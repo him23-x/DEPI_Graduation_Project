@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discover Egypt: صفحة تجريبية</title>
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Discover Egypt</h1>
+    <p>صفحة تجريبية: Clean Architecture في الـ Backend وHTML وCSS وJavaScript في الـ Frontend</p>
+  </header>
+
+  <main>
+    <section class="card info">
+      <h2>إزاي الصفحة دي بتشتغل؟</h2>
+      <ol>
+        <li>الصفحة (JavaScript) بتبعت طلب <code>fetch</code> للـ Web API.</li>
+        <li>الـ <b>Controller</b> بيستقبل الطلب وينده على الـ <b>Application</b> (Service).</li>
+        <li>الـ Service بيجيب البيانات من الـ <b>Repository</b> وبينده على الـ <b>Domain</b> (قواعد الحجز والرسوم).</li>
+        <li>الرد بيرجع بنفس الطريق، وبيتعرض هنا. شوف جدول "سجل الطلبات" تحت.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>1. التجارب المنشورة</h2>
+      <p class="hint"><code>GET /api/experiences</code></p>
+      <div id="experiences" class="grid"></div>
+    </section>
+
+    <section id="booking-section" class="card" hidden>
+      <h2>2. احجز: <span id="selected-title"></span></h2>
+      <div class="form">
+        <label>عدد الأفراد
+          <input id="guests" type="number" min="1" value="2">
+        </label>
+        <label>موعد البداية
+          <input id="start" type="datetime-local">
+        </label>
+        <button id="preview-btn" type="button">احسب السعر</button>
+      </div>
+      <p class="hint"><code>POST /api/bookings/preview</code> (مفيش حاجة بتتحفظ)</p>
+
+      <div id="breakdown" class="breakdown" hidden></div>
+      <button id="confirm-btn" type="button" class="primary" hidden>تأكيد الحجز</button>
+      <p id="message" class="message" role="status"></p>
+    </section>
+
+    <section>
+      <h2>3. حجوزاتي</h2>
+      <p class="hint"><code>GET /api/bookings?touristId=...</code></p>
+      <div id="bookings"></div>
+    </section>
+
+    <section>
+      <h2>4. سجل الطلبات (Network log)</h2>
+      <table class="log">
+        <thead><tr><th>الطريقة</th><th>المسار</th><th>الحالة</th><th>الوقت</th></tr></thead>
+        <tbody id="log"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
