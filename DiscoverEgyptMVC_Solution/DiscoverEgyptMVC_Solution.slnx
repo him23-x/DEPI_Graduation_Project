@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="DiscoverEgypt.Application/DiscoverEgypt.Application.csproj" />
+  <Project Path="DiscoverEgypt.Domain/DiscoverEgypt.Domain.csproj" />
+  <Project Path="DiscoverEgypt.Infrastructure/DiscoverEgypt.Infrastructure.csproj" />
+  <Project Path="DiscoverEgyptMVC/DiscoverEgypt.Web.csproj" />
+</Solution>
