@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="DiscoverEgypt.Application/DiscoverEgypt.Application.csproj" />
+    <Project Path="Domain/DiscoverEgypt.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="DiscoverEgypt.Infrastructure/DiscoverEgypt.Infrastructure.csproj" />
+    <Project Path="DiscoverEgypt.Persistence/DiscoverEgypt.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/UI/">
+    <Project Path="DiscoverEgypt.Presentation/DiscoverEgypt.Presentation.csproj" />
+  </Folder>
+</Solution>
