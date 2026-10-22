@@ -1,6 +1,0 @@
-@Discover_Egypt_HostAddress = http://localhost:5096
-
-GET {{Discover_Egypt_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
