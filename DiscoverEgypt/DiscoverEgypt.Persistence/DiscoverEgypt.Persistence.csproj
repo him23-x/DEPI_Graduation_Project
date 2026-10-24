@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\DiscoverEgypt.Domain.csproj" />
+    <ProjectReference Include="..\DiscoverEgypt.Application\DiscoverEgypt.Application.csproj" />
+    <ProjectReference Include="..\DiscoverEgypt.Domain\DiscoverEgypt.Domain.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.13" />

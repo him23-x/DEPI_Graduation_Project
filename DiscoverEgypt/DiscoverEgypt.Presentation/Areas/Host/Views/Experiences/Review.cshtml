@@ -1,0 +1,126 @@
+@model DiscoverEgypt.Presentation.Areas.Host.Models.ExperienceReviewViewModel
+@using DiscoverEgypt.Application.DTOs.HostExperiences
+@using DiscoverEgypt.Domain.Enums
+@{
+    ViewData["Title"] = "Review experience";
+    var review = Model.Review;
+    var food = review.ExperienceType == EvidenceExperienceType.Food;
+    var arts = review.ExperienceType == EvidenceExperienceType.Arts;
+    var local = review.ExperienceType == EvidenceExperienceType.LocalTraditions;
+    var blockingIssues = review.Issues.Any(issue => issue != "Confirm whether this experience is a public route, private/home venue, or controlled third-party venue.");
+    int Files(EvidenceKind kind) => review.Evidence.FirstOrDefault(item => item.Kind == kind)?.FileCount ?? 0;
+    string? Text(EvidenceKind kind) => review.Evidence.FirstOrDefault(item => item.Kind == kind)?.TextContent;
+}
+
+<section class="create-heading">
+    <div>
+        <div class="eyebrow">STEP 04 · REVIEW &amp; SUBMIT</div>
+        <h1>One last look</h1>
+        <p>Review the listing and accept its category-specific declaration before sending <strong>@review.Title</strong> to the review queue.</p>
+    </div>
+</section>
+
+<nav class="experience-stepper" aria-label="Experience creation steps">
+    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@review.ExperienceId"><span>01</span> Essentials</a>
+    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Media" asp-route-id="@review.ExperienceId"><span>02</span> Media</a>
+    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@review.ExperienceId"><span>03</span> Evidence</a>
+    <div class="wizard-step current" aria-current="step"><span>04</span> Review &amp; submit</div>
+</nav>
+
+@if (Model.Error is string submissionError) { <div class="setup-notice" role="alert">@submissionError</div> }
+
+<div class="review-workspace">
+    <div class="review-main-column">
+        @if (review.Status == ExperienceStatus.Rejected && !string.IsNullOrWhiteSpace(review.RejectionReason))
+        {
+            <section class="rejection-note review-rejection"><strong>Admin feedback to address</strong><p>@review.RejectionReason</p></section>
+        }
+
+        <section class="form-panel review-panel">
+            <header class="form-panel-heading review-heading"><div><span class="evidence-step-label">YOUR LISTING</span><h2>@review.Title</h2></div><div><a class="text-action" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@review.ExperienceId">Edit essentials</a><a class="text-action" asp-area="Host" asp-controller="Experiences" asp-action="Media" asp-route-id="@review.ExperienceId">Edit photos</a></div></header>
+            <div class="review-meta-grid">
+                <div><span>Category</span><strong>@review.ExperienceTypeName</strong></div>
+                <div><span>Cultural area</span><strong>@review.CulturalArea</strong></div>
+                <div><span>Price per person</span><strong>@review.PricePerPerson.ToString("0.##") EGP</strong></div>
+                <div><span>Duration · group</span><strong>@review.DurationMinutes min · up to @review.MaxGroupSize</strong></div>
+                <div class="review-wide"><span>Meeting area</span><strong>@review.MeetingPointArea</strong></div>
+                <div class="review-wide"><span>Exact meeting point</span><strong>@review.ExactMeetingPoint</strong></div>
+            </div>
+            <div class="review-copy"><h3>About the experience</h3><p>@review.Description</p><h3>Cultural story</h3><p>@review.CulturalStory</p></div>
+        </section>
+
+        <section class="form-panel review-panel">
+            <header class="form-panel-heading"><span class="evidence-step-label">MEDIA &amp; PRIVATE EVIDENCE</span><h2>Submission checklist</h2><p>Every required item must be complete before submission.</p></header>
+            @if (review.Issues.Count == 0)
+            {
+                <div class="review-ready"><span aria-hidden="true">✓</span> All required listing, media and evidence items are ready.</div>
+            }
+            else
+            {
+                <ul class="review-issues">
+                    @foreach (var issue in review.Issues) { <li>@issue</li> }
+                </ul>
+            }
+            <ul class="review-checklist">
+                <li class="@(review.ImageCount > 0 && review.HasCoverImage ? "checked" : "")"><span>@(review.ImageCount > 0 && review.HasCoverImage ? "✓" : "!")</span> @review.ImageCount photo(s) · @review.VideoCount video(s) · @(review.HasCoverImage ? "cover selected" : "cover missing")</li>
+                @if (food)
+                {
+                    <li class="@(Text(EvidenceKind.MenuAndAllergenInfo)?.Length > 0 ? "checked" : "")"><span>@(Text(EvidenceKind.MenuAndAllergenInfo)?.Length > 0 ? "✓" : "!")</span> Menu &amp; allergen details · @Files(EvidenceKind.FoodAreaPhoto)/3–5 area photos</li>
+                }
+                @if (arts)
+                {
+                    <li class="@(Files(EvidenceKind.PortfolioPhoto) >= 3 ? "checked" : "")"><span>@(Files(EvidenceKind.PortfolioPhoto) >= 3 ? "✓" : "!")</span> @Files(EvidenceKind.PortfolioPhoto)/3–10 portfolio photos</li>
+                    <li class="@(Files(EvidenceKind.WorkshopPhoto) >= 1 ? "checked" : "")"><span>@(Files(EvidenceKind.WorkshopPhoto) >= 1 ? "✓" : "!")</span> @Files(EvidenceKind.WorkshopPhoto)/1–5 workshop photos</li>
+                }
+                @if (local)
+                {
+                    <li class="@(Text(EvidenceKind.RouteDetails)?.Length > 0 ? "checked" : "")"><span>@(Text(EvidenceKind.RouteDetails)?.Length > 0 ? "✓" : "!")</span> Route details · @Files(EvidenceKind.VenueProof) venue proof · @Files(EvidenceKind.VenuePermission) permission file</li>
+                }
+            </ul>
+            @foreach (var summary in review.Evidence.Where(item => item.TextContent is not null))
+            {
+                <details class="review-evidence-text"><summary>@(summary.Kind == EvidenceKind.MenuAndAllergenInfo ? "Menu & allergen information" : "Route details")</summary><p>@summary.TextContent</p></details>
+            }
+        </section>
+
+        <section class="form-panel declaration-panel">
+            <header class="form-panel-heading"><span class="evidence-step-label">HOST DECLARATION</span><h2>Confirm your responsibilities</h2><p>This declaration is saved with your account, experience, and acceptance time for the review record.</p></header>
+            @if (string.IsNullOrWhiteSpace(Model.DeclarationText))
+            {
+                <div class="setup-notice" role="alert">A declaration has not been configured for this category, so this experience cannot be submitted yet.</div>
+            }
+            else
+            {
+                <blockquote class="declaration-copy">@Model.DeclarationText</blockquote>
+                <form asp-area="Host" asp-controller="Experiences" asp-action="Submit" asp-route-id="@review.ExperienceId" method="post">
+                    @if (local)
+                    {
+                        <fieldset class="choice-group venue-review-choice">
+                            <legend>Venue type <span>*</span></legend>
+                            <div class="venue-choice-grid">
+                                <label><input type="radio" name="venueUse" value="PublicRoute" checked="@(Model.VenueUse == ExperienceVenueUse.PublicRoute ? "checked" : null)" required /> <span><strong>Public route</strong><small>Route and meeting point details; no address document</small></span></label>
+                                <label><input type="radio" name="venueUse" value="PrivateHome" checked="@(Model.VenueUse == ExperienceVenueUse.PrivateHome ? "checked" : null)" required /> <span><strong>Home or private venue</strong><small>Utility bill, plus lease or owner permission if it is not in your name</small></span></label>
+                                <label><input type="radio" name="venueUse" value="ThirdPartyControlled" checked="@(Model.VenueUse == ExperienceVenueUse.ThirdPartyControlled ? "checked" : null)" required /> <span><strong>Controlled third-party venue</strong><small>Separate venue permission required</small></span></label>
+                            </div>
+                            <label class="host-name-check"><input type="checkbox" name="evidenceInHostName" value="true" checked="@(Model.EvidenceInHostName ? "checked" : null)" /> The address document is in my name</label>
+                        </fieldset>
+                    }
+                    <label class="declaration-accept"><input type="checkbox" name="accepted" value="true" required /> <span>I agree to this declaration and confirm that the information in this submission is accurate.</span></label>
+                    <p class="field-hint">Submission moves this experience to Pending approval. You can’t edit it while the Admin review is in progress.</p>
+                    <div class="form-actions review-submit-actions">
+                        <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@review.ExperienceId" asp-route-venueUse="@Model.VenueUse" asp-route-evidenceInHostName="@Model.EvidenceInHostName">Back to evidence</a>
+                        <button class="button button-primary" type="submit" disabled="@(blockingIssues || string.IsNullOrWhiteSpace(Model.DeclarationText))">Submit for review</button>
+                    </div>
+                </form>
+            }
+        </section>
+    </div>
+    <aside class="media-side-column">
+        <section class="media-guidance-card">
+            <h2>After you submit</h2>
+            <ul><li><span>1</span> The experience enters Admin review.</li><li><span>2</span> Pending approval is read-only.</li><li><span>3</span> If rejected, you can update this same experience and resubmit.</li></ul>
+            <p>Private evidence remains separate from the public photos shown to guests.</p>
+        </section>
+        <div class="draft-info"><span aria-hidden="true">✦</span><p>Nothing is submitted until you accept the declaration and choose Submit for review.</p></div>
+    </aside>
+</div>

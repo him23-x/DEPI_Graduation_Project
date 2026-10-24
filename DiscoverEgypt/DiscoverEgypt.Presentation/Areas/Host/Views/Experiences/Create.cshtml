@@ -1,0 +1,178 @@
+@model DiscoverEgypt.Presentation.Areas.Host.Models.CreateExperienceViewModel
+@{
+    ViewData["Title"] = Model.IsEditing ? "Edit experience" : "Create an experience";
+    ViewData["Section"] = Model.IsEditing ? "Edit experience" : "Create experience";
+}
+
+<section class="create-heading">
+    <div>
+        <div class="eyebrow">MAKE SOMETHING MEMORABLE</div>
+        <h1>@(Model.IsEditing ? "Edit your experience" : "Create an experience")</h1>
+        <p>@(Model.IsEditing ? "Update the listing details before you continue with evidence and review." : "Tell the story you’d share with a guest at your table.")</p>
+    </div>
+</section>
+
+<nav class="experience-stepper" aria-label="Experience creation steps">
+    <div class="wizard-step current" aria-current="step"><span>01</span> Essentials</div>
+    <div class="wizard-step upcoming"><span>02</span> Media</div>
+    <div class="wizard-step upcoming"><span>03</span> Evidence</div>
+    <div class="wizard-step upcoming"><span>04</span> Review &amp; submit</div>
+</nav>
+
+@if (!Model.HasRequiredLookups)
+{
+    <div class="setup-notice" role="alert">
+        Experience types, cultural areas, interests, and languages must be configured before a draft can be created. Please contact the project administrator.
+    </div>
+}
+
+@if (Model.Status == ExperienceStatus.Rejected && !string.IsNullOrWhiteSpace(Model.RejectionReason))
+{
+    <div class="rejection-note"><strong>Admin feedback</strong><p>@Model.RejectionReason</p></div>
+}
+
+<form asp-area="Host" asp-controller="Experiences" asp-action="@(Model.IsEditing ? "Edit" : "Create")" asp-route-id="@(Model.IsEditing ? Model.ExperienceId : (int?)null)" method="post" class="experience-create-form">
+    <div class="create-form-column">
+        <div asp-validation-summary="ModelOnly" class="form-validation-summary" role="alert"></div>
+        <section class="form-panel">
+            <header class="form-panel-heading">
+                <h2>The essentials</h2>
+                <p>Give guests the details they need to understand the experience.</p>
+            </header>
+
+            <div class="form-field">
+                <label asp-for="Title">Experience title <span>*</span></label>
+                <input asp-for="Title" maxlength="200" placeholder="A seat at my family table" autocomplete="off" />
+                <span asp-validation-for="Title" class="field-error"></span>
+            </div>
+            <div class="form-field">
+                <label asp-for="Description">Description <span>*</span></label>
+                <textarea asp-for="Description" maxlength="5000" rows="3" placeholder="What will guests do, feel, taste, or learn?"></textarea>
+                <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+            <div class="form-field">
+                <label asp-for="CulturalStory">Cultural story <span>*</span></label>
+                <textarea asp-for="CulturalStory" maxlength="5000" rows="4" placeholder="Share the personal or cultural story behind this experience."></textarea>
+                <span asp-validation-for="CulturalStory" class="field-error"></span>
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <header class="form-panel-heading">
+                <h2>Plan the visit</h2>
+                <p>Set the category, location, and practical details for your guests.</p>
+            </header>
+            <div class="form-grid-two">
+                <div class="form-field">
+                    <label asp-for="ExperienceTypeId">Experience type <span>*</span></label>
+                    <select asp-for="ExperienceTypeId">
+                        <option value="0">Choose a type</option>
+                        @foreach (var item in Model.Options.ExperienceTypes)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ExperienceTypeId" class="field-error"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="CulturalAreaId">Cultural area <span>*</span></label>
+                    <select asp-for="CulturalAreaId">
+                        <option value="0">Choose an area</option>
+                        @foreach (var item in Model.Options.CulturalAreas)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CulturalAreaId" class="field-error"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="DurationMinutes">Duration in minutes <span>*</span></label>
+                    <input asp-for="DurationMinutes" type="number" min="1" step="1" placeholder="180" />
+                    <span asp-validation-for="DurationMinutes" class="field-error"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="PricePerPerson">Price per person (EGP) <span>*</span></label>
+                    <input asp-for="PricePerPerson" type="number" min="0.01" step="0.01" placeholder="500.00" />
+                    <span asp-validation-for="PricePerPerson" class="field-error"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="MaxGroupSize">Maximum group size <span>*</span></label>
+                    <input asp-for="MaxGroupSize" type="number" min="1" step="1" placeholder="6" />
+                    <span asp-validation-for="MaxGroupSize" class="field-error"></span>
+                </div>
+                <div class="form-field">
+                    <label asp-for="MeetingPointArea">Public meeting area <span>*</span></label>
+                    <input asp-for="MeetingPointArea" maxlength="300" placeholder="Al-Darb Al-Ahmar, Cairo" />
+                    <span asp-validation-for="MeetingPointArea" class="field-error"></span>
+                </div>
+            </div>
+            <div class="form-field exact-meeting-field">
+                <label asp-for="ExactMeetingPoint">Exact meeting point <span>*</span></label>
+                <textarea asp-for="ExactMeetingPoint" maxlength="1000" rows="2" placeholder="Enter the precise address for confirmed guests."></textarea>
+                <span class="field-hint">This address is private. It is shared with the guest only after their booking is confirmed.</span>
+                <span asp-validation-for="ExactMeetingPoint" class="field-error"></span>
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <header class="form-panel-heading">
+                <h2>Interests &amp; languages</h2>
+                <p>Select at least one of each so guests can find your experience.</p>
+            </header>
+            <fieldset class="choice-group">
+                <legend>Interests <span>*</span></legend>
+                @if (Model.Options.Interests.Count == 0)
+                {
+                    <p class="field-hint">No interests are available yet.</p>
+                }
+                else
+                {
+                    <div class="choice-grid">
+                        @foreach (var item in Model.Options.Interests)
+                        {
+                            <label class="choice-option"><input type="checkbox" name="InterestIds" value="@item.Id" checked="@(Model.InterestIds.Contains(item.Id) ? "checked" : null)" /><span>@item.Name</span></label>
+                        }
+                    </div>
+                }
+                <span asp-validation-for="InterestIds" class="field-error"></span>
+            </fieldset>
+            <fieldset class="choice-group">
+                <legend>Languages spoken during the experience <span>*</span></legend>
+                @if (Model.Options.Languages.Count == 0)
+                {
+                    <p class="field-hint">No languages are available yet.</p>
+                }
+                else
+                {
+                    <div class="choice-grid">
+                        @foreach (var item in Model.Options.Languages)
+                        {
+                            <label class="choice-option"><input type="checkbox" name="LanguageIds" value="@item.Id" checked="@(Model.LanguageIds.Contains(item.Id) ? "checked" : null)" /><span>@item.Name</span></label>
+                        }
+                    </div>
+                }
+                <span asp-validation-for="LanguageIds" class="field-error"></span>
+            </fieldset>
+        </section>
+
+        <div class="form-actions">
+            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Index">Cancel</a>
+            <button class="button button-primary" type="submit" disabled="@(!Model.HasRequiredLookups)">@(Model.IsEditing ? "Save experience details" : "Save as draft")</button>
+        </div>
+    </div>
+
+    <aside class="create-preview-column" aria-label="Experience preview">
+        <section class="experience-preview-card">
+            <div class="preview-image"><span>PHOTO PREVIEW</span></div>
+            <div class="preview-body">
+                <div class="preview-category">YOUR EXPERIENCE</div>
+                <h2>@(string.IsNullOrWhiteSpace(Model.Title) ? "Your experience title" : Model.Title)</h2>
+                <p>@(string.IsNullOrWhiteSpace(Model.Description) ? "Your description will appear here as guests explore experiences." : Model.Description)</p>
+                <div class="preview-host"><span class="preview-host-mark">DE</span><span>Hosted by you<small>Local host</small></span></div>
+                <div class="preview-price"><strong>@(Model.PricePerPerson > 0 ? Model.PricePerPerson.ToString("0.##") : "—") EGP</strong><span>per person</span></div>
+                <p class="preview-private-note">Your exact meeting point stays private until a booking is confirmed.</p>
+            </div>
+        </section>
+        <div class="draft-info"><span aria-hidden="true">✦</span><p>Your progress on this step is saved as a draft. You can continue adding details in the next steps.</p></div>
+    </aside>
+</form>
