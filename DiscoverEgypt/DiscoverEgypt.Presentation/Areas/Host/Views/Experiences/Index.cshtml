@@ -1,0 +1,110 @@
+@model DiscoverEgypt.Presentation.Areas.Host.Models.ExperiencesIndexViewModel
+@using DiscoverEgypt.Domain.Enums
+@{
+    ViewData["Title"] = "My Experiences";
+    ViewData["Section"] = "My Experiences";
+    string StatusLabel(ExperienceStatus status) => status switch
+    {
+        ExperienceStatus.PendingApproval => "Pending review",
+        ExperienceStatus.Unpublished => "Unpublished",
+        ExperienceStatus.Published => "Published",
+        ExperienceStatus.Rejected => "Needs changes",
+        _ => "Draft"
+    };
+    string StatusClass(ExperienceStatus status) => status switch
+    {
+        ExperienceStatus.PendingApproval => "pending",
+        ExperienceStatus.Unpublished => "unpublished",
+        ExperienceStatus.Published => "published",
+        ExperienceStatus.Rejected => "rejected",
+        _ => "draft"
+    };
+}
+
+<section class="experiences-heading">
+    <div>
+        <div class="eyebrow">YOUR HOST STUDIO</div>
+        <h1>My Experiences</h1>
+        <p>Keep track of your experiences and their review status.</p>
+    </div>
+    <a class="button button-primary" asp-area="Host" asp-controller="Experiences" asp-action="Create"><span aria-hidden="true">＋</span> Create experience</a>
+</section>
+
+@if (TempData["ExperienceNotice"] is string notice)
+{
+    <div class="success-notice" role="status">@notice</div>
+}
+
+<section class="experiences-toolbar" aria-label="Experience filters">
+    <div class="results-count"><strong>@Model.Experiences.Count</strong> experience@(Model.Experiences.Count == 1 ? "" : "s")</div>
+    <form method="get" asp-area="Host" asp-controller="Experiences" asp-action="Index" class="filter-form">
+        <label for="status-filter">Status</label>
+        <select id="status-filter" name="status" onchange="this.form.submit()">
+            <option value="">All statuses</option>
+            @foreach (var status in Model.AvailableStatuses)
+            {
+                <option value="@status" selected="@(Model.SelectedStatus == status ? "selected" : null)">@StatusLabel(status)</option>
+            }
+        </select>
+        <noscript><button class="button button-secondary" type="submit">Filter</button></noscript>
+    </form>
+</section>
+
+@if (Model.Experiences.Count == 0)
+{
+    <section class="empty-state">
+        <div class="empty-illustration" aria-hidden="true"><span>✦</span></div>
+        @if (Model.SelectedStatus.HasValue)
+        {
+            <h2>No @StatusLabel(Model.SelectedStatus.Value).ToLowerInvariant() experiences</h2>
+            <p>Try another status filter to see your experiences.</p>
+            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Index">Clear filter</a>
+        }
+        else
+        {
+            <h2>Your next story starts here</h2>
+            <p>You haven’t added an experience yet. Share what makes your corner of Egypt special.</p>
+            <a class="button button-primary" asp-area="Host" asp-controller="Experiences" asp-action="Create">Create your first experience</a>
+        }
+    </section>
+}
+else
+{
+    <section class="experience-grid" aria-label="Your experiences">
+        @foreach (var experience in Model.Experiences)
+        {
+            <article class="experience-card">
+                <div class="experience-cover" aria-hidden="true">
+                    @if (experience.CoverMediaId.HasValue)
+                    {
+                        <img class="experience-cover-image" src="@Url.Action("MediaFile", "Experiences", new { area = "Host", mediaId = experience.CoverMediaId.Value })" alt="" loading="lazy" />
+                    }
+                    else
+                    {
+                        <span class="cover-sun"></span><span class="cover-land cover-land-back"></span><span class="cover-land cover-land-front"></span>
+                    }
+                    <span class="cover-caption">DISCOVER EGYPT</span>
+                </div>
+                <div class="experience-card-body">
+                    <div class="card-meta"><span class="status-badge @StatusClass(experience.Status)"><span></span>@StatusLabel(experience.Status)</span><span class="updated-label">Added @experience.CreatedAt.ToString("MMM d, yyyy")</span></div>
+                    <h2>@experience.Title</h2>
+                    <div class="experience-location"><span aria-hidden="true">⌖</span> @experience.CulturalArea <span class="meta-dot">·</span> @experience.ExperienceType</div>
+                    <p class="experience-description">@experience.Description</p>
+                    @if (experience.Status == ExperienceStatus.Rejected && !string.IsNullOrWhiteSpace(experience.RejectionReason))
+                    {
+                        <div class="rejection-note"><strong>Review feedback</strong><p>@experience.RejectionReason</p></div>
+                    }
+                    <div class="experience-card-footer"><span><strong>@experience.PricePerPerson.ToString("0.##") EGP</strong> / person</span><span>@(experience.DurationMinutes / 60)h @(experience.DurationMinutes % 60)m</span></div>
+                    @if (experience.Status is ExperienceStatus.PendingApproval or ExperienceStatus.Unpublished)
+                    {
+                        <p class="read-only-note">This experience is view-only while its status is @StatusLabel(experience.Status).ToLowerInvariant().</p>
+                    }
+                    else if (experience.Status is ExperienceStatus.Draft or ExperienceStatus.Rejected)
+                    {
+                        <a class="button button-secondary card-action" asp-area="Host" asp-controller="Experiences" asp-action="@(experience.Status == ExperienceStatus.Rejected ? "Edit" : "Media")" asp-route-id="@experience.Id">@(experience.Status == ExperienceStatus.Rejected ? "Update and resubmit" : "Continue setup")</a>
+                    }
+                </div>
+            </article>
+        }
+    </section>
+}

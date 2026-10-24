@@ -1,0 +1,146 @@
+@model DiscoverEgypt.Presentation.Areas.Host.Models.ExperienceEvidenceViewModel
+@using DiscoverEgypt.Application.DTOs.HostExperiences
+@using DiscoverEgypt.Domain.Enums
+@{
+    ViewData["Title"] = "Experience evidence";
+    var type = Model.Editor.ExperienceType;
+    var food = type == EvidenceExperienceType.Food;
+    var arts = type == EvidenceExperienceType.Arts;
+    var local = type == EvidenceExperienceType.LocalTraditions;
+    var menuKind = EvidenceKind.MenuAndAllergenInfo;
+    var routeKind = EvidenceKind.RouteDetails;
+    var evidenceGroups = Model.Editor.Files.GroupBy(item => item.Kind).ToDictionary(group => group.Key, group => group.ToList());
+    int Count(EvidenceKind kind) => evidenceGroups.TryGetValue(kind, out var items) ? items.Count : 0;
+}
+
+<section class="create-heading">
+    <div>
+        <div class="eyebrow">STEP 03 · EVIDENCE</div>
+        <h1>Evidence for a trusted experience</h1>
+        <p>Provide the private, type-specific details for <strong>@Model.Editor.Title</strong>. These files are only accessible to you and authorized reviewers.</p>
+    </div>
+</section>
+
+<nav class="experience-stepper" aria-label="Experience creation steps">
+    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.Editor.ExperienceId"><span>01</span> Essentials</a>
+    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Media" asp-route-id="@Model.Editor.ExperienceId"><span>02</span> Media</a>
+    <div class="wizard-step current" aria-current="step"><span>03</span> Evidence</div>
+    <div class="wizard-step upcoming"><span>04</span> Review &amp; submit</div>
+</nav>
+
+@if (TempData["EvidenceNotice"] is string notice) { <div class="success-notice" role="status">@notice</div> }
+@if (TempData["EvidenceError"] is string error) { <div class="setup-notice" role="alert">@error</div> }
+
+@if (type == EvidenceExperienceType.Unsupported)
+{
+    <div class="setup-notice" role="alert">This experience category is not mapped to an evidence checklist yet. The saved category is “@Model.Editor.ExperienceTypeName”. Contact the project administrator to configure its exact type.</div>
+}
+else
+{
+<div class="evidence-workspace">
+    <div class="evidence-main-column">
+        @if (food)
+        {
+            <section class="form-panel evidence-panel">
+                <header class="form-panel-heading"><span class="evidence-step-label">IN-PLATFORM DETAILS</span><h2>Menu, ingredients &amp; allergens</h2><p>Describe what guests will eat, the ingredients you use, and any common allergens.</p></header>
+                <form asp-area="Host" asp-controller="Experiences" asp-action="SaveEvidenceText" asp-route-id="@Model.Editor.ExperienceId" method="post">
+                    <input type="hidden" name="kind" value="@menuKind" />
+                    <label class="sr-only" for="evidence-text">Menu, ingredients and allergen information</label>
+                    <textarea id="evidence-text" name="textContent" maxlength="5000" required>@Model.Editor.TextContent</textarea>
+                    <div class="evidence-form-footer"><span>Up to 5,000 characters · saved privately</span><button class="button button-primary" type="submit">Save details</button></div>
+                </form>
+            </section>
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Food preparation, washing & storage areas", EvidenceKind.FoodAreaPhoto, 3, 5))
+        }
+        @if (arts)
+        {
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Photos of your completed work", EvidenceKind.PortfolioPhoto, 3, 10))
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Workshop, tools & materials", EvidenceKind.WorkshopPhoto, 1, 5))
+        }
+        @if (local)
+        {
+            <section class="form-panel evidence-panel">
+                <header class="form-panel-heading"><span class="evidence-step-label">IN-PLATFORM DETAILS</span><h2>Route &amp; location details</h2><p>Describe the route, meeting point and any location details guests need. Your meeting area and exact meeting point from Essentials remain part of this listing.</p></header>
+                <form asp-area="Host" asp-controller="Experiences" asp-action="SaveEvidenceText" asp-route-id="@Model.Editor.ExperienceId" method="post">
+                    <input type="hidden" name="kind" value="@routeKind" />
+                    <label class="sr-only" for="evidence-text">Route and location details</label>
+                    <textarea id="evidence-text" name="textContent" maxlength="5000" required>@Model.Editor.TextContent</textarea>
+                    <div class="evidence-form-footer"><span>Up to 5,000 characters · saved privately</span><button class="button button-primary" type="submit">Save route details</button></div>
+                </form>
+            </section>
+            <section class="form-panel evidence-panel">
+                <header class="form-panel-heading"><span class="evidence-step-label">LOCATION DOCUMENTS</span><h2>Where will the experience take place?</h2><p>Public routes do not need an address document. For a home or private venue, upload a recent utility bill matching the address. If it is not in your name, also provide a lease or the owner’s written permission. A controlled third-party location needs its separate permission file.</p></header>
+                <div class="venue-choice-grid">
+                    <label><input type="radio" name="venueUse" value="PublicRoute" checked="@(Model.VenueUse == "PublicRoute" ? "checked" : null)" /> <span><strong>Public route</strong><small>Route and meeting point details only</small></span></label>
+                    <label><input type="radio" name="venueUse" value="PrivateHome" checked="@(Model.VenueUse == "PrivateHome" ? "checked" : null)" /> <span><strong>My home or private venue</strong><small>Utility bill; add permission if it is not in your name</small></span></label>
+                    <label><input type="radio" name="venueUse" value="ThirdPartyControlled" checked="@(Model.VenueUse == "ThirdPartyControlled" ? "checked" : null)" /> <span><strong>Controlled third-party venue</strong><small>Upload a separate venue permission</small></span></label>
+                </div>
+                <label class="host-name-check"><input type="checkbox" name="evidenceInHostName" value="true" checked="@(Model.EvidenceInHostName ? "checked" : null)" /> The address document is in my name</label>
+                <div id="venue-proof-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Recent utility bill or address proof", EvidenceKind.VenueProof, 1, 1))</div>
+                <div id="venue-permission-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Lease or written venue permission", EvidenceKind.VenuePermission, 1, 1))</div>
+            </section>
+        }
+
+        <div class="form-actions evidence-footer-actions">
+            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Media" asp-route-id="@Model.Editor.ExperienceId">Back to media</a>
+            <a class="button button-primary" asp-area="Host" asp-controller="Experiences" asp-action="Review" asp-route-id="@Model.Editor.ExperienceId">Continue to review <span aria-hidden="true">→</span></a>
+        </div>
+    </div>
+
+    <aside class="media-side-column">
+        <section class="media-guidance-card">
+            <h2>Evidence checklist</h2>
+            <ul>
+                @if (food)
+                {
+                    <li class="@(Model.Editor.TextContent?.Length > 0 ? "checked" : "")"><span>@(Model.Editor.TextContent?.Length > 0 ? "✓" : "1")</span> Menu, ingredients &amp; allergens</li>
+                    <li class="@(Count(EvidenceKind.FoodAreaPhoto) >= 3 ? "checked" : "")"><span>@(Count(EvidenceKind.FoodAreaPhoto) >= 3 ? "✓" : "2")</span> 3–5 area photos (@Count(EvidenceKind.FoodAreaPhoto))</li>
+                    <li><span>3</span> Food-safety declaration in the next step</li>
+                }
+                @if (arts)
+                {
+                    <li class="@(Count(EvidenceKind.PortfolioPhoto) >= 3 ? "checked" : "")"><span>@(Count(EvidenceKind.PortfolioPhoto) >= 3 ? "✓" : "1")</span> 3–10 work photos (@Count(EvidenceKind.PortfolioPhoto))</li>
+                    <li class="@(Count(EvidenceKind.WorkshopPhoto) >= 1 ? "checked" : "")"><span>@(Count(EvidenceKind.WorkshopPhoto) >= 1 ? "✓" : "2")</span> 1–5 workshop photos (@Count(EvidenceKind.WorkshopPhoto))</li>
+                    <li><span>3</span> Safety declaration in the next step</li>
+                }
+                @if (local)
+                {
+                    <li class="@(Model.Editor.TextContent?.Length > 0 ? "checked" : "")"><span>@(Model.Editor.TextContent?.Length > 0 ? "✓" : "1")</span> Route and location details</li>
+                    <li><span>2</span> Venue evidence depends on location type</li>
+                    <li><span>3</span> Privacy &amp; permission declaration in the next step</li>
+                }
+            </ul>
+            <p>PDF, JPEG or PNG · up to 10 MB per file. Evidence is stored separately from public experience photos.</p>
+        </section>
+        <div class="draft-info"><span aria-hidden="true">✦</span><p>Your draft or rejected experience can be changed here. Pending approval and unpublished experiences stay read-only.</p></div>
+    </aside>
+</div>
+}
+
+@if (local)
+{
+    <script>
+        (() => {
+            const radios = document.querySelectorAll('input[name="venueUse"]');
+            const proof = document.getElementById('venue-proof-files');
+            const permission = document.getElementById('venue-permission-files');
+            const inName = document.querySelector('input[name="evidenceInHostName"]');
+            const nameCheck = inName.closest('.host-name-check');
+            const continueLink = document.querySelector('.evidence-footer-actions .button-primary');
+            const update = () => {
+                const choice = document.querySelector('input[name="venueUse"]:checked')?.value;
+                proof.hidden = choice !== 'PrivateHome';
+                nameCheck.hidden = choice !== 'PrivateHome';
+                permission.hidden = choice === 'PublicRoute' || (choice === 'PrivateHome' && inName.checked);
+                const linkUrl = new URL(continueLink.href, window.location.origin);
+                linkUrl.searchParams.set('venueUse', choice || 'PublicRoute');
+                linkUrl.searchParams.set('evidenceInHostName', inName.checked ? 'true' : 'false');
+                continueLink.href = linkUrl.toString();
+            };
+            radios.forEach(radio => radio.addEventListener('change', update));
+            inName.addEventListener('change', update);
+            update();
+        })();
+    </script>
+}
+

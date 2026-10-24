@@ -1,0 +1,140 @@
+@model DiscoverEgypt.Application.DTOs.HostExperiences.HostExperienceMediaEditor
+@using DiscoverEgypt.Domain.Enums
+@{
+    ViewData["Title"] = "Add experience media";
+    ViewData["Section"] = "Experience media";
+    var images = Model.Media.Count(item => item.MediaType == MediaType.Image);
+    var videos = Model.Media.Count(item => item.MediaType == MediaType.Video);
+}
+
+<section class="create-heading">
+    <div>
+        <div class="eyebrow">STEP 02 · MEDIA</div>
+        <h1>Show them the moment</h1>
+        <p>Add the photos and video that help guests picture <strong>@Model.Title</strong>.</p>
+    </div>
+</section>
+
+<nav class="experience-stepper" aria-label="Experience creation steps">
+    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.ExperienceId"><span>01</span> Essentials</a>
+    <div class="wizard-step current" aria-current="step"><span>02</span> Media</div>
+    <div class="wizard-step upcoming"><span>03</span> Evidence</div>
+    <div class="wizard-step upcoming"><span>04</span> Review &amp; submit</div>
+</nav>
+
+@if (TempData["MediaNotice"] is string notice)
+{
+    <div class="success-notice" role="status">@notice</div>
+}
+@if (TempData["ExperienceNotice"] is string experienceNotice)
+{
+    <div class="success-notice" role="status">@experienceNotice</div>
+}
+@if (TempData["MediaError"] is string error)
+{
+    <div class="setup-notice" role="alert">@error</div>
+}
+
+<div class="media-workspace">
+    <div class="media-main-column">
+        <section class="form-panel upload-panel">
+            <header class="form-panel-heading">
+                <h2>Your photos &amp; video</h2>
+                <p>Upload clear, authentic moments from the experience. Your first photo is selected as the cover automatically.</p>
+            </header>
+            <form asp-area="Host" asp-controller="Experiences" asp-action="UploadMedia" asp-route-id="@Model.ExperienceId" method="post" enctype="multipart/form-data" class="media-upload-form">
+                <label class="upload-dropzone" for="media-files">
+                    <span class="upload-icon" aria-hidden="true">＋</span>
+                    <strong>Choose photos or video</strong>
+                    <span>JPEG, PNG, WebP up to 10 MB · MP4 up to 100 MB</span>
+                    <input id="media-files" type="file" name="files" accept=".jpg,.jpeg,.png,.webp,.mp4,image/jpeg,image/png,image/webp,video/mp4" multiple />
+                </label>
+                <div class="upload-form-footer"><span>Up to 8 photos and 2 videos</span><button class="button button-primary" type="submit">Upload selected files</button></div>
+            </form>
+        </section>
+
+        <section class="media-gallery-panel">
+            <header class="gallery-heading"><div><h2>Uploaded media</h2><p>Use the arrows to choose the order guests will see.</p></div><div class="media-counts"><span>@images / 8 photos</span><span>@videos / 2 videos</span></div></header>
+            @if (Model.Media.Count == 0)
+            {
+                <div class="media-empty-state"><div class="empty-illustration" aria-hidden="true">▧</div><h3>No media added yet</h3><p>Add at least one photo to complete this step. You can add more later while the experience is still a draft.</p></div>
+            }
+            else
+            {
+                <div class="media-gallery">
+                    @for (var index = 0; index < Model.Media.Count; index++)
+                    {
+                        var item = Model.Media[index];
+                        <article class="media-item-card">
+                            <div class="media-item-preview">
+                                @if (item.MediaType == MediaType.Image)
+                                {
+                                    <img src="@Url.Action("MediaFile", "Experiences", new { area = "Host", mediaId = item.Id })" alt="Experience photo @(@index + 1)" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <video src="@Url.Action("MediaFile", "Experiences", new { area = "Host", mediaId = item.Id })" controls preload="metadata">Your browser does not support video playback.</video>
+                                    <span class="video-tag">MP4 VIDEO</span>
+                                }
+                                @if (item.IsCover)
+                                {
+                                    <span class="cover-tag">COVER PHOTO</span>
+                                }
+                            </div>
+                            <div class="media-item-details"><span>@(item.MediaType == MediaType.Image ? "Photo" : "Video") · @(index + 1)</span><span>Position @(@index + 1)</span></div>
+                            <div class="media-item-actions">
+                                <form asp-area="Host" asp-controller="Experiences" asp-action="MoveMedia" asp-route-id="@Model.ExperienceId" method="post">
+                                    <input type="hidden" name="mediaId" value="@item.Id" />
+                                    <input type="hidden" name="direction" value="-1" />
+                                    <button class="icon-action" type="submit" aria-label="Move item up" disabled="@(index == 0)">↑</button>
+                                </form>
+                                <form asp-area="Host" asp-controller="Experiences" asp-action="MoveMedia" asp-route-id="@Model.ExperienceId" method="post">
+                                    <input type="hidden" name="mediaId" value="@item.Id" />
+                                    <input type="hidden" name="direction" value="1" />
+                                    <button class="icon-action" type="submit" aria-label="Move item down" disabled="@(index == Model.Media.Count - 1)">↓</button>
+                                </form>
+                                @if (item.MediaType == MediaType.Image && !item.IsCover)
+                                {
+                                    <form asp-area="Host" asp-controller="Experiences" asp-action="SetCover" asp-route-id="@Model.ExperienceId" method="post">
+                                        <input type="hidden" name="mediaId" value="@item.Id" />
+                                        <button class="text-action" type="submit">Set as cover</button>
+                                    </form>
+                                }
+                                <form asp-area="Host" asp-controller="Experiences" asp-action="DeleteMedia" asp-route-id="@Model.ExperienceId" method="post" onsubmit="return confirm('Remove this media item from the draft?');">
+                                    <input type="hidden" name="mediaId" value="@item.Id" />
+                                    <button class="text-action remove-action" type="submit">Remove</button>
+                                </form>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+        @if (images == 0)
+        {
+            <div class="image-requirement"><span aria-hidden="true">!</span> Add at least one photo before continuing to the next step.</div>
+        }
+        <div class="form-actions media-footer-actions">
+            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Index">Back to My Experiences</a>
+            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.ExperienceId">Edit essentials</a>
+            @if (images > 0)
+            {
+                <a class="button button-primary" asp-area="Host" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@Model.ExperienceId">Continue to evidence <span aria-hidden="true">→</span></a>
+            }
+        </div>
+    </div>
+
+    <aside class="media-side-column">
+        <section class="media-guidance-card">
+            <h2>Media checklist</h2>
+            <ul>
+                <li class="@(images > 0 ? "checked" : "")"><span>@(images > 0 ? "✓" : "1")</span> At least 1 photo</li>
+                <li class="checked"><span>✓</span> No more than 8 photos</li>
+                <li class="checked"><span>✓</span> Optional: up to 2 MP4 videos</li>
+                <li class="@(Model.Media.Any(item => item.IsCover) ? "checked" : "")"><span>@(Model.Media.Any(item => item.IsCover) ? "✓" : "4")</span> One photo selected as cover</li>
+            </ul>
+            <p>Uploads are saved privately. Only an authorized host can preview draft media here.</p>
+        </section>
+        <div class="draft-info"><span aria-hidden="true">✦</span><p>Media changes save as you upload, reorder, change the cover, or remove a file.</p></div>
+    </aside>
+</div>

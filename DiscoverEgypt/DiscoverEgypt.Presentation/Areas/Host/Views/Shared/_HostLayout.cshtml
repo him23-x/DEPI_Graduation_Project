@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Discover Egypt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/host-experiences.css" asp-append-version="true" />
+</head>
+<body class="host-shell">
+    <aside class="host-sidebar">
+        <a class="host-brand" asp-area="" asp-controller="Home" asp-action="Index">
+            <span class="host-brand-mark">DE</span>
+            <span>Discover Egypt<small>HOST STUDIO</small></span>
+        </a>
+        <div class="sidebar-section-label">WORKSPACE</div>
+        <nav class="host-nav" aria-label="Host navigation">
+            <a class="host-nav-link" href="#" aria-disabled="true"><span class="nav-icon">⌂</span> Dashboard</a>
+            <a class="host-nav-link active" asp-area="Host" asp-controller="Experiences" asp-action="Index"><span class="nav-icon">✦</span> My Experiences</a>
+            <a class="host-nav-link" href="#" aria-disabled="true"><span class="nav-icon">▤</span> Bookings</a>
+            <a class="host-nav-link" href="#" aria-disabled="true"><span class="nav-icon">◷</span> Availability</a>
+        </nav>
+        <div class="host-sidebar-bottom">
+            <div class="sidebar-section-label">ACCOUNT</div>
+            <a class="host-nav-link" href="#" aria-disabled="true"><span class="nav-icon">⚙</span> Settings</a>
+            <div class="host-profile"><span class="host-avatar">@(User.Identity?.Name?.FirstOrDefault().ToString().ToUpperInvariant() ?? "H")</span><span>@(User.Identity?.Name ?? "Host")<small>Host account</small></span></div>
+        </div>
+    </aside>
+    <main class="host-main">
+        <header class="host-topbar"><span>Host workspace <span class="breadcrumb-separator">/</span> <strong>@(ViewData["Section"] ?? "My Experiences")</strong></span><span class="topbar-avatar">@(User.Identity?.Name?.FirstOrDefault().ToString().ToUpperInvariant() ?? "H")</span></header>
+        <div class="host-content">@RenderBody()</div>
+    </main>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

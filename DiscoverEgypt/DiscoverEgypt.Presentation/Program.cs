@@ -1,5 +1,10 @@
 using DiscoverEgypt.Domain.Entities;
+using DiscoverEgypt.Application;
+using DiscoverEgypt.Application.Contracts.Persistence;
+using DiscoverEgypt.Application.Contracts.Storage;
 using DiscoverEgypt.Persistence;
+using DiscoverEgypt.Persistence.Repositories;
+using DiscoverEgypt.Infrastructure.Storage;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddApplicationServices();
 
 builder.Services.AddDbContext<DiscoverEgyptDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -17,6 +23,18 @@ builder.Services
     .AddDefaultTokenProviders();
 
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<IHostExperienceRepository, HostExperienceRepository>();
+builder.Services.AddScoped<IHostExperienceMediaRepository, HostExperienceMediaRepository>();
+builder.Services.AddScoped<IHostExperienceEvidenceRepository, HostExperienceEvidenceRepository>();
+builder.Services.AddScoped<IHostExperienceSubmissionRepository, HostExperienceSubmissionRepository>();
+builder.Services.AddSingleton<IExperienceMediaStorage>(_ => new AzureExperienceMediaStorage(
+    builder.Configuration["ExperienceMediaStorage:ServiceUri"],
+    builder.Configuration["ExperienceMediaStorage:ConnectionString"],
+    builder.Configuration["ExperienceMediaStorage:ContainerName"]));
+builder.Services.AddSingleton<IExperienceEvidenceStorage>(_ => new AzureExperienceEvidenceStorage(
+    builder.Configuration["ExperienceEvidenceStorage:ServiceUri"],
+    builder.Configuration["ExperienceEvidenceStorage:ConnectionString"],
+    builder.Configuration["ExperienceEvidenceStorage:ContainerName"]));
 
 var app = builder.Build();
 
@@ -35,6 +53,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
