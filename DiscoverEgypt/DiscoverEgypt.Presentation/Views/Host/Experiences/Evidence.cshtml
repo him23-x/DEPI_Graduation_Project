@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.ViewModels.Experience.ExperienceEvidenceViewModel
+@model DiscoverEgypt.Application.DTOs.HostExperiences.ExperienceEvidenceDto
 @using DiscoverEgypt.Application.DTOs.HostExperiences
 @using DiscoverEgypt.Domain.Enums
 @{
@@ -50,12 +50,12 @@ else
                     <div class="evidence-form-footer"><span>Up to 5,000 characters · saved privately</span><button class="button button-primary" type="submit">Save details</button></div>
                 </form>
             </section>
-            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Food preparation, washing & storage areas", EvidenceKind.FoodAreaPhoto, 3, 5))
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Food preparation, washing & storage areas", EvidenceKind.FoodAreaPhoto, 3, 5))
         }
         @if (arts)
         {
-            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Photos of your completed work", EvidenceKind.PortfolioPhoto, 3, 10))
-            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Workshop, tools & materials", EvidenceKind.WorkshopPhoto, 1, 5))
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Photos of your completed work", EvidenceKind.PortfolioPhoto, 3, 10))
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Workshop, tools & materials", EvidenceKind.WorkshopPhoto, 1, 5))
         }
         @if (local)
         {
@@ -71,13 +71,13 @@ else
             <section class="form-panel evidence-panel">
                 <header class="form-panel-heading"><span class="evidence-step-label">LOCATION DOCUMENTS</span><h2>Where will the experience take place?</h2><p>Public routes do not need an address document. For a home or private venue, upload a recent utility bill matching the address. If it is not in your name, also provide a lease or the owner’s written permission. A controlled third-party location needs its separate permission file.</p></header>
                 <div class="venue-choice-grid">
-                    <label><input type="radio" name="venueUse" value="PublicRoute" checked="@(Model.VenueUse == "PublicRoute" ? "checked" : null)" /> <span><strong>Public route</strong><small>Route and meeting point details only</small></span></label>
-                    <label><input type="radio" name="venueUse" value="PrivateHome" checked="@(Model.VenueUse == "PrivateHome" ? "checked" : null)" /> <span><strong>My home or private venue</strong><small>Utility bill; add permission if it is not in your name</small></span></label>
-                    <label><input type="radio" name="venueUse" value="ThirdPartyControlled" checked="@(Model.VenueUse == "ThirdPartyControlled" ? "checked" : null)" /> <span><strong>Controlled third-party venue</strong><small>Upload a separate venue permission</small></span></label>
+                    <label><input type="radio" name="venueUse" value="PublicRoute" checked="@(Model.VenueUse == ExperienceVenueUse.PublicRoute ? "checked" : null)" /> <span><strong>Public route</strong><small>Route and meeting point details only</small></span></label>
+                    <label><input type="radio" name="venueUse" value="PrivateHome" checked="@(Model.VenueUse == ExperienceVenueUse.PrivateHome ? "checked" : null)" /> <span><strong>My home or private venue</strong><small>Utility bill; add permission if it is not in your name</small></span></label>
+                    <label><input type="radio" name="venueUse" value="ThirdPartyControlled" checked="@(Model.VenueUse == ExperienceVenueUse.ThirdPartyControlled ? "checked" : null)" /> <span><strong>Controlled third-party venue</strong><small>Upload a separate venue permission</small></span></label>
                 </div>
                 <label class="host-name-check"><input type="checkbox" name="evidenceInHostName" value="true" checked="@(Model.EvidenceInHostName ? "checked" : null)" /> The address document is in my name</label>
-                <div id="venue-proof-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Recent utility bill or address proof", EvidenceKind.VenueProof, 1, 1))</div>
-                <div id="venue-permission-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Lease or written venue permission", EvidenceKind.VenuePermission, 1, 1))</div>
+                <div id="venue-proof-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Recent utility bill or address proof", EvidenceKind.VenueProof, 1, 1))</div>
+                <div id="venue-permission-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Lease or written venue permission", EvidenceKind.VenuePermission, 1, 1))</div>
             </section>
         }
 

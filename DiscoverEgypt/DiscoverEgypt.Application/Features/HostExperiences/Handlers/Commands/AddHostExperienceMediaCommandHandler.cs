@@ -2,7 +2,7 @@ using DiscoverEgypt.Application.Contracts.Persistence;
 using DiscoverEgypt.Application.Contracts.Storage;
 using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
-using DiscoverEgypt.Application.Features.HostExperiences.Validators;
+using DiscoverEgypt.Application.Features.HostExperiences.Policies;
 using DiscoverEgypt.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -24,11 +24,11 @@ public sealed class AddHostExperienceMediaCommandHandler(
         }
 
         var extension = Path.GetExtension(request.FileName).ToLowerInvariant();
-        var (mediaType, expectedContentType, maxLength) = MediaFileRules.GetFileInfo(request.FileName);
+        var (mediaType, expectedContentType, maxLength) = MediaFilePolicy.GetFileInfo(request.FileName);
         if (string.IsNullOrEmpty(expectedContentType)
             || !string.Equals(request.ContentType, expectedContentType, StringComparison.OrdinalIgnoreCase)
             || request.Length > maxLength
-            || !await MediaFileRules.HasExpectedSignatureAsync(request.Content, extension, cancellationToken))
+            || !await MediaFilePolicy.HasExpectedSignatureAsync(request.Content, extension, cancellationToken))
         {
             return ExperienceMediaMutationResult.InvalidFile;
         }
@@ -40,11 +40,11 @@ public sealed class AddHostExperienceMediaCommandHandler(
         }
 
         var mediaCount = editor.Media.Count(item => item.MediaType == mediaType);
-        if (mediaType == MediaType.Image && mediaCount >= MediaFileRules.MaxImages)
+        if (mediaType == MediaType.Image && mediaCount >= MediaFilePolicy.MaxImages)
         {
             return ExperienceMediaMutationResult.ImageLimitReached;
         }
-        if (mediaType == MediaType.Video && mediaCount >= MediaFileRules.MaxVideos)
+        if (mediaType == MediaType.Video && mediaCount >= MediaFilePolicy.MaxVideos)
         {
             return ExperienceMediaMutationResult.VideoLimitReached;
         }

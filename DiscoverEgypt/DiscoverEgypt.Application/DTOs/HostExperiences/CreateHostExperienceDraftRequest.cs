@@ -1,3 +1,5 @@
+
+
 namespace DiscoverEgypt.Application.DTOs.HostExperiences;
 
 public sealed record CreateHostExperienceDraftRequest(
