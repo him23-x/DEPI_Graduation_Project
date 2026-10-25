@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.Areas.Host.Models.ExperienceEvidenceViewModel
+@model DiscoverEgypt.Presentation.ViewModels.Experience.ExperienceEvidenceViewModel
 @using DiscoverEgypt.Application.DTOs.HostExperiences
 @using DiscoverEgypt.Domain.Enums
 @{
@@ -22,8 +22,8 @@
 </section>
 
 <nav class="experience-stepper" aria-label="Experience creation steps">
-    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.Editor.ExperienceId"><span>01</span> Essentials</a>
-    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Media" asp-route-id="@Model.Editor.ExperienceId"><span>02</span> Media</a>
+    <a class="wizard-step complete" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.Editor.ExperienceId"><span>01</span> Essentials</a>
+    <a class="wizard-step complete" asp-controller="Experiences" asp-action="Media" asp-route-id="@Model.Editor.ExperienceId"><span>02</span> Media</a>
     <div class="wizard-step current" aria-current="step"><span>03</span> Evidence</div>
     <div class="wizard-step upcoming"><span>04</span> Review &amp; submit</div>
 </nav>
@@ -43,7 +43,7 @@ else
         {
             <section class="form-panel evidence-panel">
                 <header class="form-panel-heading"><span class="evidence-step-label">IN-PLATFORM DETAILS</span><h2>Menu, ingredients &amp; allergens</h2><p>Describe what guests will eat, the ingredients you use, and any common allergens.</p></header>
-                <form asp-area="Host" asp-controller="Experiences" asp-action="SaveEvidenceText" asp-route-id="@Model.Editor.ExperienceId" method="post">
+                <form asp-controller="Experiences" asp-action="SaveEvidenceText" asp-route-id="@Model.Editor.ExperienceId" method="post">
                     <input type="hidden" name="kind" value="@menuKind" />
                     <label class="sr-only" for="evidence-text">Menu, ingredients and allergen information</label>
                     <textarea id="evidence-text" name="textContent" maxlength="5000" required>@Model.Editor.TextContent</textarea>
@@ -61,7 +61,7 @@ else
         {
             <section class="form-panel evidence-panel">
                 <header class="form-panel-heading"><span class="evidence-step-label">IN-PLATFORM DETAILS</span><h2>Route &amp; location details</h2><p>Describe the route, meeting point and any location details guests need. Your meeting area and exact meeting point from Essentials remain part of this listing.</p></header>
-                <form asp-area="Host" asp-controller="Experiences" asp-action="SaveEvidenceText" asp-route-id="@Model.Editor.ExperienceId" method="post">
+                <form asp-controller="Experiences" asp-action="SaveEvidenceText" asp-route-id="@Model.Editor.ExperienceId" method="post">
                     <input type="hidden" name="kind" value="@routeKind" />
                     <label class="sr-only" for="evidence-text">Route and location details</label>
                     <textarea id="evidence-text" name="textContent" maxlength="5000" required>@Model.Editor.TextContent</textarea>
@@ -82,8 +82,8 @@ else
         }
 
         <div class="form-actions evidence-footer-actions">
-            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Media" asp-route-id="@Model.Editor.ExperienceId">Back to media</a>
-            <a class="button button-primary" asp-area="Host" asp-controller="Experiences" asp-action="Review" asp-route-id="@Model.Editor.ExperienceId">Continue to review <span aria-hidden="true">→</span></a>
+            <a class="button button-secondary" asp-controller="Experiences" asp-action="Media" asp-route-id="@Model.Editor.ExperienceId">Back to media</a>
+            <a class="button button-primary" asp-controller="Experiences" asp-action="Review" asp-route-id="@Model.Editor.ExperienceId">Continue to review <span aria-hidden="true">→</span></a>
         </div>
     </div>
 

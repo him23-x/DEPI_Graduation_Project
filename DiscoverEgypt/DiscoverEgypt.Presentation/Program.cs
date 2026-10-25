@@ -11,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorOptions(options =>
+    options.ViewLocationFormats.Insert(0, "/Views/Host/{1}/{0}.cshtml"));
 builder.Services.AddApplicationServices();
 
 builder.Services.AddDbContext<DiscoverEgyptDbContext>(options =>
@@ -55,8 +56,9 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
+    name: "host-experiences",
+    pattern: "Host/Experiences/{action=Index}/{id?}",
+    defaults: new { controller = "Experiences" })
     .WithStaticAssets();
 
 app.MapControllerRoute(

@@ -16,7 +16,7 @@
 </section>
 
 <nav class="experience-stepper" aria-label="Experience creation steps">
-    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.ExperienceId"><span>01</span> Essentials</a>
+    <a class="wizard-step complete" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.ExperienceId"><span>01</span> Essentials</a>
     <div class="wizard-step current" aria-current="step"><span>02</span> Media</div>
     <div class="wizard-step upcoming"><span>03</span> Evidence</div>
     <div class="wizard-step upcoming"><span>04</span> Review &amp; submit</div>
@@ -42,7 +42,7 @@
                 <h2>Your photos &amp; video</h2>
                 <p>Upload clear, authentic moments from the experience. Your first photo is selected as the cover automatically.</p>
             </header>
-            <form asp-area="Host" asp-controller="Experiences" asp-action="UploadMedia" asp-route-id="@Model.ExperienceId" method="post" enctype="multipart/form-data" class="media-upload-form">
+            <form asp-controller="Experiences" asp-action="UploadMedia" asp-route-id="@Model.ExperienceId" method="post" enctype="multipart/form-data" class="media-upload-form">
                 <label class="upload-dropzone" for="media-files">
                     <span class="upload-icon" aria-hidden="true">＋</span>
                     <strong>Choose photos or video</strong>
@@ -69,11 +69,11 @@
                             <div class="media-item-preview">
                                 @if (item.MediaType == MediaType.Image)
                                 {
-                                    <img src="@Url.Action("MediaFile", "Experiences", new { area = "Host", mediaId = item.Id })" alt="Experience photo @(@index + 1)" loading="lazy" />
+                                    <img src="@Url.Action("MediaFile", "Experiences", new { mediaId = item.Id })" alt="Experience photo @(@index + 1)" loading="lazy" />
                                 }
                                 else
                                 {
-                                    <video src="@Url.Action("MediaFile", "Experiences", new { area = "Host", mediaId = item.Id })" controls preload="metadata">Your browser does not support video playback.</video>
+                                    <video src="@Url.Action("MediaFile", "Experiences", new { mediaId = item.Id })" controls preload="metadata">Your browser does not support video playback.</video>
                                     <span class="video-tag">MP4 VIDEO</span>
                                 }
                                 @if (item.IsCover)
@@ -83,24 +83,24 @@
                             </div>
                             <div class="media-item-details"><span>@(item.MediaType == MediaType.Image ? "Photo" : "Video") · @(index + 1)</span><span>Position @(@index + 1)</span></div>
                             <div class="media-item-actions">
-                                <form asp-area="Host" asp-controller="Experiences" asp-action="MoveMedia" asp-route-id="@Model.ExperienceId" method="post">
+                                <form asp-controller="Experiences" asp-action="MoveMedia" asp-route-id="@Model.ExperienceId" method="post">
                                     <input type="hidden" name="mediaId" value="@item.Id" />
                                     <input type="hidden" name="direction" value="-1" />
                                     <button class="icon-action" type="submit" aria-label="Move item up" disabled="@(index == 0)">↑</button>
                                 </form>
-                                <form asp-area="Host" asp-controller="Experiences" asp-action="MoveMedia" asp-route-id="@Model.ExperienceId" method="post">
+                                <form asp-controller="Experiences" asp-action="MoveMedia" asp-route-id="@Model.ExperienceId" method="post">
                                     <input type="hidden" name="mediaId" value="@item.Id" />
                                     <input type="hidden" name="direction" value="1" />
                                     <button class="icon-action" type="submit" aria-label="Move item down" disabled="@(index == Model.Media.Count - 1)">↓</button>
                                 </form>
                                 @if (item.MediaType == MediaType.Image && !item.IsCover)
                                 {
-                                    <form asp-area="Host" asp-controller="Experiences" asp-action="SetCover" asp-route-id="@Model.ExperienceId" method="post">
+                                    <form asp-controller="Experiences" asp-action="SetCover" asp-route-id="@Model.ExperienceId" method="post">
                                         <input type="hidden" name="mediaId" value="@item.Id" />
                                         <button class="text-action" type="submit">Set as cover</button>
                                     </form>
                                 }
-                                <form asp-area="Host" asp-controller="Experiences" asp-action="DeleteMedia" asp-route-id="@Model.ExperienceId" method="post" onsubmit="return confirm('Remove this media item from the draft?');">
+                                <form asp-controller="Experiences" asp-action="DeleteMedia" asp-route-id="@Model.ExperienceId" method="post" onsubmit="return confirm('Remove this media item from the draft?');">
                                     <input type="hidden" name="mediaId" value="@item.Id" />
                                     <button class="text-action remove-action" type="submit">Remove</button>
                                 </form>
@@ -115,11 +115,11 @@
             <div class="image-requirement"><span aria-hidden="true">!</span> Add at least one photo before continuing to the next step.</div>
         }
         <div class="form-actions media-footer-actions">
-            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Index">Back to My Experiences</a>
-            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.ExperienceId">Edit essentials</a>
+            <a class="button button-secondary" asp-controller="Experiences" asp-action="Index">Back to My Experiences</a>
+            <a class="button button-secondary" asp-controller="Experiences" asp-action="Edit" asp-route-id="@Model.ExperienceId">Edit essentials</a>
             @if (images > 0)
             {
-                <a class="button button-primary" asp-area="Host" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@Model.ExperienceId">Continue to evidence <span aria-hidden="true">→</span></a>
+                <a class="button button-primary" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@Model.ExperienceId">Continue to evidence <span aria-hidden="true">→</span></a>
             }
         </div>
     </div>

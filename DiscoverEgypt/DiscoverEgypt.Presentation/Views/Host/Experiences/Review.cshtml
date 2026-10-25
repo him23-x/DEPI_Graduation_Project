@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.Areas.Host.Models.ExperienceReviewViewModel
+@model DiscoverEgypt.Presentation.ViewModels.Experience.ExperienceReviewViewModel
 @using DiscoverEgypt.Application.DTOs.HostExperiences
 @using DiscoverEgypt.Domain.Enums
 @{
@@ -21,9 +21,9 @@
 </section>
 
 <nav class="experience-stepper" aria-label="Experience creation steps">
-    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@review.ExperienceId"><span>01</span> Essentials</a>
-    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Media" asp-route-id="@review.ExperienceId"><span>02</span> Media</a>
-    <a class="wizard-step complete" asp-area="Host" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@review.ExperienceId"><span>03</span> Evidence</a>
+    <a class="wizard-step complete" asp-controller="Experiences" asp-action="Edit" asp-route-id="@review.ExperienceId"><span>01</span> Essentials</a>
+    <a class="wizard-step complete" asp-controller="Experiences" asp-action="Media" asp-route-id="@review.ExperienceId"><span>02</span> Media</a>
+    <a class="wizard-step complete" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@review.ExperienceId"><span>03</span> Evidence</a>
     <div class="wizard-step current" aria-current="step"><span>04</span> Review &amp; submit</div>
 </nav>
 
@@ -37,7 +37,7 @@
         }
 
         <section class="form-panel review-panel">
-            <header class="form-panel-heading review-heading"><div><span class="evidence-step-label">YOUR LISTING</span><h2>@review.Title</h2></div><div><a class="text-action" asp-area="Host" asp-controller="Experiences" asp-action="Edit" asp-route-id="@review.ExperienceId">Edit essentials</a><a class="text-action" asp-area="Host" asp-controller="Experiences" asp-action="Media" asp-route-id="@review.ExperienceId">Edit photos</a></div></header>
+            <header class="form-panel-heading review-heading"><div><span class="evidence-step-label">YOUR LISTING</span><h2>@review.Title</h2></div><div><a class="text-action" asp-controller="Experiences" asp-action="Edit" asp-route-id="@review.ExperienceId">Edit essentials</a><a class="text-action" asp-controller="Experiences" asp-action="Media" asp-route-id="@review.ExperienceId">Edit photos</a></div></header>
             <div class="review-meta-grid">
                 <div><span>Category</span><strong>@review.ExperienceTypeName</strong></div>
                 <div><span>Cultural area</span><strong>@review.CulturalArea</strong></div>
@@ -92,7 +92,7 @@
             else
             {
                 <blockquote class="declaration-copy">@Model.DeclarationText</blockquote>
-                <form asp-area="Host" asp-controller="Experiences" asp-action="Submit" asp-route-id="@review.ExperienceId" method="post">
+                <form asp-controller="Experiences" asp-action="Submit" asp-route-id="@review.ExperienceId" method="post">
                     @if (local)
                     {
                         <fieldset class="choice-group venue-review-choice">
@@ -108,7 +108,7 @@
                     <label class="declaration-accept"><input type="checkbox" name="accepted" value="true" required /> <span>I agree to this declaration and confirm that the information in this submission is accurate.</span></label>
                     <p class="field-hint">Submission moves this experience to Pending approval. You can’t edit it while the Admin review is in progress.</p>
                     <div class="form-actions review-submit-actions">
-                        <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@review.ExperienceId" asp-route-venueUse="@Model.VenueUse" asp-route-evidenceInHostName="@Model.EvidenceInHostName">Back to evidence</a>
+                        <a class="button button-secondary" asp-controller="Experiences" asp-action="Evidence" asp-route-id="@review.ExperienceId" asp-route-venueUse="@Model.VenueUse" asp-route-evidenceInHostName="@Model.EvidenceInHostName">Back to evidence</a>
                         <button class="button button-primary" type="submit" disabled="@(blockingIssues || string.IsNullOrWhiteSpace(Model.DeclarationText))">Submit for review</button>
                     </div>
                 </form>

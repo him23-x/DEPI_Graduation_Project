@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.Areas.Host.Models.CreateExperienceViewModel
+@model DiscoverEgypt.Presentation.ViewModels.Experience.CreateExperienceViewModel
 @{
     ViewData["Title"] = Model.IsEditing ? "Edit experience" : "Create an experience";
     ViewData["Section"] = Model.IsEditing ? "Edit experience" : "Create experience";
@@ -31,7 +31,7 @@
     <div class="rejection-note"><strong>Admin feedback</strong><p>@Model.RejectionReason</p></div>
 }
 
-<form asp-area="Host" asp-controller="Experiences" asp-action="@(Model.IsEditing ? "Edit" : "Create")" asp-route-id="@(Model.IsEditing ? Model.ExperienceId : (int?)null)" method="post" class="experience-create-form">
+<form asp-controller="Experiences" asp-action="@(Model.IsEditing ? "Edit" : "Create")" asp-route-id="@(Model.IsEditing ? Model.ExperienceId : (int?)null)" method="post" class="experience-create-form">
     <div class="create-form-column">
         <div asp-validation-summary="ModelOnly" class="form-validation-summary" role="alert"></div>
         <section class="form-panel">
@@ -156,7 +156,7 @@
         </section>
 
         <div class="form-actions">
-            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Index">Cancel</a>
+            <a class="button button-secondary" asp-controller="Experiences" asp-action="Index">Cancel</a>
             <button class="button button-primary" type="submit" disabled="@(!Model.HasRequiredLookups)">@(Model.IsEditing ? "Save experience details" : "Save as draft")</button>
         </div>
     </div>

@@ -4,17 +4,15 @@ using DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Queries;
 using DiscoverEgypt.Application.Features.HostExperiences.Validators;
 using DiscoverEgypt.Domain.Enums;
-using DiscoverEgypt.Presentation.Areas.Host.Models;
+using DiscoverEgypt.Presentation.ViewModels.Experience;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 
-namespace DiscoverEgypt.Presentation.Areas.Host.Controllers;
+namespace DiscoverEgypt.Presentation.Controllers.Experience;
 
-[Area("Host")]
 [Authorize(Roles = "Host")]
-public sealed class ExperiencesController(
-    IMediator mediator) : Controller
+public sealed class ExperiencesController(IMediator mediator) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(ExperienceStatus? status, CancellationToken cancellationToken)

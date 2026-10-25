@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.Areas.Host.Models.ExperiencesIndexViewModel
+@model DiscoverEgypt.Presentation.ViewModels.Experience.ExperiencesIndexViewModel
 @using DiscoverEgypt.Domain.Enums
 @{
     ViewData["Title"] = "My Experiences";
@@ -27,7 +27,7 @@
         <h1>My Experiences</h1>
         <p>Keep track of your experiences and their review status.</p>
     </div>
-    <a class="button button-primary" asp-area="Host" asp-controller="Experiences" asp-action="Create"><span aria-hidden="true">＋</span> Create experience</a>
+    <a class="button button-primary" asp-controller="Experiences" asp-action="Create"><span aria-hidden="true">＋</span> Create experience</a>
 </section>
 
 @if (TempData["ExperienceNotice"] is string notice)
@@ -37,7 +37,7 @@
 
 <section class="experiences-toolbar" aria-label="Experience filters">
     <div class="results-count"><strong>@Model.Experiences.Count</strong> experience@(Model.Experiences.Count == 1 ? "" : "s")</div>
-    <form method="get" asp-area="Host" asp-controller="Experiences" asp-action="Index" class="filter-form">
+    <form method="get" asp-controller="Experiences" asp-action="Index" class="filter-form">
         <label for="status-filter">Status</label>
         <select id="status-filter" name="status" onchange="this.form.submit()">
             <option value="">All statuses</option>
@@ -58,13 +58,13 @@
         {
             <h2>No @StatusLabel(Model.SelectedStatus.Value).ToLowerInvariant() experiences</h2>
             <p>Try another status filter to see your experiences.</p>
-            <a class="button button-secondary" asp-area="Host" asp-controller="Experiences" asp-action="Index">Clear filter</a>
+            <a class="button button-secondary" asp-controller="Experiences" asp-action="Index">Clear filter</a>
         }
         else
         {
             <h2>Your next story starts here</h2>
             <p>You haven’t added an experience yet. Share what makes your corner of Egypt special.</p>
-            <a class="button button-primary" asp-area="Host" asp-controller="Experiences" asp-action="Create">Create your first experience</a>
+            <a class="button button-primary" asp-controller="Experiences" asp-action="Create">Create your first experience</a>
         }
     </section>
 }
@@ -77,7 +77,7 @@ else
                 <div class="experience-cover" aria-hidden="true">
                     @if (experience.CoverMediaId.HasValue)
                     {
-                        <img class="experience-cover-image" src="@Url.Action("MediaFile", "Experiences", new { area = "Host", mediaId = experience.CoverMediaId.Value })" alt="" loading="lazy" />
+                        <img class="experience-cover-image" src="@Url.Action("MediaFile", "Experiences", new { mediaId = experience.CoverMediaId.Value })" alt="" loading="lazy" />
                     }
                     else
                     {
@@ -101,7 +101,7 @@ else
                     }
                     else if (experience.Status is ExperienceStatus.Draft or ExperienceStatus.Rejected)
                     {
-                        <a class="button button-secondary card-action" asp-area="Host" asp-controller="Experiences" asp-action="@(experience.Status == ExperienceStatus.Rejected ? "Edit" : "Media")" asp-route-id="@experience.Id">@(experience.Status == ExperienceStatus.Rejected ? "Update and resubmit" : "Continue setup")</a>
+                        <a class="button button-secondary card-action" asp-controller="Experiences" asp-action="@(experience.Status == ExperienceStatus.Rejected ? "Edit" : "Media")" asp-route-id="@experience.Id">@(experience.Status == ExperienceStatus.Rejected ? "Update and resubmit" : "Continue setup")</a>
                     }
                 </div>
             </article>

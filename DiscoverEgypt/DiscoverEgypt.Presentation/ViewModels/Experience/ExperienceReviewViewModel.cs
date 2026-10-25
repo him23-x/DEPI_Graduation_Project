@@ -1,6 +1,6 @@
 using DiscoverEgypt.Application.DTOs.HostExperiences;
 
-namespace DiscoverEgypt.Presentation.Areas.Host.Models;
+namespace DiscoverEgypt.Presentation.ViewModels.Experience;
 
 public sealed class ExperienceReviewViewModel
 {
