@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.Areas.Host.Models.EvidenceFileGroupViewModel
+@model DiscoverEgypt.Presentation.ViewModels.Experience.EvidenceFileGroupViewModel
 @{
     var files = Model.Editor.Files.Where(item => item.Kind == Model.Kind).OrderBy(item => item.UploadedAt).ToArray();
 }
@@ -16,8 +16,8 @@
                 <li>
                     <span><strong>@Model.Kind</strong><small>Added @file.UploadedAt.ToLocalTime().ToString("MMM d, yyyy")</small></span>
                     <div>
-                        <a class="text-action" asp-area="Host" asp-controller="Experiences" asp-action="EvidenceFile" asp-route-evidenceId="@file.Id">Download</a>
-                        <form asp-area="Host" asp-controller="Experiences" asp-action="DeleteEvidence" asp-route-id="@Model.Editor.ExperienceId" method="post">
+                        <a class="text-action" asp-controller="Experiences" asp-action="EvidenceFile" asp-route-evidenceId="@file.Id">Download</a>
+                        <form asp-controller="Experiences" asp-action="DeleteEvidence" asp-route-id="@Model.Editor.ExperienceId" method="post">
                             <input type="hidden" name="evidenceId" value="@file.Id" />
                             <button class="text-action remove-action" type="submit">Remove</button>
                         </form>
@@ -28,7 +28,7 @@
     }
     @if (files.Length < Model.Maximum)
     {
-        <form class="evidence-upload-form" asp-area="Host" asp-controller="Experiences" asp-action="UploadEvidence" asp-route-id="@Model.Editor.ExperienceId" method="post" enctype="multipart/form-data">
+        <form class="evidence-upload-form" asp-controller="Experiences" asp-action="UploadEvidence" asp-route-id="@Model.Editor.ExperienceId" method="post" enctype="multipart/form-data">
             <input type="hidden" name="kind" value="@Model.Kind" />
             <label>Choose a PDF, JPEG or PNG<input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required /></label>
             <button class="button button-secondary" type="submit">Upload file</button>

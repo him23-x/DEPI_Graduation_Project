@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Domain.Enums;
 
-namespace DiscoverEgypt.Presentation.Areas.Host.Models;
+namespace DiscoverEgypt.Presentation.ViewModels.Experience;
 
 public sealed class CreateExperienceViewModel
 {
