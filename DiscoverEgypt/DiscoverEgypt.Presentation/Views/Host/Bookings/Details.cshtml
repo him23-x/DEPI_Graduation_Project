@@ -1,0 +1,95 @@
+@model DiscoverEgypt.Application.DTOs.Bookings.HostBookingDetailsDto
+@using DiscoverEgypt.Domain.Enums
+@{
+    ViewData["Title"] = "Booking details";
+    ViewData["Section"] = "Booking details";
+    var booking = Model.Booking;
+    var backTab = booking.Status is BookingStatus.Rejected or BookingStatus.Cancelled
+        ? DiscoverEgypt.Application.DTOs.Bookings.HostBookingTab.RejectedCancelled
+        : Enum.Parse<DiscoverEgypt.Application.DTOs.Bookings.HostBookingTab>(booking.Status.ToString());
+    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
+    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d, yyyy · h:mm tt");
+}
+
+<section class="experiences-heading booking-detail-heading">
+    <div>
+        <div class="eyebrow">BOOKING #@booking.Id</div>
+        <h1>@booking.ExperienceTitle</h1>
+        <p>Review the guest, schedule, payment, and experience details.</p>
+    </div>
+    <a class="button button-secondary" asp-controller="Bookings" asp-action="Index" asp-route-tab="@backTab">Back to bookings</a>
+</section>
+
+@if (Model.Notice is string notice) { <div class="success-notice" role="status">@notice</div> }
+@if (Model.Error is string error) { <div class="setup-notice" role="alert">@error</div> }
+
+<div class="booking-detail-grid">
+    <div class="booking-detail-main">
+        <section class="form-panel">
+            <header class="form-panel-heading"><span class="evidence-step-label">BOOKING STATUS</span><h2>@booking.Status</h2></header>
+            <div class="booking-meta-grid booking-detail-meta">
+                <span><small>Tourist</small><strong>@booking.TouristName</strong><a href="mailto:@booking.TouristEmail">@booking.TouristEmail</a></span>
+                <span><small>Scheduled start</small><strong>@Cairo(booking.ScheduledStart)</strong></span>
+                <span><small>Scheduled end</small><strong>@Cairo(booking.ScheduledEnd)</strong></span>
+                <span><small>Guests</small><strong>@booking.NumberOfGuests</strong></span>
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <header class="form-panel-heading"><span class="evidence-step-label">MEETING POINT</span><h2>Guest arrival details</h2><p>The exact meeting point is visible here to the host who owns this experience.</p></header>
+            <dl class="booking-meeting-point">
+                <div><dt>Public area</dt><dd>@booking.MeetingPointArea</dd></div>
+                <div><dt>Exact meeting point</dt><dd>@booking.ExactMeetingPoint</dd></div>
+            </dl>
+        </section>
+
+        <section class="form-panel">
+            <header class="form-panel-heading"><span class="evidence-step-label">PAYMENT</span><h2>Booking amounts</h2></header>
+            <div class="booking-meta-grid booking-detail-meta">
+                <span><small>Payment status</small><strong>@booking.PaymentStatus</strong></span>
+                <span><small>Paid at</small><strong>@(booking.PaidAt.HasValue ? Cairo(booking.PaidAt.Value) : "Not paid")</strong></span>
+                <span><small>Service amount</small><strong>@booking.ServiceAmount.ToString("N2") EGP</strong></span>
+                <span><small>Platform fee</small><strong>@booking.PlatformFeeAmount.ToString("N2") EGP</strong></span>
+                <span><small>Total paid</small><strong>@booking.TotalAmount.ToString("N2") EGP</strong></span>
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <header class="form-panel-heading"><span class="evidence-step-label">PAYOUT</span><h2>@(booking.PayoutStatus?.ToString() ?? "Not created")</h2><p>Completion does not release a payout early. Eligibility is tied to the scheduled end and complaint window.</p></header>
+            @if (booking.PayoutAmount.HasValue)
+            {
+                <div class="booking-meta-grid booking-detail-meta">
+                    <span><small>Amount</small><strong>@booking.PayoutAmount.Value.ToString("N2") EGP</strong></span>
+                    <span><small>Eligible at</small><strong>@(booking.PayoutEligibleAt.HasValue ? Cairo(booking.PayoutEligibleAt.Value) : "Not scheduled")</strong></span>
+                </div>
+            }
+        </section>
+    </div>
+
+    <aside class="booking-detail-actions">
+        @if (booking.Status == BookingStatus.Pending && booking.ResponseDeadline.HasValue)
+        {
+            <section class="media-guidance-card"><span class="evidence-step-label">RESPONSE DEADLINE</span><h2>@Cairo(booking.ResponseDeadline.Value)</h2><p>Requests must be accepted within 12 hours of payment confirmation.</p></section>
+        }
+        @if (booking.HasOpenDispute)
+        {
+            <div class="setup-notice" role="status">A dispute is open or under review. This booking cannot be marked completed.</div>
+        }
+        @if (booking.CanAccept)
+        {
+            <form asp-controller="Bookings" asp-action="Accept" asp-route-id="@booking.Id" method="post"><button class="button button-primary booking-action-button" type="submit">Accept booking</button></form>
+        }
+        @if (booking.CanReject)
+        {
+            <form asp-controller="Bookings" asp-action="Reject" asp-route-id="@booking.Id" method="post" onsubmit="return confirm('Reject this booking? The service amount will be refunded and the platform fee will not be refunded.');"><button class="button button-danger booking-action-button" type="submit">Reject and refund</button></form>
+        }
+        @if (booking.CanComplete)
+        {
+            <form asp-controller="Bookings" asp-action="Complete" asp-route-id="@booking.Id" method="post"><button class="button button-secondary booking-action-button" type="submit">Mark completed</button></form>
+        }
+        @if (!booking.CanAccept && !booking.CanReject && !booking.CanComplete)
+        {
+            <p class="read-only-note">No actions are available for this booking at its current status and time.</p>
+        }
+    </aside>
+</div>

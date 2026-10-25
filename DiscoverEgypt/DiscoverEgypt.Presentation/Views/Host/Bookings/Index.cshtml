@@ -1,0 +1,90 @@
+@model DiscoverEgypt.Application.DTOs.Bookings.HostBookingsIndexDto
+@using DiscoverEgypt.Application.DTOs.Bookings
+@using DiscoverEgypt.Domain.Enums
+@{
+    ViewData["Title"] = "My Bookings";
+    ViewData["Section"] = "Bookings";
+    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
+    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d · h:mm tt");
+    string UtcIso(DateTime value) => DateTime.SpecifyKind(value, DateTimeKind.Utc).ToString("O");
+    var tabs = new (HostBookingTab Value, string Label)[]
+    {
+        (HostBookingTab.Pending, "Pending"),
+        (HostBookingTab.Confirmed, "Confirmed"),
+        (HostBookingTab.Completed, "Completed"),
+        (HostBookingTab.RejectedCancelled, "Rejected / Cancelled")
+    };
+}
+
+<section class="experiences-heading">
+    <div>
+        <div class="eyebrow">HOST BOOKINGS</div>
+        <h1>Booking requests</h1>
+        <p>Review paid requests, manage confirmed experiences, and keep track of completed bookings.</p>
+    </div>
+</section>
+
+@if (Model.Notice is string notice) { <div class="success-notice" role="status">@notice</div> }
+@if (Model.Error is string error) { <div class="setup-notice" role="alert">@error</div> }
+
+<nav class="booking-tabs" aria-label="Booking status">
+    @foreach (var tab in tabs)
+    {
+        <a class="booking-tab @(Model.SelectedTab == tab.Value ? "selected" : string.Empty)"
+           asp-controller="Bookings" asp-action="Index" asp-route-tab="@tab.Value" aria-current="@(Model.SelectedTab == tab.Value ? "page" : null)">@tab.Label</a>
+    }
+</nav>
+
+<section class="booking-list" aria-label="@Model.SelectedTab bookings">
+    @if (Model.Bookings.Count == 0)
+    {
+        <section class="empty-state booking-empty">
+            <div class="empty-illustration" aria-hidden="true"><span>▤</span></div>
+            <h2>No @Model.SelectedTab bookings</h2>
+            <p>Paid bookings and refunded requests you have handled appear here.</p>
+        </section>
+    }
+    else
+    {
+        @foreach (var booking in Model.Bookings)
+        {
+            <article class="booking-row">
+                <div class="booking-row-main">
+                    <div class="card-meta">
+                        <span class="status-badge @(booking.Status switch { BookingStatus.Pending => "pending", BookingStatus.Confirmed => "published", BookingStatus.Completed => "draft", _ => "rejected" })"><span></span>@booking.Status</span>
+                        @if (booking.Status == BookingStatus.Pending && booking.ResponseDeadline.HasValue)
+                        {
+                            <span class="booking-deadline" data-deadline="@UtcIso(booking.ResponseDeadline.Value)">Respond within <strong class="booking-countdown">12 hours</strong></span>
+                        }
+                    </div>
+                    <h2>@booking.ExperienceTitle</h2>
+                    <p class="booking-guest">Requested by <strong>@booking.TouristName</strong></p>
+                    <div class="booking-meta-grid">
+                        <span><small>Experience time</small><strong>@Cairo(booking.ScheduledStart)</strong></span>
+                        <span><small>Guests</small><strong>@booking.NumberOfGuests</strong></span>
+                        <span><small>Service amount</small><strong>@booking.ServiceAmount.ToString("N2") EGP</strong></span>
+                    </div>
+                </div>
+                <a class="button button-secondary booking-open" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.Id">View details</a>
+            </article>
+        }
+    }
+</section>
+
+@section Scripts {
+    <script>
+        (() => {
+            const updateCountdowns = () => document.querySelectorAll("[data-deadline]").forEach((element) => {
+                const remaining = new Date(element.dataset.deadline).getTime() - Date.now();
+                const label = element.querySelector(".booking-countdown");
+                if (!label) return;
+                if (remaining <= 0) { label.textContent = "response window expired"; return; }
+                const hours = Math.floor(remaining / 3600000);
+                const minutes = Math.floor((remaining % 3600000) / 60000);
+                label.textContent = `${hours}h ${minutes}m`;
+            });
+            updateCountdowns();
+            window.setInterval(updateCountdowns, 60000);
+        })();
+    </script>
+}

@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.ViewModels.Experience.EvidenceFileGroupViewModel
+@model DiscoverEgypt.Application.DTOs.HostExperiences.EvidenceFileGroupDto
 @{
     var files = Model.Editor.Files.Where(item => item.Kind == Model.Kind).OrderBy(item => item.UploadedAt).ToArray();
 }
