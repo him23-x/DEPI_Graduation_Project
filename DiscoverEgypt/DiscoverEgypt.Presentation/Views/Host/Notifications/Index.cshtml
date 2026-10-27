@@ -1,0 +1,116 @@
+@model DiscoverEgypt.Application.DTOs.Notifications.HostNotificationsPage
+@using DiscoverEgypt.Application.DTOs.Notifications
+@{
+    ViewData["Title"] = "Notifications";
+    ViewData["Section"] = "Notifications";
+    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
+    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d · h:mm tt");
+    string TypeLabel(DiscoverEgypt.Domain.Enums.NotificationType type) => type switch
+    {
+        DiscoverEgypt.Domain.Enums.NotificationType.NewBooking => "New booking",
+        DiscoverEgypt.Domain.Enums.NotificationType.BookingConfirmation => "Booking confirmed",
+        DiscoverEgypt.Domain.Enums.NotificationType.BookingStatusUpdate => "Booking update",
+        DiscoverEgypt.Domain.Enums.NotificationType.ExperienceApprovalUpdate => "Experience review",
+        DiscoverEgypt.Domain.Enums.NotificationType.VerificationUpdate => "Verification update",
+        DiscoverEgypt.Domain.Enums.NotificationType.PaymentUpdate => "Payout update",
+        DiscoverEgypt.Domain.Enums.NotificationType.DisputeUpdate => "Dispute update",
+        _ => "Account update"
+    };
+    var filters = new (NotificationReadFilter Value, string Label)[]
+    {
+        (NotificationReadFilter.All, "All"),
+        (NotificationReadFilter.Unread, "Unread"),
+        (NotificationReadFilter.Read, "Read")
+    };
+}
+
+<section class="experiences-heading notifications-heading">
+    <div>
+        <div class="eyebrow">HOST UPDATES</div>
+        <h1>Notifications</h1>
+        <p>Booking requests, booking changes, and experience review updates appear here.</p>
+    </div>
+    @if (Model.UnreadCount > 0)
+    {
+        <form asp-controller="Notifications" asp-action="MarkAllRead" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="filter" value="@Model.Filter" />
+            <button class="button button-secondary" type="submit">Mark all as read</button>
+        </form>
+    }
+</section>
+
+<nav class="notification-filters" aria-label="Filter notifications">
+    @foreach (var filter in filters)
+    {
+        <a class="notification-filter @(Model.Filter == filter.Value ? "selected" : string.Empty)"
+           asp-controller="Notifications" asp-action="Index" asp-route-filter="@filter.Value" aria-current="@(Model.Filter == filter.Value ? "page" : null)">
+            @filter.Label
+            @if (filter.Value == NotificationReadFilter.Unread && Model.UnreadCount > 0)
+            {
+                <span>@Model.UnreadCount</span>
+            }
+        </a>
+    }
+</nav>
+
+<section class="notification-list" aria-label="@Model.Filter notifications">
+    @if (Model.Notifications.Count == 0)
+    {
+        <section class="empty-state notification-empty">
+            <div class="empty-illustration" aria-hidden="true"><span>♢</span></div>
+            <h2>No @Model.Filter.ToString().ToLowerInvariant() notifications</h2>
+            <p>Updates related to your host account will show up here.</p>
+        </section>
+    }
+    else
+    {
+        @foreach (var notification in Model.Notifications)
+        {
+            <article class="notification-row @(notification.IsRead ? "is-read" : "is-unread")">
+                <span class="notification-status-dot" aria-hidden="true"></span>
+                <div class="notification-copy">
+                    <div class="notification-meta">
+                        <span>@TypeLabel(notification.Type)</span>
+                        <time datetime="@DateTime.SpecifyKind(notification.CreatedAt, DateTimeKind.Utc).ToString("O")">@Cairo(notification.CreatedAt)</time>
+                    </div>
+                    <p>@notification.Message</p>
+                    <div class="notification-actions">
+                        @if (notification.BookingId.HasValue)
+                        {
+                            <a asp-controller="Bookings" asp-action="Details" asp-route-id="@notification.BookingId.Value">View booking</a>
+                        }
+                        else if (notification.Type == DiscoverEgypt.Domain.Enums.NotificationType.ExperienceApprovalUpdate)
+                        {
+                            <a asp-controller="Experiences" asp-action="Index">View experiences</a>
+                        }
+                        @if (!notification.IsRead)
+                        {
+                            <form asp-controller="Notifications" asp-action="MarkRead" asp-route-id="@notification.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="filter" value="@Model.Filter" />
+                                <input type="hidden" name="page" value="@Model.Page" />
+                                <button type="submit">Mark as read</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </article>
+        }
+    }
+</section>
+
+@if (Model.PageCount > 1)
+{
+    <nav class="notification-pagination" aria-label="Notification pages">
+        @if (Model.Page > 1)
+        {
+            <a asp-controller="Notifications" asp-action="Index" asp-route-filter="@Model.Filter" asp-route-page="@(Model.Page - 1)">Previous</a>
+        }
+        <span>Page @Model.Page of @Model.PageCount</span>
+        @if (Model.Page < Model.PageCount)
+        {
+            <a asp-controller="Notifications" asp-action="Index" asp-route-filter="@Model.Filter" asp-route-page="@(Model.Page + 1)">Next</a>
+        }
+    </nav>
+}

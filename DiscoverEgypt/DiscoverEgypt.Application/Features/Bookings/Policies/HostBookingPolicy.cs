@@ -5,7 +5,8 @@ namespace DiscoverEgypt.Application.Features.Bookings.Policies;
 
 public static class HostBookingPolicy
 {
-    public static DateTime? GetResponseDeadline(DateTime? paidAt) => paidAt?.AddHours(12);
+    public static DateTime? GetResponseDeadline(DateTime? paidAt, TimeSpan responseTimeout) =>
+        paidAt?.Add(responseTimeout);
 
     public static HostBookingActionResult? GetAcceptFailure(
         BookingStatus status,
@@ -14,12 +15,13 @@ public static class HostBookingPolicy
         bool isProviderSuspended,
         bool hasOverlap,
         bool payoutExists,
-        DateTime now)
+        DateTime now,
+        TimeSpan responseTimeout)
     {
         if (status != BookingStatus.Pending) return HostBookingActionResult.NotPending;
         if (paymentStatus != PaymentStatus.Paid || !paidAt.HasValue) return HostBookingActionResult.PaymentNotPaid;
         if (isProviderSuspended) return HostBookingActionResult.ProviderSuspended;
-        if (now > paidAt.Value.AddHours(12)) return HostBookingActionResult.ResponseWindowExpired;
+        if (now > paidAt.Value.Add(responseTimeout)) return HostBookingActionResult.ResponseWindowExpired;
         if (hasOverlap) return HostBookingActionResult.Overlap;
         if (payoutExists) return HostBookingActionResult.PayoutAlreadyExists;
         return null;

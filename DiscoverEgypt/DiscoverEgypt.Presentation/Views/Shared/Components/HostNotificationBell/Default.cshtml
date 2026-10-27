@@ -1,0 +1,10 @@
+@model int
+@{ var ariaLabel = Model > 0 ? $"Notifications, {Model} unread" : "Notifications"; }
+<a class="host-notification-bell" asp-controller="Notifications" asp-action="Index" aria-label="@ariaLabel">
+    <span aria-hidden="true">♢</span>
+    <span>Notifications</span>
+    @if (Model > 0)
+    {
+        <span class="notification-count" aria-label="@Model unread notifications">@(Model > 99 ? "99+" : Model)</span>
+    }
+</a>
