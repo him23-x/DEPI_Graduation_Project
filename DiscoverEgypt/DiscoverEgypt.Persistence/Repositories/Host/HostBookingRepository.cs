@@ -1,19 +1,24 @@
 using System.Data;
 using System.Data.Common;
+using DiscoverEgypt.Application.Contracts.Notifications;
 using DiscoverEgypt.Application.Contracts.Persistence;
 using DiscoverEgypt.Application.DTOs.Bookings;
+using DiscoverEgypt.Application.Features.Bookings.Options;
 using DiscoverEgypt.Application.Features.Bookings.Policies;
 using DiscoverEgypt.Domain.Entities;
 using DiscoverEgypt.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Options;
 
 namespace DiscoverEgypt.Persistence.Repositories.Host;
 
 public sealed class HostBookingRepository(
     DiscoverEgyptDbContext dbContext,
-    UserManager<ApplicationUser> userManager) : IHostBookingRepository
+    UserManager<ApplicationUser> userManager,
+    INotificationService notificationService,
+    IOptions<BookingLifecycleOptions> lifecycleOptions) : IHostBookingRepository
 {
     public async Task<IReadOnlyList<HostBookingListItem>> GetForHostAsync(
         string userId,
@@ -47,7 +52,7 @@ public sealed class HostBookingRepository(
             booking.NumberOfGuests!.Value,
             booking.ServiceAmount,
             booking.Status,
-            HostBookingPolicy.GetResponseDeadline(booking.Payment.PaidAt))).ToArray();
+            HostBookingPolicy.GetResponseDeadline(booking.Payment.PaidAt, lifecycleOptions.Value.ProviderResponseTimeout))).ToArray();
     }
 
     public async Task<HostBookingDetails?> GetDetailsAsync(
@@ -76,7 +81,7 @@ public sealed class HostBookingRepository(
         var hasOpenDispute = booking.Disputes.Any(dispute => dispute.Status is DisputeStatus.Open or DisputeStatus.UnderReview);
         var acceptFailure = HostBookingPolicy.GetAcceptFailure(
             booking.Status, booking.Payment.Status, booking.Payment.PaidAt, isSuspended,
-            hasOverlap, booking.Payout is not null, now);
+            hasOverlap, booking.Payout is not null, now, lifecycleOptions.Value.ProviderResponseTimeout);
 
         return new HostBookingDetails(
             booking.Id,
@@ -92,7 +97,7 @@ public sealed class HostBookingRepository(
             booking.Status,
             booking.Payment.Status,
             booking.Payment.PaidAt,
-            HostBookingPolicy.GetResponseDeadline(booking.Payment.PaidAt),
+            HostBookingPolicy.GetResponseDeadline(booking.Payment.PaidAt, lifecycleOptions.Value.ProviderResponseTimeout),
             booking.Experience.MeetingPointArea,
             booking.Experience.ExactMeetingPoint,
             booking.Payout?.Amount,
@@ -139,15 +144,12 @@ public sealed class HostBookingRepository(
             EligibleAt = booking.ScheduledEnd.AddHours(24),
             Status = PayoutStatus.Pending
         });
-        dbContext.Notifications.Add(new Notification
-        {
-            UserId = booking.TouristUserId,
-            BookingId = booking.Id,
-            Type = NotificationType.BookingConfirmation,
-            Message = $"Your booking for {booking.Experience!.Title} has been confirmed.",
-            IsRead = false,
-            CreatedAt = now
-        });
+        await notificationService.CreateAsync(
+            booking.TouristUserId,
+            NotificationType.BookingConfirmation,
+            $"Your booking for {booking.Experience!.Title} has been confirmed.",
+            booking.Id,
+            cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
@@ -185,15 +187,12 @@ public sealed class HostBookingRepository(
             Reason = "Host rejected the booking. The service amount is refunded; the platform fee is not refundable.",
             CreatedAt = now
         });
-        dbContext.Notifications.Add(new Notification
-        {
-            UserId = booking.TouristUserId,
-            BookingId = booking.Id,
-            Type = NotificationType.BookingStatusUpdate,
-            Message = $"Your booking for {booking.Experience!.Title} was declined. The service amount will be refunded; the platform fee is not refundable.",
-            IsRead = false,
-            CreatedAt = now
-        });
+        await notificationService.CreateAsync(
+            booking.TouristUserId,
+            NotificationType.BookingStatusUpdate,
+            $"Your booking for {booking.Experience!.Title} was declined. The service amount will be refunded; the platform fee is not refundable.",
+            booking.Id,
+            cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
