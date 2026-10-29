@@ -1,4 +1,3 @@
-using DiscoverEgypt.Domain.Enums;
 
 namespace DiscoverEgypt.Domain.Entities;
 

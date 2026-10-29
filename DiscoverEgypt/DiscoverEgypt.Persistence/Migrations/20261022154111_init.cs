@@ -1,7 +1,13 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
+
+using DiscoverEgypt.Domain.Enums.Bookings;
+using DiscoverEgypt.Domain.Enums.Experiences;
+using DiscoverEgypt.Domain.Enums.Hosts;
+using DiscoverEgypt.Domain.Enums.Preferences;
+using DiscoverEgypt.Domain.Enums.Sanctions;
 
 namespace DiscoverEgypt.Persistence.Migrations
 {

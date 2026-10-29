@@ -6,8 +6,8 @@ using MediatR;
 namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Queries;
 
 public sealed class GetHostExperienceCreateOptionsQueryHandler(IHostExperienceRepository repository)
-    : IRequestHandler<GetHostExperienceCreateOptionsQuery, HostExperienceCreateOptions>
+    : IRequestHandler<GetHostExperienceCreateOptionsQuery, HostExperienceCreateOptionsDto>
 {
-    public Task<HostExperienceCreateOptions> Handle(GetHostExperienceCreateOptionsQuery request, CancellationToken cancellationToken)
+    public Task<HostExperienceCreateOptionsDto> Handle(GetHostExperienceCreateOptionsQuery request, CancellationToken cancellationToken)
         => repository.GetCreateOptionsAsync(cancellationToken);
 }

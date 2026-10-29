@@ -1,9 +1,10 @@
-using DiscoverEgypt.Domain.Enums;
+
+using DiscoverEgypt.Domain.Enums.Experiences;
 
 namespace DiscoverEgypt.Application.DTOs.HostExperiences;
 
 public sealed record EvidenceFileGroupDto(
-    HostExperienceEvidenceEditor Editor,
+    HostExperienceEvidenceEditorDto Editor,
     string Title,
     EvidenceKind Kind,
     int Minimum,

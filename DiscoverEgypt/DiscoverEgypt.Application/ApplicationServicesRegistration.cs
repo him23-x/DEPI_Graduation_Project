@@ -18,7 +18,7 @@ public static class ApplicationServicesRegistration
             configuration.LicenseKey = Environment.GetEnvironmentVariable("AUTOMAPPER_LICENSE_KEY");
         }, applicationAssembly);
         services.AddValidatorsFromAssembly(applicationAssembly, ServiceLifetime.Transient);
-        services.AddTransient<Features.HostExperiences.Requests.Validation.HostExperienceSubmissionReviewValidator>();
+        services.AddTransient<Features.HostExperiences.Validators.DTOs.HostExperienceSubmissionReviewValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         return services;
     }

@@ -1,6 +1,9 @@
 using DiscoverEgypt.Application.DTOs.HostExperiences;
-using DiscoverEgypt.Domain.Enums;
 using MediatR;
+
+using DiscoverEgypt.Application.Enums.HostExperiences;
+
+using DiscoverEgypt.Domain.Enums.Experiences;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 
@@ -11,4 +14,4 @@ public sealed record AddHostExperienceEvidenceFileCommand(
     string FileName,
     string ContentType,
     long Length,
-    Stream Content) : IRequest<ExperienceEvidenceMutationResult>;
+    Stream Content) : IRequest<ExperienceEvidenceMutationOutcome>;

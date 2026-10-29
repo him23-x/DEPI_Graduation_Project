@@ -1,5 +1,7 @@
 using DiscoverEgypt.Application.DTOs.HostExperiences;
 
+using DiscoverEgypt.Application.Contracts.Storage;
+
 namespace DiscoverEgypt.Application.Contracts.Storage;
 
 public interface IExperienceEvidenceStorage

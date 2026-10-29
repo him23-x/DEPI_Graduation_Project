@@ -6,9 +6,9 @@ using MediatR;
 namespace DiscoverEgypt.Application.Features.Bookings.Handlers.Queries;
 
 public sealed class GetHostBookingsQueryHandler(IHostBookingRepository repository)
-    : IRequestHandler<GetHostBookingsQuery, IReadOnlyList<HostBookingListItem>>
+    : IRequestHandler<GetHostBookingsQuery, IReadOnlyList<HostBookingListItemDto>>
 {
-    public Task<IReadOnlyList<HostBookingListItem>> Handle(GetHostBookingsQuery request, CancellationToken cancellationToken)
+    public Task<IReadOnlyList<HostBookingListItemDto>> Handle(GetHostBookingsQuery request, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
         return repository.GetForHostAsync(request.UserId, request.Tab, cancellationToken);

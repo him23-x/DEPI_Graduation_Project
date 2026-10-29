@@ -1,20 +1,26 @@
 using System.Security.Claims;
+using AutoMapper;
 using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Queries;
 using DiscoverEgypt.Application.Features.HostExperiences.Policies;
-using DiscoverEgypt.Application.Features.HostExperiences.Requests.Validation;
+using DiscoverEgypt.Application.Features.HostExperiences.Validators.DTOs;
 using FluentValidation;
-using DiscoverEgypt.Domain.Enums;
+using DiscoverEgypt.Presentation.ViewModels.Experience;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+
+using DiscoverEgypt.Application.Enums.HostExperiences;
+
+using DiscoverEgypt.Domain.Enums.Experiences;
 
 namespace DiscoverEgypt.Presentation.Controllers.Experience;
 
 [Authorize(Roles = "Host")]
 public sealed class ExperiencesController(
     IMediator mediator,
+    IMapper mapper,
     HostExperienceSubmissionReviewValidator reviewValidator,
     CreateExperienceDtoValidator createExperienceValidator,
     SaveExperienceEvidenceTextDtoValidator saveEvidenceTextValidator,
@@ -29,20 +35,22 @@ public sealed class ExperiencesController(
             return Challenge();
         }
 
-        var items = await mediator.Send(new GetHostExperienceListRequest(userId, status), cancellationToken);
-        return View(new ExperiencesIndexDto
+        var items = await mediator.Send(new GetHostExperienceListQuery(userId, status), cancellationToken);
+        var model = new ExperiencesIndexDto
         {
             SelectedStatus = status,
             Experiences = items
-        });
+        };
+        return View(mapper.Map<ExperiencesIndexViewModel>(model));
     }
 
     [HttpGet]
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var model = new CreateExperienceDto
+        var options = await mediator.Send(new GetHostExperienceCreateOptionsQuery(), cancellationToken);
+        var model = new CreateExperienceViewModel
         {
-            Options = await mediator.Send(new GetHostExperienceCreateOptionsQuery(), cancellationToken)
+            Options = mapper.Map<ExperienceCreateOptionsViewModel>(options)
         };
         ViewData["Section"] = "Create experience";
         return View(model);
@@ -55,32 +63,16 @@ public sealed class ExperiencesController(
         if (string.IsNullOrWhiteSpace(userId)) return Challenge();
         var editor = await mediator.Send(new GetEditableHostExperienceDraftQuery(userId, id), cancellationToken);
         if (editor is null) return NotFound();
-        var model = new CreateExperienceDto
-        {
-            ExperienceId = editor.ExperienceId,
-            Status = editor.Status,
-            RejectionReason = editor.RejectionReason,
-            ExperienceTypeId = editor.Draft.ExperienceTypeId,
-            CulturalAreaId = editor.Draft.CulturalAreaId,
-            Title = editor.Draft.Title,
-            Description = editor.Draft.Description,
-            CulturalStory = editor.Draft.CulturalStory,
-            PricePerPerson = editor.Draft.PricePerPerson,
-            DurationMinutes = editor.Draft.DurationMinutes,
-            MaxGroupSize = editor.Draft.MaxGroupSize,
-            MeetingPointArea = editor.Draft.MeetingPointArea,
-            ExactMeetingPoint = editor.Draft.ExactMeetingPoint,
-            InterestIds = editor.Draft.InterestIds.ToArray(),
-            LanguageIds = editor.Draft.LanguageIds.ToArray(),
-            Options = await mediator.Send(new GetHostExperienceCreateOptionsQuery(), cancellationToken)
-        };
+        var model = mapper.Map<CreateExperienceViewModel>(editor);
+        model.Options = mapper.Map<ExperienceCreateOptionsViewModel>(
+            await mediator.Send(new GetHostExperienceCreateOptionsQuery(), cancellationToken));
         ViewData["Section"] = "Edit experience";
         return View("Create", model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateExperienceDto model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(CreateExperienceViewModel model, CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
@@ -88,10 +80,12 @@ public sealed class ExperiencesController(
             return Challenge();
         }
 
-        model.Options = await mediator.Send(new GetHostExperienceCreateOptionsQuery(), cancellationToken);
+        var applicationModel = mapper.Map<CreateExperienceDto>(model);
+        applicationModel.Options = await mediator.Send(new GetHostExperienceCreateOptionsQuery(), cancellationToken);
+        model.Options = mapper.Map<ExperienceCreateOptionsViewModel>(applicationModel.Options);
         ViewData["Section"] = "Create experience";
 
-        ApplyValidation(await createExperienceValidator.ValidateAsync(model, cancellationToken));
+        ApplyValidation(await createExperienceValidator.ValidateAsync(applicationModel, cancellationToken));
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -100,19 +94,8 @@ public sealed class ExperiencesController(
         int? experienceId;
         try
         {
-            experienceId = await mediator.Send(new CreateHostExperienceDraftCommand(userId, new CreateHostExperienceDraftRequest(
-            model.ExperienceTypeId,
-            model.CulturalAreaId,
-            model.Title,
-            model.Description,
-            model.CulturalStory,
-            model.PricePerPerson,
-            model.DurationMinutes,
-            model.MaxGroupSize,
-            model.MeetingPointArea,
-            model.ExactMeetingPoint,
-            model.InterestIds,
-            model.LanguageIds)), cancellationToken);
+            experienceId = await mediator.Send(new CreateHostExperienceDraftCommand(
+                userId, mapper.Map<CreateHostExperienceDraftDto>(model)), cancellationToken);
         }
         catch (ValidationException exception)
         {
@@ -132,7 +115,7 @@ public sealed class ExperiencesController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, CreateExperienceDto model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Edit(int id, CreateExperienceViewModel model, CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId)) return Challenge();
@@ -141,27 +124,18 @@ public sealed class ExperiencesController(
         if (editor is null) return NotFound();
         model.Status = editor.Status;
         model.RejectionReason = editor.RejectionReason;
-        model.Options = await mediator.Send(new GetHostExperienceCreateOptionsQuery(), cancellationToken);
+        var applicationModel = mapper.Map<CreateExperienceDto>(model);
+        applicationModel.Options = await mediator.Send(new GetHostExperienceCreateOptionsQuery(), cancellationToken);
+        model.Options = mapper.Map<ExperienceCreateOptionsViewModel>(applicationModel.Options);
         ViewData["Section"] = "Edit experience";
-        ApplyValidation(await createExperienceValidator.ValidateAsync(model, cancellationToken));
+        ApplyValidation(await createExperienceValidator.ValidateAsync(applicationModel, cancellationToken));
         if (!ModelState.IsValid) return View("Create", model);
 
         bool updated;
         try
         {
-            updated = await mediator.Send(new UpdateHostExperienceDraftCommand(userId, id, new CreateHostExperienceDraftRequest(
-            model.ExperienceTypeId,
-            model.CulturalAreaId,
-            model.Title,
-            model.Description,
-            model.CulturalStory,
-            model.PricePerPerson,
-            model.DurationMinutes,
-            model.MaxGroupSize,
-            model.MeetingPointArea,
-            model.ExactMeetingPoint,
-            model.InterestIds,
-            model.LanguageIds)), cancellationToken);
+            updated = await mediator.Send(new UpdateHostExperienceDraftCommand(
+                userId, id, mapper.Map<CreateHostExperienceDraftDto>(model)), cancellationToken);
         }
         catch (ValidationException exception)
         {
@@ -205,7 +179,7 @@ public sealed class ExperiencesController(
         }
 
         ViewData["Section"] = "Experience media";
-        return View(editor);
+        return View(mapper.Map<ExperienceMediaViewModel>(editor));
     }
 
     [HttpPost]
@@ -234,7 +208,7 @@ public sealed class ExperiencesController(
             {
                 var result = await mediator.Send(new AddHostExperienceMediaCommand(
                     userId, id, file.FileName, file.ContentType, file.Length, stream), cancellationToken);
-                if (result == ExperienceMediaMutationResult.Success)
+                if (result == ExperienceMediaMutationOutcome.Success)
                 {
                     savedCount++;
                 }
@@ -263,8 +237,8 @@ public sealed class ExperiencesController(
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId)) return Challenge();
         var result = await mediator.Send(new SetHostExperienceMediaCoverCommand(userId, id, mediaId), cancellationToken);
-        TempData[result == ExperienceMediaMutationResult.Success ? "MediaNotice" : "MediaError"] =
-            result == ExperienceMediaMutationResult.Success ? "Cover photo updated." : MediaResultMessage(result);
+        TempData[result == ExperienceMediaMutationOutcome.Success ? "MediaNotice" : "MediaError"] =
+            result == ExperienceMediaMutationOutcome.Success ? "Cover photo updated." : MediaResultMessage(result);
         return RedirectToAction(nameof(Media), new { id });
     }
 
@@ -275,7 +249,7 @@ public sealed class ExperiencesController(
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId)) return Challenge();
         var result = await mediator.Send(new MoveHostExperienceMediaCommand(userId, id, mediaId, direction), cancellationToken);
-        if (result != ExperienceMediaMutationResult.Success)
+        if (result != ExperienceMediaMutationOutcome.Success)
         {
             TempData["MediaError"] = MediaResultMessage(result);
         }
@@ -289,8 +263,8 @@ public sealed class ExperiencesController(
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId)) return Challenge();
         var result = await mediator.Send(new DeleteHostExperienceMediaCommand(userId, id, mediaId), cancellationToken);
-        TempData[result == ExperienceMediaMutationResult.Success ? "MediaNotice" : "MediaError"] =
-            result == ExperienceMediaMutationResult.Success ? "Media removed from this draft." : MediaResultMessage(result);
+        TempData[result == ExperienceMediaMutationOutcome.Success ? "MediaNotice" : "MediaError"] =
+            result == ExperienceMediaMutationOutcome.Success ? "Media removed from this draft." : MediaResultMessage(result);
         return RedirectToAction(nameof(Media), new { id });
     }
 
@@ -316,30 +290,32 @@ public sealed class ExperiencesController(
         var inferredVenueUse = editor.Files.Any(item => item.Kind == EvidenceKind.VenueProof) ? "PrivateHome"
             : editor.Files.Any(item => item.Kind == EvidenceKind.VenuePermission) ? "ThirdPartyControlled" : "PublicRoute";
         var selectedVenueUse = venueUse ?? Enum.Parse<ExperienceVenueUse>(inferredVenueUse);
-        return View(new ExperienceEvidenceDto
+        var applicationModel = new ExperienceEvidenceDto
         {
             Editor = editor,
             TextContent = editor.TextContent,
             VenueUse = selectedVenueUse,
             EvidenceInHostName = evidenceInHostName ?? !editor.Files.Any(item => item.Kind == EvidenceKind.VenuePermission)
-        });
+        };
+        return View(mapper.Map<ExperienceEvidenceViewModel>(applicationModel));
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SaveEvidenceText(int id, SaveExperienceEvidenceTextDto model, CancellationToken cancellationToken)
+    public async Task<IActionResult> SaveEvidenceText(int id, SaveExperienceEvidenceTextViewModel model, CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId)) return Challenge();
         model.ExperienceId = id;
-        var validation = await saveEvidenceTextValidator.ValidateAsync(model, cancellationToken);
+        var applicationModel = mapper.Map<SaveExperienceEvidenceTextDto>(model);
+        var validation = await saveEvidenceTextValidator.ValidateAsync(applicationModel, cancellationToken);
         if (!validation.IsValid)
         {
             TempData["EvidenceError"] = validation.Errors[0].ErrorMessage;
             return RedirectToAction(nameof(Evidence), new { id });
         }
-        var result = await mediator.Send(new SaveHostExperienceEvidenceTextCommand(userId, id, model.Kind, model.TextContent), cancellationToken);
-        TempData[result == ExperienceEvidenceMutationResult.Success ? "EvidenceNotice" : "EvidenceError"] = EvidenceResultMessage(result);
+        var result = await mediator.Send(new SaveHostExperienceEvidenceTextCommand(userId, id, applicationModel.Kind, applicationModel.TextContent), cancellationToken);
+        TempData[result == ExperienceEvidenceMutationOutcome.Success ? "EvidenceNotice" : "EvidenceError"] = EvidenceResultMessage(result);
         return RedirectToAction(nameof(Evidence), new { id });
     }
 
@@ -361,7 +337,7 @@ public sealed class ExperiencesController(
         {
             var result = await mediator.Send(new AddHostExperienceEvidenceFileCommand(
                 userId, id, kind, file.FileName, file.ContentType, file.Length, stream), cancellationToken);
-            TempData[result == ExperienceEvidenceMutationResult.Success ? "EvidenceNotice" : "EvidenceError"] = EvidenceResultMessage(result);
+            TempData[result == ExperienceEvidenceMutationOutcome.Success ? "EvidenceNotice" : "EvidenceError"] = EvidenceResultMessage(result);
         }
         catch (InvalidOperationException)
         {
@@ -377,8 +353,8 @@ public sealed class ExperiencesController(
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId)) return Challenge();
         var result = await mediator.Send(new DeleteHostExperienceEvidenceFileCommand(userId, id, evidenceId), cancellationToken);
-        TempData[result == ExperienceEvidenceMutationResult.Success ? "EvidenceNotice" : "EvidenceError"] =
-            result == ExperienceEvidenceMutationResult.Success ? "Evidence file removed from this draft." : EvidenceResultMessage(result);
+        TempData[result == ExperienceEvidenceMutationOutcome.Success ? "EvidenceNotice" : "EvidenceError"] =
+            result == ExperienceEvidenceMutationOutcome.Success ? "Evidence file removed from this draft." : EvidenceResultMessage(result);
         return RedirectToAction(nameof(Evidence), new { id });
     }
 
@@ -410,33 +386,35 @@ public sealed class ExperiencesController(
         review = review with { Issues = reviewIssues };
         var declaration = HostExperienceSubmissionPolicy.GetDeclaration(review.ExperienceType);
         ViewData["Section"] = "Review experience";
-        return View(new ExperienceReviewDto
+        var applicationModel = new ExperienceReviewDto
         {
             Review = review,
             DeclarationText = declaration?.Text ?? string.Empty,
             VenueUse = selectedVenueUse,
             EvidenceInHostName = addressDocumentInHostName
-        });
+        };
+        return View(mapper.Map<ExperienceReviewViewModel>(applicationModel));
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Submit(int id, SubmitExperienceDto model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Submit(int id, SubmitExperienceViewModel model, CancellationToken cancellationToken)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId)) return Challenge();
         model.ExperienceId = id;
-        var validation = await submitExperienceValidator.ValidateAsync(model, cancellationToken);
+        var applicationModel = mapper.Map<SubmitExperienceDto>(model);
+        var validation = await submitExperienceValidator.ValidateAsync(applicationModel, cancellationToken);
         ApplyValidation(validation);
         var result = validation.IsValid
-            ? await mediator.Send(new SubmitHostExperienceCommand(userId, id, model.Accepted, model.VenueUse, model.EvidenceInHostName), cancellationToken)
-            : model.Accepted ? ExperienceSubmissionResult.Incomplete : ExperienceSubmissionResult.DeclarationNotAccepted;
-        if (result == ExperienceSubmissionResult.Success)
+            ? await mediator.Send(new SubmitHostExperienceCommand(userId, id, applicationModel.Accepted, applicationModel.VenueUse, applicationModel.EvidenceInHostName), cancellationToken)
+            : model.Accepted ? ExperienceSubmissionOutcome.Incomplete : ExperienceSubmissionOutcome.DeclarationNotAccepted;
+        if (result == ExperienceSubmissionOutcome.Success)
         {
             TempData["ExperienceNotice"] = "Your experience has been submitted for review.";
             return RedirectToAction(nameof(Index));
         }
-        if (result == ExperienceSubmissionResult.ExperienceUnavailable) return NotFound();
+        if (result == ExperienceSubmissionOutcome.ExperienceUnavailable) return NotFound();
         var review = await mediator.Send(new GetHostExperienceSubmissionReviewQuery(userId, id), cancellationToken);
         if (review is null) return NotFound();
         var venueUse = model.VenueUse;
@@ -450,7 +428,7 @@ public sealed class ExperiencesController(
         review = review with { Issues = issues };
         var declaration = HostExperienceSubmissionPolicy.GetDeclaration(review.ExperienceType);
         ViewData["Section"] = "Review experience";
-        return View(nameof(Review), new ExperienceReviewDto
+        var applicationReview = new ExperienceReviewDto
         {
             Review = review,
             DeclarationText = declaration?.Text ?? string.Empty,
@@ -458,12 +436,13 @@ public sealed class ExperiencesController(
             EvidenceInHostName = model.EvidenceInHostName,
             Error = result switch
             {
-                ExperienceSubmissionResult.DeclarationNotAccepted => "Accept the declaration before submitting.",
-                ExperienceSubmissionResult.Incomplete => "Complete the required listing, media, venue, and evidence items below before submitting.",
-                ExperienceSubmissionResult.UnsupportedType => "This experience category does not have a configured submission declaration.",
+                ExperienceSubmissionOutcome.DeclarationNotAccepted => "Accept the declaration before submitting.",
+                ExperienceSubmissionOutcome.Incomplete => "Complete the required listing, media, venue, and evidence items below before submitting.",
+                ExperienceSubmissionOutcome.UnsupportedType => "This experience category does not have a configured submission declaration.",
                 _ => "This experience cannot be submitted in its current state. Pending approval and unpublished experiences are read-only."
             }
-        });
+        };
+        return View(nameof(Review), mapper.Map<ExperienceReviewViewModel>(applicationReview));
     }
 
     private void ApplyValidation(FluentValidation.Results.ValidationResult validationResult)
@@ -472,28 +451,28 @@ public sealed class ExperiencesController(
             ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
     }
 
-    private static string MediaResultMessage(ExperienceMediaMutationResult result) => result switch
+    private static string MediaResultMessage(ExperienceMediaMutationOutcome result) => result switch
     {
-        ExperienceMediaMutationResult.ExperienceUnavailable => "Only your own draft or rejected experiences can be changed. Pending approval and unpublished experiences are read-only.",
-        ExperienceMediaMutationResult.ImageLimitReached => "An experience can have up to 8 images.",
-        ExperienceMediaMutationResult.VideoLimitReached => "An experience can have up to 2 videos.",
-        ExperienceMediaMutationResult.InvalidFile => "Use JPEG, PNG, or WebP images up to 10 MB, or MP4 videos up to 100 MB.",
-        ExperienceMediaMutationResult.MediaUnavailable => "That media item is no longer available.",
-        ExperienceMediaMutationResult.CoverMustBeImage => "Choose an image for the cover photo.",
-        ExperienceMediaMutationResult.InvalidOrder => "That item cannot move any farther in that direction.",
+        ExperienceMediaMutationOutcome.ExperienceUnavailable => "Only your own draft or rejected experiences can be changed. Pending approval and unpublished experiences are read-only.",
+        ExperienceMediaMutationOutcome.ImageLimitReached => "An experience can have up to 8 images.",
+        ExperienceMediaMutationOutcome.VideoLimitReached => "An experience can have up to 2 videos.",
+        ExperienceMediaMutationOutcome.InvalidFile => "Use JPEG, PNG, or WebP images up to 10 MB, or MP4 videos up to 100 MB.",
+        ExperienceMediaMutationOutcome.MediaUnavailable => "That media item is no longer available.",
+        ExperienceMediaMutationOutcome.CoverMustBeImage => "Choose an image for the cover photo.",
+        ExperienceMediaMutationOutcome.InvalidOrder => "That item cannot move any farther in that direction.",
         _ => "The media change could not be completed. Refresh and try again."
     };
 
-    private static string EvidenceResultMessage(ExperienceEvidenceMutationResult result) => result switch
+    private static string EvidenceResultMessage(ExperienceEvidenceMutationOutcome result) => result switch
     {
-        ExperienceEvidenceMutationResult.Success => "Evidence saved to your private draft.",
-        ExperienceEvidenceMutationResult.ExperienceUnavailable => "Only your own draft or rejected experiences can be changed. Pending approval and unpublished experiences are read-only.",
-        ExperienceEvidenceMutationResult.EvidenceUnavailable => "That evidence file is no longer available.",
-        ExperienceEvidenceMutationResult.InvalidEvidenceKind => "This evidence type does not apply to the selected experience category.",
-        ExperienceEvidenceMutationResult.InvalidFile => "Use a valid PDF, JPEG, or PNG file up to 10 MB.",
-        ExperienceEvidenceMutationResult.FileLimitReached => "The maximum number of files for this evidence category has been reached.",
-        ExperienceEvidenceMutationResult.TextRequired => "Enter the requested details before saving.",
-        ExperienceEvidenceMutationResult.TextTooLong => "Keep the details to 5,000 characters or fewer.",
+        ExperienceEvidenceMutationOutcome.Success => "Evidence saved to your private draft.",
+        ExperienceEvidenceMutationOutcome.ExperienceUnavailable => "Only your own draft or rejected experiences can be changed. Pending approval and unpublished experiences are read-only.",
+        ExperienceEvidenceMutationOutcome.EvidenceUnavailable => "That evidence file is no longer available.",
+        ExperienceEvidenceMutationOutcome.InvalidEvidenceKind => "This evidence type does not apply to the selected experience category.",
+        ExperienceEvidenceMutationOutcome.InvalidFile => "Use a valid PDF, JPEG, or PNG file up to 10 MB.",
+        ExperienceEvidenceMutationOutcome.FileLimitReached => "The maximum number of files for this evidence category has been reached.",
+        ExperienceEvidenceMutationOutcome.TextRequired => "Enter the requested details before saving.",
+        ExperienceEvidenceMutationOutcome.TextTooLong => "Keep the details to 5,000 characters or fewer.",
         _ => "The evidence change could not be completed. Refresh and try again."
     };
 

@@ -1,19 +1,19 @@
-@model DiscoverEgypt.Application.DTOs.Notifications.HostNotificationsPage
+@model DiscoverEgypt.Presentation.ViewModels.Notifications.HostNotificationsViewModel
 @using DiscoverEgypt.Application.DTOs.Notifications
 @{
     ViewData["Title"] = "Notifications";
     ViewData["Section"] = "Notifications";
     var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
     string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d · h:mm tt");
-    string TypeLabel(DiscoverEgypt.Domain.Enums.NotificationType type) => type switch
+    string TypeLabel(DiscoverEgypt.Domain.Enums.Notifications.NotificationType type) => type switch
     {
-        DiscoverEgypt.Domain.Enums.NotificationType.NewBooking => "New booking",
-        DiscoverEgypt.Domain.Enums.NotificationType.BookingConfirmation => "Booking confirmed",
-        DiscoverEgypt.Domain.Enums.NotificationType.BookingStatusUpdate => "Booking update",
-        DiscoverEgypt.Domain.Enums.NotificationType.ExperienceApprovalUpdate => "Experience review",
-        DiscoverEgypt.Domain.Enums.NotificationType.VerificationUpdate => "Verification update",
-        DiscoverEgypt.Domain.Enums.NotificationType.PaymentUpdate => "Payout update",
-        DiscoverEgypt.Domain.Enums.NotificationType.DisputeUpdate => "Dispute update",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.NewBooking => "New booking",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.BookingConfirmation => "Booking confirmed",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.BookingStatusUpdate => "Booking update",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.ExperienceApprovalUpdate => "Experience review",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.VerificationUpdate => "Verification update",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.PaymentUpdate => "Payout update",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.DisputeUpdate => "Dispute update",
         _ => "Account update"
     };
     var filters = new (NotificationReadFilter Value, string Label)[]
@@ -80,7 +80,7 @@
                         {
                             <a asp-controller="Bookings" asp-action="Details" asp-route-id="@notification.BookingId.Value">View booking</a>
                         }
-                        else if (notification.Type == DiscoverEgypt.Domain.Enums.NotificationType.ExperienceApprovalUpdate)
+                        else if (notification.Type == DiscoverEgypt.Domain.Enums.Notifications.NotificationType.ExperienceApprovalUpdate)
                         {
                             <a asp-controller="Experiences" asp-action="Index">View experiences</a>
                         }

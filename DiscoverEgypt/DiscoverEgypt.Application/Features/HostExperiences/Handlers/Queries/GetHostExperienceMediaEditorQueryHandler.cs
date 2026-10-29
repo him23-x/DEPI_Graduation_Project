@@ -6,9 +6,9 @@ using MediatR;
 namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Queries;
 
 public sealed class GetHostExperienceMediaEditorQueryHandler(IHostExperienceMediaRepository repository)
-    : IRequestHandler<GetHostExperienceMediaEditorQuery, HostExperienceMediaEditor?>
+    : IRequestHandler<GetHostExperienceMediaEditorQuery, HostExperienceMediaEditorDto?>
 {
-    public Task<HostExperienceMediaEditor?> Handle(GetHostExperienceMediaEditorQuery request, CancellationToken cancellationToken)
+    public Task<HostExperienceMediaEditorDto?> Handle(GetHostExperienceMediaEditorQuery request, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
         return repository.GetDraftEditorAsync(request.UserId, request.ExperienceId, cancellationToken);

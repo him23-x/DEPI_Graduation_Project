@@ -5,4 +5,4 @@ namespace DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 
 public sealed record CreateHostExperienceDraftCommand(
     string UserId,
-    CreateHostExperienceDraftRequest Draft) : IRequest<int?>;
+    CreateHostExperienceDraftDto Draft) : IRequest<int?>;

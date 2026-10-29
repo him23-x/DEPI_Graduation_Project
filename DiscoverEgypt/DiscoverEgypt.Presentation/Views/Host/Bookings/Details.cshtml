@@ -1,12 +1,20 @@
-@model DiscoverEgypt.Application.DTOs.Bookings.HostBookingDetailsDto
-@using DiscoverEgypt.Domain.Enums
+@model DiscoverEgypt.Presentation.ViewModels.Bookings.HostBookingDetailsViewModel
+@using DiscoverEgypt.Domain.Enums.Bookings
+@using DiscoverEgypt.Domain.Enums.Disputes
+@using DiscoverEgypt.Domain.Enums.Experiences
+@using DiscoverEgypt.Domain.Enums.Hosts
+@using DiscoverEgypt.Domain.Enums.Notifications
+@using DiscoverEgypt.Domain.Enums.Payments
+@using DiscoverEgypt.Domain.Enums.Preferences
+@using DiscoverEgypt.Domain.Enums.Sanctions
+@using DiscoverEgypt.Domain.Enums.Verification
 @{
     ViewData["Title"] = "Booking details";
     ViewData["Section"] = "Booking details";
     var booking = Model.Booking;
     var backTab = booking.Status is BookingStatus.Rejected or BookingStatus.Cancelled
-        ? DiscoverEgypt.Application.DTOs.Bookings.HostBookingTab.RejectedCancelled
-        : Enum.Parse<DiscoverEgypt.Application.DTOs.Bookings.HostBookingTab>(booking.Status.ToString());
+        ? DiscoverEgypt.Application.Enums.Bookings.HostBookingTab.RejectedCancelled
+        : Enum.Parse<DiscoverEgypt.Application.Enums.Bookings.HostBookingTab>(booking.Status.ToString());
     var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
     string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d, yyyy · h:mm tt");
 }

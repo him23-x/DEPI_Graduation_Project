@@ -1,0 +1,13 @@
+using DiscoverEgypt.Application.Features.Bookings.Requests.Commands;
+using FluentValidation;
+
+namespace DiscoverEgypt.Application.Features.Bookings.Validators;
+
+public sealed class RejectHostBookingCommandValidator : AbstractValidator<RejectHostBookingCommand>
+{
+    public RejectHostBookingCommandValidator()
+    {
+        RuleFor(x => x.UserId).NotEmpty();
+        RuleFor(x => x.BookingId).GreaterThan(0);
+    }
+}

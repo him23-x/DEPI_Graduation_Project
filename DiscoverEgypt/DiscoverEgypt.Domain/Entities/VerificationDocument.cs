@@ -1,4 +1,5 @@
-using DiscoverEgypt.Domain.Enums;
+
+using DiscoverEgypt.Domain.Enums.Verification;
 
 namespace DiscoverEgypt.Domain.Entities;
 

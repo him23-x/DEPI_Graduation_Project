@@ -3,4 +3,4 @@ using MediatR;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Requests.Queries;
 
-public sealed record GetHostExperienceCreateOptionsQuery : IRequest<HostExperienceCreateOptions>;
+public sealed record GetHostExperienceCreateOptionsQuery : IRequest<HostExperienceCreateOptionsDto>;

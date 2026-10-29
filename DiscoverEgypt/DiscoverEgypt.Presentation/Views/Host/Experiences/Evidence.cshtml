@@ -1,6 +1,14 @@
-@model DiscoverEgypt.Application.DTOs.HostExperiences.ExperienceEvidenceDto
+@model DiscoverEgypt.Presentation.ViewModels.Experience.ExperienceEvidenceViewModel
 @using DiscoverEgypt.Application.DTOs.HostExperiences
-@using DiscoverEgypt.Domain.Enums
+@using DiscoverEgypt.Domain.Enums.Bookings
+@using DiscoverEgypt.Domain.Enums.Disputes
+@using DiscoverEgypt.Domain.Enums.Experiences
+@using DiscoverEgypt.Domain.Enums.Hosts
+@using DiscoverEgypt.Domain.Enums.Notifications
+@using DiscoverEgypt.Domain.Enums.Payments
+@using DiscoverEgypt.Domain.Enums.Preferences
+@using DiscoverEgypt.Domain.Enums.Sanctions
+@using DiscoverEgypt.Domain.Enums.Verification
 @{
     ViewData["Title"] = "Experience evidence";
     var type = Model.Editor.ExperienceType;
@@ -50,12 +58,12 @@ else
                     <div class="evidence-form-footer"><span>Up to 5,000 characters · saved privately</span><button class="button button-primary" type="submit">Save details</button></div>
                 </form>
             </section>
-            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Food preparation, washing & storage areas", EvidenceKind.FoodAreaPhoto, 3, 5))
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Food preparation, washing & storage areas", EvidenceKind.FoodAreaPhoto, 3, 5))
         }
         @if (arts)
         {
-            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Photos of your completed work", EvidenceKind.PortfolioPhoto, 3, 10))
-            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Workshop, tools & materials", EvidenceKind.WorkshopPhoto, 1, 5))
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Photos of your completed work", EvidenceKind.PortfolioPhoto, 3, 10))
+            @await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Workshop, tools & materials", EvidenceKind.WorkshopPhoto, 1, 5))
         }
         @if (local)
         {
@@ -76,8 +84,8 @@ else
                     <label><input type="radio" name="venueUse" value="ThirdPartyControlled" checked="@(Model.VenueUse == ExperienceVenueUse.ThirdPartyControlled ? "checked" : null)" /> <span><strong>Controlled third-party venue</strong><small>Upload a separate venue permission</small></span></label>
                 </div>
                 <label class="host-name-check"><input type="checkbox" name="evidenceInHostName" value="true" checked="@(Model.EvidenceInHostName ? "checked" : null)" /> The address document is in my name</label>
-                <div id="venue-proof-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Recent utility bill or address proof", EvidenceKind.VenueProof, 1, 1))</div>
-                <div id="venue-permission-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupDto(Model.Editor, "Lease or written venue permission", EvidenceKind.VenuePermission, 1, 1))</div>
+                <div id="venue-proof-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Recent utility bill or address proof", EvidenceKind.VenueProof, 1, 1))</div>
+                <div id="venue-permission-files">@await Html.PartialAsync("_EvidenceFiles", new EvidenceFileGroupViewModel(Model.Editor, "Lease or written venue permission", EvidenceKind.VenuePermission, 1, 1))</div>
             </section>
         }
 
