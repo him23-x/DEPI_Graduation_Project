@@ -3,15 +3,17 @@ using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 using MediatR;
 
+using DiscoverEgypt.Application.Enums.HostExperiences;
+
 namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Commands;
 
 public sealed class SaveHostExperienceEvidenceTextCommandHandler(IHostExperienceEvidenceRepository repository)
-    : IRequestHandler<SaveHostExperienceEvidenceTextCommand, ExperienceEvidenceMutationResult>
+    : IRequestHandler<SaveHostExperienceEvidenceTextCommand, ExperienceEvidenceMutationOutcome>
 {
-    public Task<ExperienceEvidenceMutationResult> Handle(SaveHostExperienceEvidenceTextCommand request, CancellationToken cancellationToken)
+    public Task<ExperienceEvidenceMutationOutcome> Handle(SaveHostExperienceEvidenceTextCommand request, CancellationToken cancellationToken)
     {
-        if (request.Text is null) return Task.FromResult(ExperienceEvidenceMutationResult.TextRequired);
-        if (request.Text.Length > 5000) return Task.FromResult(ExperienceEvidenceMutationResult.TextTooLong);
+        if (request.Text is null) return Task.FromResult(ExperienceEvidenceMutationOutcome.TextRequired);
+        if (request.Text.Length > 5000) return Task.FromResult(ExperienceEvidenceMutationOutcome.TextTooLong);
         return repository.SaveTextAsync(request.UserId, request.ExperienceId, request.Kind, request.Text, cancellationToken);
     }
 }

@@ -1,5 +1,9 @@
 using DiscoverEgypt.Application.DTOs.Bookings;
-using DiscoverEgypt.Domain.Enums;
+
+using DiscoverEgypt.Application.Enums.Bookings;
+
+using DiscoverEgypt.Domain.Enums.Bookings;
+using DiscoverEgypt.Domain.Enums.Payments;
 
 namespace DiscoverEgypt.Application.Features.Bookings.Policies;
 
@@ -8,7 +12,7 @@ public static class HostBookingPolicy
     public static DateTime? GetResponseDeadline(DateTime? paidAt, TimeSpan responseTimeout) =>
         paidAt?.Add(responseTimeout);
 
-    public static HostBookingActionResult? GetAcceptFailure(
+    public static HostBookingActionOutcome? GetAcceptFailure(
         BookingStatus status,
         PaymentStatus paymentStatus,
         DateTime? paidAt,
@@ -18,32 +22,32 @@ public static class HostBookingPolicy
         DateTime now,
         TimeSpan responseTimeout)
     {
-        if (status != BookingStatus.Pending) return HostBookingActionResult.NotPending;
-        if (paymentStatus != PaymentStatus.Paid || !paidAt.HasValue) return HostBookingActionResult.PaymentNotPaid;
-        if (isProviderSuspended) return HostBookingActionResult.ProviderSuspended;
-        if (now > paidAt.Value.Add(responseTimeout)) return HostBookingActionResult.ResponseWindowExpired;
-        if (hasOverlap) return HostBookingActionResult.Overlap;
-        if (payoutExists) return HostBookingActionResult.PayoutAlreadyExists;
+        if (status != BookingStatus.Pending) return HostBookingActionOutcome.NotPending;
+        if (paymentStatus != PaymentStatus.Paid || !paidAt.HasValue) return HostBookingActionOutcome.PaymentNotPaid;
+        if (isProviderSuspended) return HostBookingActionOutcome.ProviderSuspended;
+        if (now > paidAt.Value.Add(responseTimeout)) return HostBookingActionOutcome.ResponseWindowExpired;
+        if (hasOverlap) return HostBookingActionOutcome.Overlap;
+        if (payoutExists) return HostBookingActionOutcome.PayoutAlreadyExists;
         return null;
     }
 
-    public static HostBookingActionResult? GetRejectFailure(BookingStatus status, PaymentStatus paymentStatus, decimal serviceAmount)
+    public static HostBookingActionOutcome? GetRejectFailure(BookingStatus status, PaymentStatus paymentStatus, decimal serviceAmount)
     {
-        if (status != BookingStatus.Pending) return HostBookingActionResult.NotPending;
-        if (paymentStatus != PaymentStatus.Paid) return HostBookingActionResult.PaymentNotPaid;
-        if (serviceAmount <= 0) return HostBookingActionResult.InvalidRefundAmount;
+        if (status != BookingStatus.Pending) return HostBookingActionOutcome.NotPending;
+        if (paymentStatus != PaymentStatus.Paid) return HostBookingActionOutcome.PaymentNotPaid;
+        if (serviceAmount <= 0) return HostBookingActionOutcome.InvalidRefundAmount;
         return null;
     }
 
-    public static HostBookingActionResult? GetCompleteFailure(
+    public static HostBookingActionOutcome? GetCompleteFailure(
         BookingStatus status,
         DateTime scheduledEnd,
         bool hasOpenDispute,
         DateTime now)
     {
-        if (status != BookingStatus.Confirmed) return HostBookingActionResult.NotConfirmed;
-        if (now < scheduledEnd) return HostBookingActionResult.NotEnded;
-        if (hasOpenDispute) return HostBookingActionResult.OpenDispute;
+        if (status != BookingStatus.Confirmed) return HostBookingActionOutcome.NotConfirmed;
+        if (now < scheduledEnd) return HostBookingActionOutcome.NotEnded;
+        if (hasOpenDispute) return HostBookingActionOutcome.OpenDispute;
         return null;
     }
 

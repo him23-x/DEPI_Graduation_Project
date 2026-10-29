@@ -1,6 +1,8 @@
 using DiscoverEgypt.Application.DTOs.HostExperiences;
 using MediatR;
 
+using DiscoverEgypt.Application.Enums.HostExperiences;
+
 namespace DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 
 public sealed record AddHostExperienceMediaCommand(
@@ -9,4 +11,4 @@ public sealed record AddHostExperienceMediaCommand(
     string FileName,
     string ContentType,
     long Length,
-    Stream Content) : IRequest<ExperienceMediaMutationResult>;
+    Stream Content) : IRequest<ExperienceMediaMutationOutcome>;

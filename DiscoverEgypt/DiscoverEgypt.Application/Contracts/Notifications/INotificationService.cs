@@ -1,5 +1,8 @@
 using DiscoverEgypt.Application.DTOs.Notifications;
-using DiscoverEgypt.Domain.Enums;
+
+using DiscoverEgypt.Application.Enums.Notifications;
+
+using DiscoverEgypt.Domain.Enums.Notifications;
 
 namespace DiscoverEgypt.Application.Contracts.Notifications;
 
@@ -12,7 +15,7 @@ public interface INotificationService
         int? bookingId = null,
         CancellationToken cancellationToken = default);
 
-    Task<HostNotificationsPage> GetForUserAsync(
+    Task<HostNotificationsPageDto> GetForUserAsync(
         string userId,
         NotificationReadFilter filter,
         int page,

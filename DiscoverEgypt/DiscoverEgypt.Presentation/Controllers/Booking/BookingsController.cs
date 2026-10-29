@@ -1,15 +1,19 @@
 using System.Security.Claims;
+using AutoMapper;
 using DiscoverEgypt.Application.DTOs.Bookings;
 using DiscoverEgypt.Application.Features.Bookings.Requests.Commands;
 using DiscoverEgypt.Application.Features.Bookings.Requests.Queries;
+using DiscoverEgypt.Presentation.ViewModels.Bookings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 
+using DiscoverEgypt.Application.Enums.Bookings;
+
 namespace DiscoverEgypt.Presentation.Controllers.Booking;
 
 [Authorize(Roles = "Host")]
-public sealed class BookingsController(IMediator mediator) : Controller
+public sealed class BookingsController(IMediator mediator, IMapper mapper) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(HostBookingTab tab = HostBookingTab.Pending, CancellationToken cancellationToken = default)
@@ -20,13 +24,14 @@ public sealed class BookingsController(IMediator mediator) : Controller
 
         var bookings = await mediator.Send(new GetHostBookingsQuery(userId, tab), cancellationToken);
         ViewData["Section"] = "Bookings";
-        return View(new HostBookingsIndexDto
+        var model = new HostBookingsIndexDto
         {
             SelectedTab = tab,
             Bookings = bookings,
             Notice = TempData["BookingNotice"] as string,
             Error = TempData["BookingError"] as string
-        });
+        };
+        return View(mapper.Map<HostBookingsIndexViewModel>(model));
     }
 
     [HttpGet]
@@ -39,12 +44,13 @@ public sealed class BookingsController(IMediator mediator) : Controller
         var booking = await mediator.Send(new GetHostBookingDetailsQuery(userId, id), cancellationToken);
         if (booking is null) return NotFound();
         ViewData["Section"] = "Booking details";
-        return View(new HostBookingDetailsDto
+        var model = new HostBookingDetailsDto
         {
             Booking = booking,
             Notice = TempData["BookingNotice"] as string,
             Error = TempData["BookingError"] as string
-        });
+        };
+        return View(mapper.Map<HostBookingDetailsViewModel>(model));
     }
 
     [HttpPost]
@@ -67,7 +73,7 @@ public sealed class BookingsController(IMediator mediator) : Controller
 
     private async Task<IActionResult> ExecuteActionAsync(
         int id,
-        Func<string, int, IRequest<HostBookingActionResult>> createCommand,
+        Func<string, int, IRequest<HostBookingActionOutcome>> createCommand,
         string successMessage,
         CancellationToken cancellationToken,
         bool returnToList = false)
@@ -77,31 +83,31 @@ public sealed class BookingsController(IMediator mediator) : Controller
         if (id <= 0) return NotFound();
 
         var result = await mediator.Send(createCommand(userId, id), cancellationToken);
-        if (result == HostBookingActionResult.BookingUnavailable) return NotFound();
-        if (result == HostBookingActionResult.Success)
+        if (result == HostBookingActionOutcome.BookingUnavailable) return NotFound();
+        if (result == HostBookingActionOutcome.Success)
             TempData["BookingNotice"] = successMessage;
         else
             TempData["BookingError"] = ActionError(result);
 
-        if (result == HostBookingActionResult.Success && returnToList)
+        if (result == HostBookingActionOutcome.Success && returnToList)
             return RedirectToAction(nameof(Index), new { tab = HostBookingTab.RejectedCancelled });
 
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    private static string ActionError(HostBookingActionResult result) => result switch
+    private static string ActionError(HostBookingActionOutcome result) => result switch
     {
-        HostBookingActionResult.NotPending => "Only pending bookings can be accepted or rejected.",
-        HostBookingActionResult.PaymentNotPaid => "This booking is not available until payment is confirmed.",
-        HostBookingActionResult.ResponseWindowExpired => "The 12-hour response window has expired.",
-        HostBookingActionResult.ProviderSuspended => "Your account is suspended and cannot accept new bookings.",
-        HostBookingActionResult.Overlap => "You already have a confirmed experience booking during this time.",
-        HostBookingActionResult.ConcurrencyUnavailable => "The booking could not be locked safely. Refresh and try again.",
-        HostBookingActionResult.PayoutAlreadyExists => "A payout already exists for this booking, so it cannot be accepted or rejected again.",
-        HostBookingActionResult.InvalidRefundAmount => "This booking does not have a refundable service amount.",
-        HostBookingActionResult.NotConfirmed => "Only confirmed bookings can be marked completed.",
-        HostBookingActionResult.NotEnded => "The booking cannot be marked completed before its scheduled end.",
-        HostBookingActionResult.OpenDispute => "This booking cannot be marked completed while a dispute is open or under review.",
+        HostBookingActionOutcome.NotPending => "Only pending bookings can be accepted or rejected.",
+        HostBookingActionOutcome.PaymentNotPaid => "This booking is not available until payment is confirmed.",
+        HostBookingActionOutcome.ResponseWindowExpired => "The 12-hour response window has expired.",
+        HostBookingActionOutcome.ProviderSuspended => "Your account is suspended and cannot accept new bookings.",
+        HostBookingActionOutcome.Overlap => "You already have a confirmed experience booking during this time.",
+        HostBookingActionOutcome.ConcurrencyUnavailable => "The booking could not be locked safely. Refresh and try again.",
+        HostBookingActionOutcome.PayoutAlreadyExists => "A payout already exists for this booking, so it cannot be accepted or rejected again.",
+        HostBookingActionOutcome.InvalidRefundAmount => "This booking does not have a refundable service amount.",
+        HostBookingActionOutcome.NotConfirmed => "Only confirmed bookings can be marked completed.",
+        HostBookingActionOutcome.NotEnded => "The booking cannot be marked completed before its scheduled end.",
+        HostBookingActionOutcome.OpenDispute => "This booking cannot be marked completed while a dispute is open or under review.",
         _ => "The booking could not be updated. Refresh and try again."
     };
 }

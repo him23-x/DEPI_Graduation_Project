@@ -1,5 +1,7 @@
 using DiscoverEgypt.Application.DTOs.HostExperiences;
-using DiscoverEgypt.Domain.Enums;
+using DiscoverEgypt.Application.Enums.HostExperiences;
+
+using DiscoverEgypt.Domain.Enums.Experiences;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Policies;
 

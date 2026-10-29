@@ -1,4 +1,5 @@
-using DiscoverEgypt.Domain.Enums;
+
+using DiscoverEgypt.Domain.Enums.Bookings;
 
 namespace DiscoverEgypt.Domain.Entities;
 

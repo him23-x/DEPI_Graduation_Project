@@ -6,10 +6,10 @@ using MediatR;
 namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Queries;
 
 public sealed class GetHostExperienceListRequestHandler(IHostExperienceRepository repository)
-    : IRequestHandler<GetHostExperienceListRequest, IReadOnlyList<HostExperienceListItem>>
+    : IRequestHandler<GetHostExperienceListQuery, IReadOnlyList<HostExperienceListItemDto>>
 {
-    public Task<IReadOnlyList<HostExperienceListItem>> Handle(
-        GetHostExperienceListRequest request,
+    public Task<IReadOnlyList<HostExperienceListItemDto>> Handle(
+        GetHostExperienceListQuery request,
         CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);

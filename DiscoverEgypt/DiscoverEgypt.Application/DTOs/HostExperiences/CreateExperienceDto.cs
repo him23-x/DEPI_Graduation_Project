@@ -1,4 +1,5 @@
-using DiscoverEgypt.Domain.Enums;
+
+using DiscoverEgypt.Domain.Enums.Experiences;
 
 namespace DiscoverEgypt.Application.DTOs.HostExperiences;
 
@@ -20,7 +21,7 @@ public sealed class CreateExperienceDto
     public string ExactMeetingPoint { get; set; } = string.Empty;
     public int[] InterestIds { get; set; } = [];
     public int[] LanguageIds { get; set; } = [];
-    public HostExperienceCreateOptions Options { get; set; } = new([], [], [], []);
+    public HostExperienceCreateOptionsDto Options { get; set; } = new([], [], [], []);
     public bool HasRequiredLookups => Options.ExperienceTypes.Count > 0
         && Options.CulturalAreas.Count > 0
         && Options.Interests.Count > 0
