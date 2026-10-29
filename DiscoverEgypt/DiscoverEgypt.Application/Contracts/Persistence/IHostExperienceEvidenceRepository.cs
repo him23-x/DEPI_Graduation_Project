@@ -15,4 +15,5 @@ public interface IHostExperienceEvidenceRepository
     Task<ExperienceEvidenceMutationOutcome> AddFileAsync(string userId, int experienceId, EvidenceKind kind, string storageKey, CancellationToken cancellationToken = default);
     Task<(ExperienceEvidenceMutationOutcome Result, string? StorageKey)> DeleteFileAsync(string userId, int experienceId, int evidenceId, CancellationToken cancellationToken = default);
     Task<StoredExperienceEvidence?> GetOwnedFileAsync(string userId, int evidenceId, CancellationToken cancellationToken = default);
+    Task<StoredExperienceEvidence?> GetFileForReviewAsync(int evidenceId, CancellationToken cancellationToken = default);
 }

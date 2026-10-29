@@ -17,9 +17,12 @@
         </a>
         <div class="sidebar-section-label">WORKSPACE</div>
         <nav class="host-nav" aria-label="Host navigation">
-            <a class="host-nav-link" href="#" aria-disabled="true"><span class="nav-icon">⌂</span> Dashboard</a>
-            <a class="host-nav-link active" asp-controller="Experiences" asp-action="Index"><span class="nav-icon">✦</span> My Experiences</a>
+            <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : string.Empty)" asp-controller="Dashboard" asp-action="Index"><span class="nav-icon">⌂</span> Dashboard</a>
+            <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Experiences" ? "active" : string.Empty)" asp-controller="Experiences" asp-action="Index"><span class="nav-icon">✦</span> My Experiences</a>
             <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Bookings" ? "active" : string.Empty)" asp-controller="Bookings" asp-action="Index"><span class="nav-icon">▤</span> Bookings</a>
+            <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Earnings" ? "active" : string.Empty)" asp-controller="Earnings" asp-action="Index"><span class="nav-icon">◈</span> Earnings</a>
+            <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reviews" ? "active" : string.Empty)" asp-controller="Reviews" asp-action="Index"><span class="nav-icon">❝</span> Reviews</a>
+            <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Disputes" ? "active" : string.Empty)" asp-controller="Disputes" asp-action="Index"><span class="nav-icon">⚖</span> Disputes</a>
             <a class="host-nav-link" href="#" aria-disabled="true"><span class="nav-icon">◷</span> Availability</a>
         </nav>
         <div class="host-sidebar-bottom">

@@ -1,0 +1,81 @@
+@model HostDisputesIndexViewModel
+@{
+    ViewData["Title"] = "Host Disputes";
+    ViewData["Section"] = "Disputes";
+    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
+    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("MMM d, yyyy · h:mm tt");
+    string StatusLabel(DisputeStatus status) => status switch
+    {
+        DisputeStatus.UnderReview => "Under review",
+        _ => status.ToString()
+    };
+    string StatusClass(DisputeStatus status) => status switch
+    {
+        DisputeStatus.Open or DisputeStatus.UnderReview => "dispute-open",
+        DisputeStatus.Resolved => "dispute-resolved",
+        _ => "dispute-closed"
+    };
+    string OutcomeLabel(DisputeOutcome? outcome) => outcome switch
+    {
+        DisputeOutcome.ProviderFault => "Provider at fault",
+        DisputeOutcome.TouristFault => "Tourist at fault",
+        DisputeOutcome.NoFault => "No fault",
+        _ => "Pending"
+    };
+    var firstRow = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
+    var lastRow = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+}
+
+<section class="experiences-heading disputes-heading">
+    <div>
+        <div class="eyebrow">BOOKING SUPPORT</div>
+        <h1>Disputes</h1>
+        <p>Review concerns raised about bookings for your experiences.</p>
+    </div>
+</section>
+
+@if (Model.Disputes.Count == 0)
+{
+    <section class="empty-state disputes-empty">
+        <div class="empty-illustration" aria-hidden="true"><span>◇</span></div>
+        <h2>No disputes</h2>
+        <p>Disputes connected to your experience bookings will appear here.</p>
+    </section>
+}
+else
+{
+    <section class="disputes-list" aria-label="Disputes">
+        @foreach (var dispute in Model.Disputes)
+        {
+            <article class="dispute-card">
+                <div class="dispute-card-main">
+                    <div class="dispute-card-topline">
+                        <span class="dispute-status @StatusClass(dispute.Status)"><span></span>@StatusLabel(dispute.Status)</span>
+                        <span class="dispute-opened">Opened @Cairo(dispute.CreatedAt)</span>
+                    </div>
+                    <h2>@dispute.ExperienceTitle</h2>
+                    <p class="dispute-booking-meta">Booking <strong>#BK-@dispute.BookingId</strong> · @dispute.GuestName · Experience @Cairo(dispute.ScheduledStart)</p>
+                    <div class="dispute-card-summary">
+                        <span><small>Outcome</small><strong>@OutcomeLabel(dispute.Outcome)</strong></span>
+                        <span><small>Payout</small><strong>@(dispute.IsPayoutHeld ? "Held during dispute" : dispute.PayoutStatus?.ToString() ?? "Not available")</strong></span>
+                    </div>
+                </div>
+                <a class="button button-secondary dispute-open-button" asp-controller="Disputes" asp-action="Details" asp-route-id="@dispute.DisputeId">View details</a>
+            </article>
+        }
+    </section>
+
+    <div class="disputes-pagination">
+        <span>Showing @firstRow–@lastRow of @Model.TotalCount disputes</span>
+        <nav aria-label="Dispute pages">
+            @if (Model.Page > 1)
+            {
+                <a asp-controller="Disputes" asp-action="Index" asp-route-page="@(Model.Page - 1)" aria-label="Previous page">Previous</a>
+            }
+            @if (Model.Page < Model.PageCount)
+            {
+                <a asp-controller="Disputes" asp-action="Index" asp-route-page="@(Model.Page + 1)" aria-label="Next page">Next</a>
+            }
+        </nav>
+    </div>
+}

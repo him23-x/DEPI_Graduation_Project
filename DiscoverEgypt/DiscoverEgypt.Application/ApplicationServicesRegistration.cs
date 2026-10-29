@@ -1,5 +1,7 @@
 using AutoMapper;
 using DiscoverEgypt.Application.Common.Behaviors;
+using DiscoverEgypt.Application.Contracts.HostExperiences;
+using DiscoverEgypt.Application.Features.HostExperiences.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,8 @@ public static class ApplicationServicesRegistration
         }, applicationAssembly);
         services.AddValidatorsFromAssembly(applicationAssembly, ServiceLifetime.Transient);
         services.AddTransient<Features.HostExperiences.Validators.DTOs.HostExperienceSubmissionReviewValidator>();
+        services.AddScoped<IExperienceReadinessService, ExperienceReadinessService>();
+        services.AddScoped<IExperienceStatusService, ExperienceStatusService>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         return services;
     }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Discover Egypt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-shell">
+    <header class="public-header">
+        <a class="public-brand" asp-controller="Experiences" asp-action="Index"><span class="brand-mark">DE</span><span>Discover Egypt</span></a>
+        <nav class="public-nav" aria-label="Main navigation">
+            <a href="#discover">Discover</a><a href="#experiences">Experiences</a><a href="#about">About us</a>
+        </nav>
+        <div class="public-actions">
+            <a class="nav-login" asp-controller="Account" asp-action="Login">Log in</a>
+            <a class="nav-register" asp-controller="Account" asp-action="Register">Sign up</a>
+        </div>
+    </header>
+    <main class="auth-main">@RenderBody()</main>
+    <footer class="public-footer"><span>© 2026 Discover Egypt</span><span>Travel deeper. Connect with Egypt.</span></footer>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

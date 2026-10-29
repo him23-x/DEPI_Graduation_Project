@@ -46,7 +46,9 @@ public sealed class HostExperienceEvidenceRepository(DiscoverEgyptDbContext dbCo
     public async Task<ExperienceEvidenceMutationOutcome> SaveTextAsync(string userId, int experienceId, EvidenceKind kind, string text, CancellationToken cancellationToken = default)
     {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
-        var experience = await dbContext.Experiences.Include(item => item.Evidence)
+        var experience = await dbContext.Experiences
+            .Include(item => item.Evidence)
+            .Include(item => item.ExperienceType)
             .SingleOrDefaultAsync(item => item.Id == experienceId && item.HostProfile.UserId == userId
                 && (item.Status == ExperienceStatus.Draft || item.Status == ExperienceStatus.Rejected), cancellationToken);
         if (experience is null) return ExperienceEvidenceMutationOutcome.ExperienceUnavailable;
@@ -73,7 +75,9 @@ public sealed class HostExperienceEvidenceRepository(DiscoverEgyptDbContext dbCo
     public async Task<ExperienceEvidenceMutationOutcome> AddFileAsync(string userId, int experienceId, EvidenceKind kind, string storageKey, CancellationToken cancellationToken = default)
     {
         await using var transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
-        var experience = await dbContext.Experiences.Include(item => item.Evidence)
+        var experience = await dbContext.Experiences
+            .Include(item => item.Evidence)
+            .Include(item => item.ExperienceType)
             .SingleOrDefaultAsync(item => item.Id == experienceId && item.HostProfile.UserId == userId
                 && (item.Status == ExperienceStatus.Draft || item.Status == ExperienceStatus.Rejected), cancellationToken);
         if (experience is null) return ExperienceEvidenceMutationOutcome.ExperienceUnavailable;
@@ -117,6 +121,15 @@ public sealed class HostExperienceEvidenceRepository(DiscoverEgyptDbContext dbCo
         var key = await dbContext.ExperienceEvidence.AsNoTracking()
             .Where(item => item.Id == evidenceId && item.Experience.HostProfile.UserId == userId
                 && item.DeletedAt == null && item.StorageKey != null)
+            .Select(item => item.StorageKey)
+            .SingleOrDefaultAsync(cancellationToken);
+        return key is null ? null : new StoredExperienceEvidence(key);
+    }
+
+    public async Task<StoredExperienceEvidence?> GetFileForReviewAsync(int evidenceId, CancellationToken cancellationToken = default)
+    {
+        var key = await dbContext.ExperienceEvidence.AsNoTracking()
+            .Where(item => item.Id == evidenceId && item.DeletedAt == null && item.StorageKey != null)
             .Select(item => item.StorageKey)
             .SingleOrDefaultAsync(cancellationToken);
         return key is null ? null : new StoredExperienceEvidence(key);

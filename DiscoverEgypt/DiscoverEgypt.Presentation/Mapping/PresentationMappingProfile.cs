@@ -2,9 +2,17 @@ using AutoMapper;
 using DiscoverEgypt.Application.DTOs.Bookings;
 using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.DTOs.Notifications;
+using DiscoverEgypt.Application.DTOs.Earnings;
+using DiscoverEgypt.Application.DTOs.Dashboard;
+using DiscoverEgypt.Application.DTOs.Reviews;
+using DiscoverEgypt.Application.DTOs.Disputes;
 using DiscoverEgypt.Presentation.ViewModels.Experience;
 using DiscoverEgypt.Presentation.ViewModels.Bookings;
 using DiscoverEgypt.Presentation.ViewModels.Notifications;
+using DiscoverEgypt.Presentation.ViewModels.Earnings;
+using DiscoverEgypt.Presentation.ViewModels.Dashboard;
+using DiscoverEgypt.Presentation.ViewModels.Reviews;
+using DiscoverEgypt.Presentation.ViewModels.Disputes;
 
 namespace DiscoverEgypt.Presentation.Mapping;
 
@@ -18,11 +26,21 @@ public sealed class PresentationMappingProfile : Profile
         CreateMap<HostBookingDetailsDto, HostBookingDetailsViewModel>();
         CreateMap<HostNotificationItemDto, HostNotificationViewModel>();
         CreateMap<HostNotificationsPageDto, HostNotificationsViewModel>();
+        CreateMap<HostPayoutListItemDto, HostPayoutItemViewModel>();
+        CreateMap<HostDashboardExperienceStatusDto, HostDashboardExperienceStatusViewModel>();
+        CreateMap<HostDashboardBookingDto, HostDashboardBookingViewModel>();
+        CreateMap<HostDashboardDto, HostDashboardViewModel>();
+        CreateMap<HostReviewListItemDto, HostReviewItemViewModel>();
+        CreateMap<HostReviewsPageDto, HostReviewsIndexViewModel>();
+        CreateMap<HostDisputeListItemDto, HostDisputeListItemViewModel>();
+        CreateMap<HostDisputesPageDto, HostDisputesIndexViewModel>();
+        CreateMap<HostDisputeDetailsDto, HostDisputeDetailsViewModel>();
 
         CreateMap<HostExperienceLookupDto, ExperienceLookupViewModel>();
         CreateMap<HostExperienceCreateOptionsDto, ExperienceCreateOptionsViewModel>();
         CreateMap<CreateExperienceDto, CreateExperienceViewModel>();
-        CreateMap<CreateExperienceViewModel, CreateExperienceDto>();
+        CreateMap<CreateExperienceViewModel, CreateExperienceDto>()
+            .ForMember(destination => destination.Options, options => options.Ignore());
         CreateMap<CreateExperienceViewModel, CreateHostExperienceDraftDto>();
         CreateMap<HostExperienceDraftEditorDto, CreateExperienceViewModel>()
             .ForMember(destination => destination.ExperienceTypeId, options => options.MapFrom(source => source.Draft.ExperienceTypeId))
@@ -38,7 +56,8 @@ public sealed class PresentationMappingProfile : Profile
             .ForMember(destination => destination.InterestIds, options => options.MapFrom(source => source.Draft.InterestIds))
             .ForMember(destination => destination.LanguageIds, options => options.MapFrom(source => source.Draft.LanguageIds));
         CreateMap<HostExperienceListItemDto, ExperienceListItemViewModel>();
-        CreateMap<ExperiencesIndexDto, ExperiencesIndexViewModel>();
+        CreateMap<ExperiencesIndexDto, ExperiencesIndexViewModel>()
+            .ForMember(destination => destination.AvailableStatuses, options => options.Ignore());
         CreateMap<HostExperienceMediaItemDto, ExperienceMediaItemViewModel>();
         CreateMap<HostExperienceMediaEditorDto, ExperienceMediaViewModel>();
         CreateMap<HostExperienceEvidenceFileDto, ExperienceEvidenceFileViewModel>();
