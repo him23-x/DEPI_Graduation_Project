@@ -1,0 +1,29 @@
+@model DiscoverEgypt.Presentation.ViewModels.Account.LoginViewModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Log in";
+}
+<section class="auth-card" aria-labelledby="login-title">
+    <div class="auth-visual auth-visual-login">
+        <div class="visual-copy"><span class="eyebrow">YOUR JOURNEY STARTS HERE</span><h1>Discover Egypt<br />beyond the guidebook.</h1><p>Meet local storytellers and find the moments that make a journey unforgettable.</p></div>
+        <span class="visual-caption">A timeless journey, told by the people who call it home.</span>
+    </div>
+    <div class="auth-form-panel">
+        <div class="form-heading"><span class="eyebrow">WELCOME BACK</span><h2 id="login-title">Log in to your account</h2><p>Continue your journey through Egypt.</p></div>
+        <form asp-action="Login" method="post" class="auth-form">
+            <input asp-for="ReturnUrl" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="auth-input" autocomplete="email" placeholder="you@example.com" />
+            <span asp-validation-for="Email" class="field-error"></span>
+            <div class="password-label"><label asp-for="Password"></label><a href="#" aria-disabled="true">Forgot password?</a></div>
+            <input asp-for="Password" class="auth-input" autocomplete="current-password" placeholder="Enter your password" />
+            <span asp-validation-for="Password" class="field-error"></span>
+            <label class="remember-row"><input asp-for="RememberMe" /><span>Remember me for 30 days</span></label>
+            <button class="auth-submit" type="submit">Log in <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="form-switch">New to Discover Egypt? <a asp-action="Register">Create an account</a></p>
+        <p class="secure-note"><span aria-hidden="true">✦</span> Your information is kept secure and private.</p>
+    </div>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

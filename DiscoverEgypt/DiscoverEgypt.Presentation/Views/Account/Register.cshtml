@@ -1,0 +1,43 @@
+@model DiscoverEgypt.Presentation.ViewModels.Account.RegisterViewModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Create your account";
+}
+<section class="auth-card auth-card-register" aria-labelledby="register-title">
+    <div class="auth-visual auth-visual-register">
+        <div class="visual-copy"><span class="eyebrow">TRAVEL WITH MEANING</span><h1>Find your place<br />in the story.</h1><p>Join a community that brings Egypt's culture, people, and hidden places closer.</p></div>
+        <span class="visual-caption">The most memorable places are found together.</span>
+    </div>
+    <div class="auth-form-panel register-panel">
+        <div class="form-heading"><span class="eyebrow">START EXPLORING</span><h2 id="register-title">Create your account</h2><p>Tell us a little about yourself to get started.</p></div>
+        <form asp-action="Register" method="post" class="auth-form">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <label asp-for="FullName"></label>
+            <input asp-for="FullName" class="auth-input" autocomplete="name" placeholder="Your full name" />
+            <span asp-validation-for="FullName" class="field-error"></span>
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="auth-input" autocomplete="email" placeholder="you@example.com" />
+            <span asp-validation-for="Email" class="field-error"></span>
+            <label asp-for="Role"></label>
+            <select asp-for="Role" class="auth-input auth-select">
+                <option value="">Choose your role</option>
+                <option value="Tourist">Tourist</option>
+                <option value="Host">Host</option>
+                <option value="Guide">Guide</option>
+            </select>
+            <span asp-validation-for="Role" class="field-error"></span>
+            <label asp-for="Password"></label>
+            <input asp-for="Password" class="auth-input" autocomplete="new-password" placeholder="Create a password" />
+            <span asp-validation-for="Password" class="field-error"></span>
+            <p class="password-hint">Use at least 8 characters, including a number and a symbol.</p>
+            <label asp-for="ConfirmPassword"></label>
+            <input asp-for="ConfirmPassword" class="auth-input" autocomplete="new-password" placeholder="Re-enter your password" />
+            <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+            <label class="remember-row terms-row"><input asp-for="AcceptTerms" /><span>I agree to the <a href="#terms">Terms of Service</a> and <a href="#privacy">Privacy Policy</a>.</span></label>
+            <span asp-validation-for="AcceptTerms" class="field-error"></span>
+            <button class="auth-submit" type="submit">Create account <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="form-switch">Already have an account? <a asp-action="Login">Log in</a></p>
+    </div>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

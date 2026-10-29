@@ -1,0 +1,78 @@
+@model HostDisputeDetailsViewModel
+@{
+    ViewData["Title"] = "Dispute details";
+    ViewData["Section"] = "Dispute details";
+    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
+    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d, yyyy · h:mm tt");
+    string OutcomeLabel(DisputeOutcome? outcome) => outcome switch
+    {
+        DisputeOutcome.ProviderFault => "Provider at fault",
+        DisputeOutcome.TouristFault => "Tourist at fault",
+        DisputeOutcome.NoFault => "No fault",
+        _ => "Pending"
+    };
+    string BookingStatusLabel(BookingStatus status) => status.ToString();
+}
+
+<section class="experiences-heading dispute-detail-heading">
+    <div>
+        <div class="eyebrow">DISPUTE · #@Model.DisputeId</div>
+        <h1>Dispute details</h1>
+        <p>Review the dispute outcome, linked booking, and payout status.</p>
+    </div>
+    <a class="button button-secondary" asp-controller="Disputes" asp-action="Index">← Back to disputes</a>
+</section>
+
+<div class="dispute-detail-grid">
+    <main class="dispute-detail-main">
+        <section class="dispute-detail-panel">
+            <div class="dispute-detail-topline">
+                <span class="dispute-status @(Model.Status is DisputeStatus.Open or DisputeStatus.UnderReview ? "dispute-open" : Model.Status == DisputeStatus.Resolved ? "dispute-resolved" : "dispute-closed")"><span></span>@(Model.Status == DisputeStatus.UnderReview ? "Under review" : Model.Status.ToString())</span>
+                <span class="dispute-opened">Opened @Cairo(Model.CreatedAt)</span>
+            </div>
+            <h2>Guest concern</h2>
+            <p class="dispute-description">@Model.Description</p>
+        </section>
+
+        <section class="dispute-detail-panel">
+            <div class="dispute-detail-section-heading"><div class="eyebrow">DECISION</div><h2>Resolution</h2></div>
+            <dl class="dispute-detail-fields">
+                <div><dt>Outcome</dt><dd>@OutcomeLabel(Model.Outcome)</dd></div>
+                <div><dt>Resolved at</dt><dd>@(Model.ResolvedAt.HasValue ? Cairo(Model.ResolvedAt.Value) : "Not resolved")</dd></div>
+                <div class="dispute-detail-wide"><dt>Resolution note</dt><dd>@(string.IsNullOrWhiteSpace(Model.ResolutionNote) ? "No resolution note has been recorded." : Model.ResolutionNote)</dd></div>
+            </dl>
+        </section>
+
+        <section class="dispute-detail-panel">
+            <div class="dispute-detail-section-heading"><div class="eyebrow">RELATED RESERVATION</div><h2>Booking details</h2></div>
+            <dl class="dispute-detail-fields">
+                <div><dt>Experience</dt><dd>@Model.ExperienceTitle</dd></div>
+                <div><dt>Guest</dt><dd>@Model.GuestName</dd></div>
+                <div><dt>Booking ID</dt><dd>#BK-@Model.BookingId</dd></div>
+                <div><dt>Booking status</dt><dd>@BookingStatusLabel(Model.BookingStatus)</dd></div>
+                <div><dt>Experience time</dt><dd>@Cairo(Model.ScheduledStart)</dd></div>
+                <div><dt>Guests</dt><dd>@Model.NumberOfGuests</dd></div>
+                <div><dt>Service amount</dt><dd>@Model.ServiceAmount.ToString("N2") EGP</dd></div>
+            </dl>
+            <a class="dispute-booking-link" asp-controller="Bookings" asp-action="Details" asp-route-id="@Model.BookingId">Open booking details</a>
+        </section>
+    </main>
+
+    <aside class="dispute-payout-panel" aria-labelledby="dispute-payout-heading">
+        <div class="eyebrow">PAYOUT</div>
+        <h2 id="dispute-payout-heading">Payout status</h2>
+        @if (Model.IsPayoutHeld)
+        {
+            <div class="dispute-hold-notice" role="status"><strong>Held during dispute</strong><span>The pending payout remains on hold while this dispute is open or under review.</span></div>
+        }
+        else
+        {
+            <div class="dispute-payout-state">@(Model.PayoutStatus?.ToString() ?? "No payout recorded")</div>
+        }
+        <dl class="dispute-payout-fields">
+            <div><dt>Amount</dt><dd>@(Model.PayoutAmount.HasValue ? $"{Model.PayoutAmount.Value:N2} EGP" : "—")</dd></div>
+            <div><dt>Eligible at</dt><dd>@(Model.EligibleAt.HasValue ? Cairo(Model.EligibleAt.Value) : "—")</dd></div>
+            <div><dt>Paid at</dt><dd>@(Model.PaidAt.HasValue ? Cairo(Model.PaidAt.Value) : "—")</dd></div>
+        </dl>
+    </aside>
+</div>

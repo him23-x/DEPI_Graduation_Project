@@ -1,0 +1,5 @@
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Welcome";
+}
+<section class="account-message"><span class="eyebrow">WELCOME TO DISCOVER EGYPT</span><h1>Your account is ready.</h1><p>You are signed in as <strong>@User.Identity?.Name</strong>. Your role-specific workspace will be available here as it is built.</p><form asp-action="Logout" method="post"><button class="auth-submit" type="submit">Log out</button></form></section>

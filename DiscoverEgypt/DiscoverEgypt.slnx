@@ -11,4 +11,5 @@
   <Folder Name="/src/UI/">
     <Project Path="DiscoverEgypt.Presentation/DiscoverEgypt.Presentation.csproj" />
   </Folder>
+  <Project Path="DiscoverEgypt.Tests/DiscoverEgypt.Tests.csproj" />
 </Solution>

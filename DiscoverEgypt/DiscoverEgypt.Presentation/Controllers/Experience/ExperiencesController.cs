@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AutoMapper;
+using DiscoverEgypt.Application.Contracts.HostExperiences;
 using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Queries;
@@ -10,6 +11,7 @@ using DiscoverEgypt.Presentation.ViewModels.Experience;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 using DiscoverEgypt.Application.Enums.HostExperiences;
 
@@ -21,7 +23,8 @@ namespace DiscoverEgypt.Presentation.Controllers.Experience;
 public sealed class ExperiencesController(
     IMediator mediator,
     IMapper mapper,
-    HostExperienceSubmissionReviewValidator reviewValidator,
+    IExperienceReadinessService readinessService,
+    ILogger<ExperiencesController> logger,
     CreateExperienceDtoValidator createExperienceValidator,
     SaveExperienceEvidenceTextDtoValidator saveEvidenceTextValidator,
     SubmitExperienceDtoValidator submitExperienceValidator) : Controller
@@ -217,8 +220,9 @@ public sealed class ExperiencesController(
                     failures.Add(MediaResultMessage(result));
                 }
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException exception)
             {
+                logger.LogError(exception, "Experience media upload failed because private storage is unavailable or misconfigured.");
                 failures.Add("Media storage is unavailable or not private. Configure a private Azure container and try again.");
                 break;
             }
@@ -382,7 +386,7 @@ public sealed class ExperiencesController(
                 ? ExperienceVenueUse.ThirdPartyControlled : ExperienceVenueUse.PublicRoute;
         var selectedVenueUse = venueUse ?? inferredVenueUse;
         var addressDocumentInHostName = evidenceInHostName ?? !review.Evidence.Any(item => item.Kind == EvidenceKind.VenuePermission && item.FileCount > 0);
-        var reviewIssues = reviewValidator.GetIssues(review, venueUse ?? inferredVenueUse, addressDocumentInHostName).ToList();
+        var reviewIssues = readinessService.GetIssues(review, venueUse, addressDocumentInHostName).ToList();
         review = review with { Issues = reviewIssues };
         var declaration = HostExperienceSubmissionPolicy.GetDeclaration(review.ExperienceType);
         ViewData["Section"] = "Review experience";
@@ -422,9 +426,7 @@ public sealed class ExperiencesController(
             ? ExperienceVenueUse.PrivateHome
             : review.Evidence.Any(item => item.Kind == EvidenceKind.VenuePermission && item.FileCount > 0)
                 ? ExperienceVenueUse.ThirdPartyControlled : ExperienceVenueUse.PublicRoute);
-        var issues = reviewValidator.GetIssues(review, venueUse, model.EvidenceInHostName).ToList();
-        if (review.ExperienceType == EvidenceExperienceType.LocalTraditions && !venueUse.HasValue)
-            issues.Add("Choose whether this experience is a public route, private/home venue, or controlled third-party venue.");
+        var issues = readinessService.GetIssues(review, venueUse, model.EvidenceInHostName).ToList();
         review = review with { Issues = issues };
         var declaration = HostExperienceSubmissionPolicy.GetDeclaration(review.ExperienceType);
         ViewData["Section"] = "Review experience";

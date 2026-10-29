@@ -1,0 +1,89 @@
+@model HostReviewsIndexViewModel
+@{
+    ViewData["Title"] = "Host Reviews";
+    ViewData["Section"] = "Reviews";
+    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
+    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("MMM d, yyyy");
+    var firstRow = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
+    var lastRow = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+}
+
+<section class="experiences-heading reviews-heading">
+    <div>
+        <div class="eyebrow">GUEST FEEDBACK</div>
+        <h1>Reviews</h1>
+        <p>Read feedback from guests who booked your experiences.</p>
+    </div>
+</section>
+
+<section class="reviews-summary" aria-label="Guest rating summary">
+    <div class="reviews-average">
+        <span class="reviews-summary-label">Average rating</span>
+        <strong>@Model.AverageRating.ToString("0.0") <span>/ 5</span></strong>
+    </div>
+    <div class="reviews-summary-divider" aria-hidden="true"></div>
+    <div class="reviews-count">
+        <span class="reviews-summary-label">Total reviews</span>
+        <strong>@Model.ReviewCount</strong>
+    </div>
+</section>
+
+<section class="reviews-list-section" aria-labelledby="reviews-list-heading">
+    <div class="reviews-list-heading">
+        <h2 id="reviews-list-heading">Guest feedback</h2>
+        <span>@Model.ReviewCount review@(Model.ReviewCount == 1 ? "" : "s")</span>
+    </div>
+
+    @if (Model.Reviews.Count == 0)
+    {
+        <section class="empty-state reviews-empty">
+            <div class="empty-illustration" aria-hidden="true"><span>✦</span></div>
+            <h3>No reviews yet</h3>
+            <p>Guest reviews for your experiences will appear here after they submit them.</p>
+        </section>
+    }
+    else
+    {
+        <div class="reviews-list">
+            @foreach (var review in Model.Reviews)
+            {
+                <article class="host-review-card">
+                    <div class="host-review-topline">
+                        <div class="host-review-guest">
+                            <span class="host-review-avatar" aria-hidden="true">@review.GuestName.Trim().FirstOrDefault().ToString().ToUpperInvariant()</span>
+                            <span><strong>@review.GuestName</strong><small>@Cairo(review.CreatedAt)</small></span>
+                        </div>
+                        <span class="host-review-rating">@review.Rating <small>/ 5</small></span>
+                    </div>
+                    <div class="host-review-experience">
+                        <span>Experience</span>
+                        <strong>@review.ExperienceTitle</strong>
+                        <span>Booking #BK-@review.BookingId</span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(review.Comment))
+                    {
+                        <p class="host-review-comment">@review.Comment</p>
+                    }
+                    else
+                    {
+                        <p class="host-review-comment host-review-no-comment">The guest left a rating without a written comment.</p>
+                    }
+                </article>
+            }
+        </div>
+
+        <div class="reviews-pagination">
+            <span>Showing @firstRow–@lastRow of @Model.TotalCount reviews</span>
+            <nav aria-label="Review pages">
+                @if (Model.Page > 1)
+                {
+                    <a asp-controller="Reviews" asp-action="Index" asp-route-page="@(Model.Page - 1)" aria-label="Previous page">Previous</a>
+                }
+                @if (Model.Page < Model.PageCount)
+                {
+                    <a asp-controller="Reviews" asp-action="Index" asp-route-page="@(Model.Page + 1)" aria-label="Next page">Next</a>
+                }
+            </nav>
+        </div>
+    }
+</section>

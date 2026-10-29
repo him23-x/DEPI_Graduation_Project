@@ -90,6 +90,167 @@ body.host-shell { margin: 0; min-height: 100vh; background: var(--host-paper); c
 .booking-meta-grid strong { color: #39332e; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
 .booking-open { flex: 0 0 auto; }
 .booking-empty { margin-top: 18px; }
+.earnings-container { width: min(100%, 1000px); margin: 0 auto; }
+.earnings-heading { display: grid; gap: 10px; }
+.earnings-breadcrumb { display: flex; align-items: center; gap: 9px; color: #7c756d; font-size: 11px; }
+.earnings-breadcrumb > span:nth-child(2) { color: #a9a198; }
+.earnings-breadcrumb img { display: block; }
+.earnings-breadcrumb strong { color: var(--host-gold); font-weight: 700; }
+.earnings-title-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.earnings-title-row h1 { margin: 0; color: #2b2822; font: 700 32px/1.15 "Plus Jakarta Sans", sans-serif; }
+.earnings-export { display: inline-flex; min-height: 38px; align-items: center; gap: 8px; padding: 0 14px; border: 1px solid #efebe4; border-radius: 7px; background: #fff; color: #2b2822; font-size: 11px; font-weight: 600; text-decoration: none; }
+.earnings-export:hover { border-color: #d7c294; background: #fffdf9; }
+.earnings-export img { display: block; }
+.earnings-transparency { display: flex; align-items: center; gap: 9px; margin: 22px 0; padding: 13px 15px; border: 1px solid #e8f4ec; border-radius: 10px; background: #e8f4ec; color: #2b6349; font-size: 11px; line-height: 1.6; }
+.earnings-stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-bottom: 25px; }
+.earnings-stat-card { display: flex; min-height: 100px; flex-direction: column; gap: 10px; overflow: hidden; padding: 15px 17px; border: 1px solid #efebe4; border-radius: 12px; background: #fff; box-shadow: inset 0 3px 0 var(--host-gold); }
+.earnings-stat-card span { color: #7c756d; font-size: 11px; }
+.earnings-stat-card strong { color: #2b2822; font-size: 22px; font-weight: 700; }
+.earnings-stat-cancelled { box-shadow: inset 0 3px 0 #a65b52; }
+.earnings-history { display: grid; gap: 13px; }
+.earnings-history-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.earnings-history-heading h2 { margin: 0; color: #2b2822; font-size: 16px; font-weight: 700; }
+.earnings-filter { display: flex; align-items: center; gap: 8px; color: #7c756d; font-size: 10px; }
+.earnings-filter select { min-width: 130px; height: 33px; padding: 0 10px; border: 1px solid #efebe4; border-radius: 6px; background: #fff; color: #2b2822; font: 500 10px "Plus Jakarta Sans", sans-serif; }
+.earnings-table-wrap { overflow: auto; border: 1px solid #efebe4; border-radius: 12px; background: #fff; }
+.earnings-table { width: 100%; border-collapse: collapse; text-align: left; }
+.earnings-table th { padding: 12px 14px; border-bottom: 1px solid #efebe4; background: #faf7f2; color: #7c756d; font-size: 9px; font-weight: 700; white-space: nowrap; }
+.earnings-table td { padding: 13px 14px; border-bottom: 1px solid #f1eee9; color: #7c756d; font-size: 10px; white-space: nowrap; }
+.earnings-table tbody tr:last-child td { border-bottom: 1px solid #efebe4; }
+.earnings-table .booking-id { color: #2b2822; font-weight: 700; }
+.earnings-table .experience-title-cell { max-width: 210px; overflow: hidden; color: #2b2822; text-overflow: ellipsis; }
+.earnings-table .amount-cell { color: #2b2822; font-weight: 700; text-align: right; }
+.earnings-table .status-cell { text-align: right; }
+.earnings-status { display: inline-flex; padding: 5px 9px; border-radius: 99px; font-size: 9px; font-weight: 700; }
+.earnings-status.paid { background: #e8f4ec; color: #2b6349; }
+.earnings-status.pending { background: #fef3c7; color: #b45309; }
+.earnings-status.cancelled { background: #f0efed; color: #716960; }
+.earnings-table tfoot td { padding: 13px 14px; border: 0; }
+.earnings-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #7c756d; font-size: 10px; }
+.earnings-pagination nav { display: flex; gap: 7px; }
+.earnings-pagination a { padding: 7px 10px; border: 1px solid #efebe4; border-radius: 6px; color: #2b2822; font-size: 9px; text-decoration: none; }
+.earnings-pagination a:hover { border-color: #d7c294; background: #fffdf9; }
+.earnings-empty { min-height: 270px; }
+.earnings-empty h3 { margin: 0; color: #2b2822; font: 600 23px "Cormorant Garamond", serif; }
+.dashboard-heading { margin-bottom: 24px; }
+.dashboard-metric-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 13px; margin-bottom: 17px; }
+.dashboard-metric-card { display: grid; min-height: 128px; align-content: start; gap: 8px; padding: 17px; border: 1px solid var(--host-border); border-radius: 9px; background: #fff; box-shadow: inset 0 3px 0 var(--host-gold); color: inherit; text-decoration: none; transition: transform .15s ease, box-shadow .15s ease; }
+.dashboard-metric-card:hover { transform: translateY(-2px); box-shadow: inset 0 3px 0 var(--host-gold), 0 7px 18px rgba(44,34,30,.06); }
+.dashboard-metric-label { color: #796e66; font-size: 10px; font-weight: 600; }
+.dashboard-metric-card > strong { color: #2b2822; font-size: 25px; line-height: 1.2; }
+.dashboard-metric-card > small { color: #948981; font-size: 9px; line-height: 1.5; }
+.dashboard-rating-denominator { color: #857a72; font-size: 13px; font-weight: 500; }
+.dashboard-content-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px; margin-bottom: 15px; }
+.dashboard-panel { min-width: 0; padding: 18px; border: 1px solid var(--host-border); border-radius: 9px; background: #fff; }
+.dashboard-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
+.dashboard-panel-heading .eyebrow { margin-bottom: 5px; font-size: 8px; }
+.dashboard-panel-heading h2 { margin: 0; color: #2b2822; font: 600 20px/1.2 "Cormorant Garamond", serif; }
+.dashboard-panel-heading > a { color: #806143; font-size: 9px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.dashboard-panel-heading > a:hover { text-decoration: underline; }
+.dashboard-status-list { display: grid; gap: 6px; }
+.dashboard-status-row { display: flex; min-height: 37px; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px solid #f1eee9; color: inherit; text-decoration: none; }
+.dashboard-status-row:last-child { border-bottom: 0; }
+.dashboard-status-row > strong { min-width: 25px; color: #2b2822; font-size: 12px; text-align: right; }
+.dashboard-status-row:hover .status-badge { filter: brightness(.97); }
+.dashboard-payout-rows { display: grid; }
+.dashboard-payout-rows > div { display: flex; min-height: 46px; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid #f1eee9; color: #766b63; font-size: 10px; }
+.dashboard-payout-rows > div:last-child { border-bottom: 0; }
+.dashboard-payout-rows > div > span { display: inline-flex; align-items: center; gap: 8px; }
+.dashboard-payout-rows strong { color: #2b2822; font-size: 11px; }
+.payout-dot { width: 7px; height: 7px; border-radius: 50%; background: #b45309; }
+.payout-paid { background: #367650; }
+.payout-cancelled { background: #a65b52; }
+.dashboard-bookings-grid { align-items: start; }
+.dashboard-booking-list { display: grid; }
+.dashboard-booking-row { display: flex; min-height: 60px; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid #f1eee9; color: inherit; text-decoration: none; }
+.dashboard-booking-row > span:first-child { display: grid; min-width: 0; gap: 5px; }
+.dashboard-booking-row strong { overflow: hidden; color: #39332e; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.dashboard-booking-row small { color: #8a7e75; font-size: 9px; }
+.dashboard-booking-row:hover strong { color: #806143; }
+.dashboard-booking-arrow { flex: 0 0 auto; color: var(--host-gold); font-size: 19px; }
+.dashboard-empty-copy { margin: 0; padding: 15px 0 5px; color: #887a6f; font-size: 10px; line-height: 1.7; }
+.reviews-heading { margin-bottom: 22px; }
+.reviews-summary { display: flex; align-items: center; gap: 30px; margin-bottom: 28px; padding: 20px 24px; border: 1px solid var(--host-border); border-radius: 9px; background: #fff; }
+.reviews-average, .reviews-count { display: grid; gap: 7px; }
+.reviews-summary-label { color: #81766e; font-size: 10px; font-weight: 600; }
+.reviews-average > strong { color: #2b2822; font-size: 28px; line-height: 1.1; }
+.reviews-average > strong > span { color: #857a72; font-size: 13px; font-weight: 500; }
+.reviews-count > strong { color: #2b2822; font-size: 24px; line-height: 1.1; }
+.reviews-summary-divider { width: 1px; height: 47px; background: var(--host-border); }
+.reviews-list-section { display: grid; gap: 13px; }
+.reviews-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.reviews-list-heading h2 { margin: 0; color: #2b2822; font: 600 23px "Cormorant Garamond", serif; }
+.reviews-list-heading > span { color: #81766e; font-size: 10px; }
+.reviews-list { display: grid; gap: 10px; }
+.host-review-card { padding: 17px 19px; border: 1px solid var(--host-border); border-radius: 9px; background: #fff; }
+.host-review-topline { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.host-review-guest { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.host-review-avatar { display: grid; width: 35px; height: 35px; flex: 0 0 35px; place-items: center; border: 1px solid #eadab8; border-radius: 50%; background: #fbf4e7; color: #76562e; font-size: 12px; font-weight: 700; }
+.host-review-guest > span:last-child { display: grid; min-width: 0; gap: 4px; }
+.host-review-guest strong { overflow: hidden; color: #2b2822; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.host-review-guest small { color: #8c8178; font-size: 9px; }
+.host-review-rating { flex: 0 0 auto; color: #2b2822; font-size: 13px; font-weight: 700; }
+.host-review-rating small { color: #8c8178; font-size: 9px; font-weight: 500; }
+.host-review-experience { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 14px 0 9px; color: #8c8178; font-size: 9px; }
+.host-review-experience strong { color: #806143; font-size: 9px; font-weight: 600; }
+.host-review-experience > span:last-child { margin-left: auto; }
+.host-review-comment { margin: 0; color: #5e554e; font-size: 10px; line-height: 1.75; overflow-wrap: anywhere; }
+.host-review-no-comment { color: #9a8f87; font-style: italic; }
+.reviews-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #7c756d; font-size: 10px; }
+.reviews-pagination nav { display: flex; gap: 7px; }
+.reviews-pagination a { padding: 7px 10px; border: 1px solid #efebe4; border-radius: 6px; color: #2b2822; font-size: 9px; text-decoration: none; }
+.reviews-pagination a:hover { border-color: #d7c294; background: #fffdf9; }
+.reviews-empty { min-height: 280px; }
+.disputes-heading { margin-bottom: 23px; }
+.disputes-list { display: grid; gap: 11px; }
+.dispute-card { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 19px; border: 1px solid var(--host-border); border-radius: 9px; background: #fff; }
+.dispute-card-main { min-width: 0; flex: 1; }
+.dispute-card-topline, .dispute-detail-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dispute-status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 99px; font-size: 9px; font-weight: 700; white-space: nowrap; }
+.dispute-status > span { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.dispute-status.dispute-open { background: #fff4df; color: #9a6611; }
+.dispute-status.dispute-resolved { background: #e8f4ec; color: #367650; }
+.dispute-status.dispute-closed { background: #f0efed; color: #716960; }
+.dispute-opened { color: #8c8178; font-size: 9px; }
+.dispute-card h2 { overflow: hidden; margin: 11px 0 5px; color: #2b2822; font: 600 21px/1.15 "Cormorant Garamond", serif; text-overflow: ellipsis; white-space: nowrap; }
+.dispute-booking-meta { margin: 0; color: #81766e; font-size: 9px; line-height: 1.6; }
+.dispute-booking-meta strong { color: #39332e; }
+.dispute-card-summary { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 13px; }
+.dispute-card-summary > span { display: grid; gap: 4px; }
+.dispute-card-summary small { color: #93877f; font-size: 8px; }
+.dispute-card-summary strong { color: #51473f; font-size: 9px; }
+.dispute-open-button { flex: 0 0 auto; }
+.disputes-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 15px; color: #7c756d; font-size: 10px; }
+.disputes-pagination nav { display: flex; gap: 7px; }
+.disputes-pagination a { padding: 7px 10px; border: 1px solid #efebe4; border-radius: 6px; color: #2b2822; font-size: 9px; text-decoration: none; }
+.disputes-pagination a:hover { border-color: #d7c294; background: #fffdf9; }
+.disputes-empty { min-height: 300px; }
+.disputes-empty h2 { margin: 0; color: #2b2822; font: 600 26px "Cormorant Garamond", serif; }
+.dispute-detail-heading { margin-bottom: 20px; }
+.dispute-detail-grid { display: grid; grid-template-columns: minmax(0,1fr) 260px; align-items: start; gap: 15px; }
+.dispute-detail-main { display: grid; gap: 13px; min-width: 0; }
+.dispute-detail-panel, .dispute-payout-panel { padding: 18px; border: 1px solid var(--host-border); border-radius: 9px; background: #fff; }
+.dispute-detail-panel h2, .dispute-payout-panel h2 { margin: 11px 0 10px; color: #2b2822; font: 600 22px/1.2 "Cormorant Garamond", serif; }
+.dispute-description { margin: 0; color: #5e554e; font-size: 10px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+.dispute-detail-section-heading { margin-bottom: 13px; }
+.dispute-detail-section-heading .eyebrow { margin-bottom: 4px; }
+.dispute-detail-section-heading h2 { margin: 0; }
+.dispute-detail-fields, .dispute-payout-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px 18px; margin: 0; }
+.dispute-detail-fields div, .dispute-payout-fields div { display: grid; min-width: 0; gap: 5px; }
+.dispute-detail-fields dt, .dispute-payout-fields dt { color: #8a7e75; font-size: 9px; }
+.dispute-detail-fields dd, .dispute-payout-fields dd { margin: 0; color: #39332e; font-size: 10px; line-height: 1.6; overflow-wrap: anywhere; }
+.dispute-detail-wide { grid-column: 1 / -1; }
+.dispute-booking-link { display: inline-block; margin-top: 16px; color: #806143; font-size: 9px; font-weight: 600; text-decoration: none; }
+.dispute-booking-link:hover { text-decoration: underline; }
+.dispute-payout-panel { position: sticky; top: 18px; }
+.dispute-payout-panel > .eyebrow { margin-bottom: 0; }
+.dispute-payout-panel h2 { margin-top: 4px; }
+.dispute-hold-notice { display: grid; gap: 6px; margin: 13px 0 16px; padding: 11px; border: 1px solid #ead7ab; border-radius: 6px; background: #fff8e9; color: #795b20; }
+.dispute-hold-notice strong { font-size: 10px; }
+.dispute-hold-notice span { font-size: 9px; line-height: 1.6; }
+.dispute-payout-state { margin: 13px 0 16px; color: #51473f; font-size: 11px; font-weight: 700; }
+.dispute-payout-fields { grid-template-columns: 1fr; gap: 12px; padding-top: 14px; border-top: 1px solid #f1eee9; }
+.reviews-empty h3 { margin: 0; color: #2b2822; font: 600 23px "Cormorant Garamond", serif; }
 .booking-detail-heading { align-items: center; }
 .booking-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 270px; align-items: start; gap: 16px; }
 .booking-detail-main { display: grid; gap: 14px; }
@@ -293,5 +454,8 @@ body.host-shell { margin: 0; min-height: 100vh; background: var(--host-paper); c
 @media (max-width: 1050px) { .experience-create-form { grid-template-columns: minmax(0,1fr) 290px; gap: 14px; } .experience-stepper { gap: 7px; } .wizard-step { padding: 0 9px; } }
 @media (max-width: 850px) { .experience-create-form { grid-template-columns: 1fr; } .create-preview-column { position: static; grid-row: 1; } .experience-preview-card { display: grid; grid-template-columns: 180px minmax(0,1fr); } .preview-image { height: 100%; min-height: 170px; } .media-workspace, .evidence-workspace, .review-workspace { grid-template-columns: 1fr; } .media-side-column { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 850px) { .booking-detail-grid { grid-template-columns: 1fr; } .booking-detail-actions { position: static; } }
-@media (max-width: 720px) { .host-sidebar { position: static; width: auto; padding: 13px 14px; } .host-brand { margin: 0 3px 12px; } .host-nav { grid-template-columns: repeat(2,minmax(0,1fr)); } .host-sidebar-bottom { display: none; } .host-main { margin-left: 0; } .host-topbar { height: 52px; padding: 0 17px; } .host-content { padding: 30px 17px; } .experiences-heading { align-items: flex-start; flex-direction: column; } .experiences-heading h1 { font-size: 34px; } .experiences-toolbar { align-items: flex-start; flex-direction: column; gap: 13px; } .experience-grid { grid-template-columns: 1fr; } .experience-stepper { grid-template-columns: repeat(2,minmax(0,1fr)); } .form-panel { padding: 16px 14px; } .form-grid-two { grid-template-columns: 1fr; } .experience-preview-card { grid-template-columns: 1fr; } .preview-image { height: 110px; min-height: 0; } .create-heading h1 { font-size: 32px; } .media-gallery { grid-template-columns: repeat(2,minmax(0,1fr)); } .gallery-heading { align-items: flex-start; flex-direction: column; } .media-side-column { grid-template-columns: 1fr; } .review-meta-grid { grid-template-columns: 1fr; } .review-meta-grid .review-wide { grid-column: auto; } .evidence-form-footer, .evidence-upload-form { align-items: flex-start; flex-direction: column; } .review-submit-actions { align-items: stretch; flex-direction: column; } }
+@media (max-width: 900px) { .earnings-stats { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 900px) { .dashboard-metric-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 900px) { .dispute-detail-grid { grid-template-columns: minmax(0,1fr) 230px; } }
+@media (max-width: 720px) { .host-sidebar { position: static; width: auto; padding: 13px 14px; } .host-brand { margin: 0 3px 12px; } .host-nav { grid-template-columns: repeat(2,minmax(0,1fr)); } .host-sidebar-bottom { display: none; } .host-main { margin-left: 0; } .host-topbar { height: 52px; padding: 0 17px; } .host-content { padding: 30px 17px; } .experiences-heading { align-items: flex-start; flex-direction: column; } .experiences-heading h1 { font-size: 34px; } .experiences-toolbar { align-items: flex-start; flex-direction: column; gap: 13px; } .experience-grid { grid-template-columns: 1fr; } .experience-stepper { grid-template-columns: repeat(2,minmax(0,1fr)); } .form-panel { padding: 16px 14px; } .form-grid-two { grid-template-columns: 1fr; } .experience-preview-card { grid-template-columns: 1fr; } .preview-image { height: 110px; min-height: 0; } .create-heading h1 { font-size: 32px; } .media-gallery { grid-template-columns: repeat(2,minmax(0,1fr)); } .gallery-heading { align-items: flex-start; flex-direction: column; } .media-side-column { grid-template-columns: 1fr; } .review-meta-grid { grid-template-columns: 1fr; } .review-meta-grid .review-wide { grid-column: auto; } .evidence-form-footer, .evidence-upload-form { align-items: flex-start; flex-direction: column; } .review-submit-actions { align-items: stretch; flex-direction: column; } .earnings-title-row { align-items: flex-start; flex-direction: column; } .earnings-title-row h1 { font-size: 29px; } .earnings-history-heading { align-items: flex-start; flex-direction: column; } .earnings-filter { width: 100%; justify-content: space-between; } .earnings-filter select { flex: 1; max-width: 190px; } .earnings-pagination { align-items: flex-start; flex-direction: column; } .dashboard-content-grid { grid-template-columns: 1fr; } .dashboard-panel { padding: 15px; } .reviews-summary { gap: 18px; padding: 17px; } .host-review-card { padding: 15px; } .reviews-pagination { align-items: flex-start; flex-direction: column; } .dispute-card { align-items: stretch; flex-direction: column; } .dispute-open-button { width: 100%; } .dispute-detail-grid { grid-template-columns: 1fr; } .dispute-payout-panel { position: static; } .dispute-detail-fields { grid-template-columns: 1fr; } .disputes-pagination { align-items: flex-start; flex-direction: column; } .dispute-detail-heading > a { width: 100%; } }
 @media (max-width: 720px) { .booking-row { align-items: stretch; flex-direction: column; } .booking-open { width: 100%; justify-content: center; } .booking-meta-grid, .booking-detail-meta { grid-template-columns: 1fr 1fr; } }

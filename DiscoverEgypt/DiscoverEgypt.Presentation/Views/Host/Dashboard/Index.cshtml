@@ -1,0 +1,131 @@
+@model HostDashboardViewModel
+@{
+    ViewData["Title"] = "Host Dashboard";
+    ViewData["Section"] = "Dashboard";
+    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
+    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d · h:mm tt");
+    string StatusLabel(ExperienceStatus status) => status switch
+    {
+        ExperienceStatus.PendingApproval => "Pending approval",
+        ExperienceStatus.Unpublished => "Unpublished",
+        _ => status.ToString()
+    };
+    string StatusClass(ExperienceStatus status) => status switch
+    {
+        ExperienceStatus.PendingApproval => "pending",
+        ExperienceStatus.Published => "published",
+        ExperienceStatus.Rejected => "rejected",
+        ExperienceStatus.Unpublished => "unpublished",
+        _ => "draft"
+    };
+}
+
+<section class="experiences-heading dashboard-heading">
+    <div>
+        <div class="eyebrow">YOUR HOST STUDIO</div>
+        <h1>Host Dashboard</h1>
+        <p>A current view of your experiences, bookings, payouts, and guest feedback.</p>
+    </div>
+    <a class="button button-primary" asp-controller="Experiences" asp-action="Create">＋ Create experience</a>
+</section>
+
+<section class="dashboard-metric-grid" aria-label="Host performance metrics">
+    <a class="dashboard-metric-card" asp-controller="Bookings" asp-action="Index" asp-route-tab="Pending">
+        <span class="dashboard-metric-label">Pending requests</span>
+        <strong>@Model.PendingRequestCount</strong>
+        <small>Paid requests awaiting your response</small>
+    </a>
+    <a class="dashboard-metric-card" asp-controller="Bookings" asp-action="Index" asp-route-tab="Confirmed">
+        <span class="dashboard-metric-label">Confirmed bookings</span>
+        <strong>@Model.ConfirmedBookingCount</strong>
+        <small>Experience bookings confirmed</small>
+    </a>
+    <a class="dashboard-metric-card" asp-controller="Notifications" asp-action="Index" asp-route-filter="Unread">
+        <span class="dashboard-metric-label">Unread notifications</span>
+        <strong>@Model.UnreadNotificationCount</strong>
+        <small>Updates that need your attention</small>
+    </a>
+    <a class="dashboard-metric-card" asp-controller="Earnings" asp-action="Index">
+        <span class="dashboard-metric-label">Average guest rating</span>
+        <strong>@Model.AverageRating.ToString("0.0") <span class="dashboard-rating-denominator">/ 5</span></strong>
+        <small>@Model.ReviewCount reviews</small>
+    </a>
+</section>
+
+<div class="dashboard-content-grid">
+    <section class="dashboard-panel dashboard-status-panel" aria-labelledby="experience-status-heading">
+        <div class="dashboard-panel-heading">
+            <div><div class="eyebrow">YOUR EXPERIENCES</div><h2 id="experience-status-heading">Experience status</h2></div>
+            <a asp-controller="Experiences" asp-action="Index">View all</a>
+        </div>
+        <div class="dashboard-status-list">
+            @foreach (var item in Model.ExperienceStatuses)
+            {
+                <a class="dashboard-status-row" asp-controller="Experiences" asp-action="Index" asp-route-status="@item.Status">
+                    <span class="status-badge @StatusClass(item.Status)"><span></span>@StatusLabel(item.Status)</span>
+                    <strong>@item.Count</strong>
+                </a>
+            }
+        </div>
+    </section>
+
+    <section class="dashboard-panel dashboard-payout-panel" aria-labelledby="payout-summary-heading">
+        <div class="dashboard-panel-heading">
+            <div><div class="eyebrow">PAYOUTS</div><h2 id="payout-summary-heading">Payout totals</h2></div>
+            <a asp-controller="Earnings" asp-action="Index">View earnings</a>
+        </div>
+        <div class="dashboard-payout-rows">
+            <div><span><i class="payout-dot payout-pending"></i>Pending</span><strong>@Model.PendingPayoutAmount.ToString("N2") EGP</strong></div>
+            <div><span><i class="payout-dot payout-paid"></i>Paid</span><strong>@Model.PaidPayoutAmount.ToString("N2") EGP</strong></div>
+            <div><span><i class="payout-dot payout-cancelled"></i>Cancelled</span><strong>@Model.CancelledPayoutAmount.ToString("N2") EGP</strong></div>
+        </div>
+    </section>
+</div>
+
+<div class="dashboard-content-grid dashboard-bookings-grid">
+    <section class="dashboard-panel" aria-labelledby="pending-requests-heading">
+        <div class="dashboard-panel-heading">
+            <div><div class="eyebrow">ACTION NEEDED</div><h2 id="pending-requests-heading">Nearest pending requests</h2></div>
+            <a asp-controller="Bookings" asp-action="Index" asp-route-tab="Pending">View all</a>
+        </div>
+        @if (Model.NearestPendingRequests.Count == 0)
+        {
+            <p class="dashboard-empty-copy">No paid requests are waiting for your response.</p>
+        }
+        else
+        {
+            <div class="dashboard-booking-list">
+                @foreach (var booking in Model.NearestPendingRequests)
+                {
+                    <a class="dashboard-booking-row" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.BookingId">
+                        <span><strong>@booking.ExperienceTitle</strong><small>Booking #BK-@booking.BookingId · @Cairo(booking.ScheduledStart)</small></span>
+                        <span class="dashboard-booking-arrow" aria-hidden="true">›</span>
+                    </a>
+                }
+            </div>
+        }
+    </section>
+
+    <section class="dashboard-panel" aria-labelledby="upcoming-confirmed-heading">
+        <div class="dashboard-panel-heading">
+            <div><div class="eyebrow">COMING UP</div><h2 id="upcoming-confirmed-heading">Confirmed bookings</h2></div>
+            <a asp-controller="Bookings" asp-action="Index" asp-route-tab="Confirmed">View all</a>
+        </div>
+        @if (Model.UpcomingConfirmedBookings.Count == 0)
+        {
+            <p class="dashboard-empty-copy">No upcoming confirmed bookings.</p>
+        }
+        else
+        {
+            <div class="dashboard-booking-list">
+                @foreach (var booking in Model.UpcomingConfirmedBookings)
+                {
+                    <a class="dashboard-booking-row" asp-controller="Bookings" asp-action="Details" asp-route-id="@booking.BookingId">
+                        <span><strong>@booking.ExperienceTitle</strong><small>Booking #BK-@booking.BookingId · @Cairo(booking.ScheduledStart)</small></span>
+                        <span class="dashboard-booking-arrow" aria-hidden="true">›</span>
+                    </a>
+                }
+            </div>
+        }
+    </section>
+</div>

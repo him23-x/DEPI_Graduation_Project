@@ -1,0 +1,108 @@
+@model HostEarningsIndexViewModel
+@{
+    ViewData["Title"] = "Your Earnings";
+    ViewData["Section"] = "Earnings";
+    var zone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
+    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), zone).ToString("MMM d, yyyy · h:mm tt");
+    var firstRow = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
+    var lastRow = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+    var statuses = Enum.GetValues<PayoutStatus>();
+}
+
+<div class="earnings-container">
+    <header class="earnings-heading">
+        <div class="earnings-breadcrumb"><span>Host Dashboard</span><img src="~/images/earnings-chevron-right.svg" alt="" aria-hidden="true" /><strong>Earnings</strong></div>
+        <div class="earnings-title-row">
+            <h1>Your Earnings</h1>
+            <a class="earnings-export" asp-controller="Earnings" asp-action="Export" asp-route-status="@Model.SelectedStatus">
+                <img src="~/images/earnings-download.svg" alt="" aria-hidden="true" /> Export CSV
+            </a>
+        </div>
+    </header>
+
+    <aside class="earnings-transparency" role="note">
+        <span aria-hidden="true">💡</span>
+        <span>Your payout reflects the experience service amount. Any platform fee is added separately at checkout.</span>
+    </aside>
+
+    <section class="earnings-stats" aria-label="Payout totals by status">
+        <article class="earnings-stat-card"><span>Total Earnings</span><strong>@Model.TotalEarnings.ToString("N2") EGP</strong></article>
+        <article class="earnings-stat-card"><span>Pending Payouts</span><strong>@Model.PendingAmount.ToString("N2") EGP</strong></article>
+        <article class="earnings-stat-card"><span>Paid Out</span><strong>@Model.PaidAmount.ToString("N2") EGP</strong></article>
+        <article class="earnings-stat-card earnings-stat-cancelled"><span>Cancelled Payouts</span><strong>@Model.CancelledAmount.ToString("N2") EGP</strong></article>
+    </section>
+
+    <section class="earnings-history" aria-labelledby="payout-history-title">
+        <div class="earnings-history-heading">
+            <h2 id="payout-history-title">Payout History</h2>
+            <form method="get" asp-controller="Earnings" asp-action="Index" class="earnings-filter">
+                <label for="payout-status">Status</label>
+                <select id="payout-status" name="status" onchange="this.form.submit()">
+                    <option value="">All payouts</option>
+                    @foreach (var status in statuses)
+                    {
+                        <option value="@status" selected="@(Model.SelectedStatus == status)">@status</option>
+                    }
+                </select>
+            </form>
+        </div>
+
+        @if (Model.Payouts.Count == 0)
+        {
+            <section class="empty-state earnings-empty">
+                <div class="empty-illustration" aria-hidden="true"><span>◈</span></div>
+                <h3>No payouts yet</h3>
+                <p>Once an experience booking is accepted, its payout will appear here with its amount and eligibility date.</p>
+            </section>
+        }
+        else
+        {
+            <div class="earnings-table-wrap">
+                <table class="earnings-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Experience date</th>
+                            <th scope="col">Booking ID</th>
+                            <th scope="col">Experience</th>
+                            <th scope="col" class="amount-cell">Amount</th>
+                            <th scope="col">Eligible at</th>
+                            <th scope="col" class="status-cell">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var payout in Model.Payouts)
+                        {
+                            <tr>
+                                <td data-label="Experience date">@Cairo(payout.ScheduledStart)</td>
+                                <td data-label="Booking ID" class="booking-id">#BK-@payout.BookingId</td>
+                                <td data-label="Experience" class="experience-title-cell">@payout.ExperienceTitle</td>
+                                <td data-label="Amount" class="amount-cell">@payout.Amount.ToString("N2") EGP</td>
+                                <td data-label="Eligible at">@Cairo(payout.EligibleAt)</td>
+                                <td data-label="Status" class="status-cell"><span class="earnings-status @payout.Status.ToString().ToLowerInvariant()">@payout.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6">
+                                <div class="earnings-pagination">
+                                    <span>Showing @firstRow–@lastRow of @Model.TotalCount transactions</span>
+                                    <nav aria-label="Payout pages">
+                                        @if (Model.Page > 1)
+                                        {
+                                            <a asp-controller="Earnings" asp-action="Index" asp-route-status="@Model.SelectedStatus" asp-route-page="@(Model.Page - 1)" aria-label="Previous page">Previous</a>
+                                        }
+                                        @if (Model.Page < Model.TotalPages)
+                                        {
+                                            <a asp-controller="Earnings" asp-action="Index" asp-route-status="@Model.SelectedStatus" asp-route-page="@(Model.Page + 1)" aria-label="Next page">Next</a>
+                                        }
+                                    </nav>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+    </section>
+</div>
