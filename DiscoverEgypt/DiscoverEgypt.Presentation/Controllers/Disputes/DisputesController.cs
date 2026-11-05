@@ -1,7 +1,5 @@
 using System.Security.Claims;
-using AutoMapper;
 using DiscoverEgypt.Application.Features.Disputes.Requests.Queries;
-using DiscoverEgypt.Presentation.ViewModels.Disputes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +8,7 @@ namespace DiscoverEgypt.Presentation.Controllers.Disputes;
 
 [Authorize(Roles = "Host")]
 [Route("Host/Disputes")]
-public sealed class DisputesController(IMediator mediator, IMapper mapper) : Controller
+public sealed class DisputesController(IMediator mediator) : Controller
 {
     private const int PageSize = 10;
 
@@ -27,7 +25,7 @@ public sealed class DisputesController(IMediator mediator, IMapper mapper) : Con
 
         ViewData["Title"] = "Host Disputes";
         ViewData["Section"] = "Disputes";
-        return View(mapper.Map<HostDisputesIndexViewModel>(result));
+        return View(result);
     }
 
     [HttpGet("{id:int}")]
@@ -42,6 +40,6 @@ public sealed class DisputesController(IMediator mediator, IMapper mapper) : Con
 
         ViewData["Title"] = "Dispute details";
         ViewData["Section"] = "Dispute details";
-        return View(mapper.Map<HostDisputeDetailsViewModel>(dispute));
+        return View(dispute);
     }
 }
