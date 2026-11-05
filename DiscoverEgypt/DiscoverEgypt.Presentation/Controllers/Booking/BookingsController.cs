@@ -1,9 +1,7 @@
 using System.Security.Claims;
-using AutoMapper;
 using DiscoverEgypt.Application.DTOs.Bookings;
 using DiscoverEgypt.Application.Features.Bookings.Requests.Commands;
 using DiscoverEgypt.Application.Features.Bookings.Requests.Queries;
-using DiscoverEgypt.Presentation.ViewModels.Bookings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
@@ -13,7 +11,7 @@ using DiscoverEgypt.Application.Enums.Bookings;
 namespace DiscoverEgypt.Presentation.Controllers.Booking;
 
 [Authorize(Roles = "Host")]
-public sealed class BookingsController(IMediator mediator, IMapper mapper) : Controller
+public sealed class BookingsController(IMediator mediator) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(HostBookingTab tab = HostBookingTab.Pending, CancellationToken cancellationToken = default)
@@ -31,7 +29,7 @@ public sealed class BookingsController(IMediator mediator, IMapper mapper) : Con
             Notice = TempData["BookingNotice"] as string,
             Error = TempData["BookingError"] as string
         };
-        return View(mapper.Map<HostBookingsIndexViewModel>(model));
+        return View(model);
     }
 
     [HttpGet]
@@ -50,7 +48,7 @@ public sealed class BookingsController(IMediator mediator, IMapper mapper) : Con
             Notice = TempData["BookingNotice"] as string,
             Error = TempData["BookingError"] as string
         };
-        return View(mapper.Map<HostBookingDetailsViewModel>(model));
+        return View(model);
     }
 
     [HttpPost]

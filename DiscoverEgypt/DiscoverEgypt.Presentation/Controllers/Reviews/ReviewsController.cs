@@ -1,7 +1,5 @@
 using System.Security.Claims;
-using AutoMapper;
 using DiscoverEgypt.Application.Features.Reviews.Requests.Queries;
-using DiscoverEgypt.Presentation.ViewModels.Reviews;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +8,7 @@ namespace DiscoverEgypt.Presentation.Controllers.Reviews;
 
 [Authorize(Roles = "Host")]
 [Route("Host/Reviews")]
-public sealed class ReviewsController(IMediator mediator, IMapper mapper) : Controller
+public sealed class ReviewsController(IMediator mediator) : Controller
 {
     private const int PageSize = 10;
 
@@ -27,6 +25,6 @@ public sealed class ReviewsController(IMediator mediator, IMapper mapper) : Cont
 
         ViewData["Title"] = "Host Reviews";
         ViewData["Section"] = "Reviews";
-        return View(mapper.Map<HostReviewsIndexViewModel>(result));
+        return View(result);
     }
 }

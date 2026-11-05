@@ -1,11 +1,9 @@
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
-using AutoMapper;
 using DiscoverEgypt.Application.DTOs.Earnings;
 using DiscoverEgypt.Application.Features.Earnings.Requests.Queries;
 using DiscoverEgypt.Domain.Enums.Payments;
-using DiscoverEgypt.Presentation.ViewModels.Earnings;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DiscoverEgypt.Presentation.Controllers.Earnings;
 
 [Authorize(Roles = "Host")]
-public sealed class EarningsController(IMediator mediator, IMapper mapper) : Controller
+public sealed class EarningsController(IMediator mediator) : Controller
 {
     private const int PageSize = 10;
 
@@ -30,17 +28,7 @@ public sealed class EarningsController(IMediator mediator, IMapper mapper) : Con
             return RedirectToAction(nameof(Index), new { status, page = totalPages });
 
         ViewData["Section"] = "Earnings";
-        return View(new HostEarningsIndexViewModel
-        {
-            Payouts = mapper.Map<IReadOnlyList<HostPayoutItemViewModel>>(result.Payouts),
-            PendingAmount = result.PendingAmount,
-            PaidAmount = result.PaidAmount,
-            CancelledAmount = result.CancelledAmount,
-            TotalCount = result.TotalCount,
-            Page = result.Page,
-            PageSize = result.PageSize,
-            SelectedStatus = status
-        });
+        return View(result with { SelectedStatus = status });
     }
 
     public async Task<IActionResult> Export(PayoutStatus? status, CancellationToken cancellationToken = default)

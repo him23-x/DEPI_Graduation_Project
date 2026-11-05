@@ -1,8 +1,6 @@
 using System.Security.Claims;
-using AutoMapper;
 using DiscoverEgypt.Application.Contracts.Notifications;
 using DiscoverEgypt.Application.DTOs.Notifications;
-using DiscoverEgypt.Presentation.ViewModels.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +10,7 @@ namespace DiscoverEgypt.Presentation.Controllers.Notifications;
 
 [Authorize(Roles = "Host")]
 [Route("Host/Notifications")]
-public sealed class NotificationsController(INotificationService notificationService, IMapper mapper) : Controller
+public sealed class NotificationsController(INotificationService notificationService) : Controller
 {
     private const int PageSize = 20;
 
@@ -30,7 +28,7 @@ public sealed class NotificationsController(INotificationService notificationSer
             userId, filter, page, PageSize, cancellationToken);
         ViewData["Title"] = "Notifications";
         ViewData["Section"] = "Notifications";
-        return View(mapper.Map<HostNotificationsViewModel>(notifications));
+        return View(notifications);
     }
 
     [HttpPost("{id:int}/read")]
