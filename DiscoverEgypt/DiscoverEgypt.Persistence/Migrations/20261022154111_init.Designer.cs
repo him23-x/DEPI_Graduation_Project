@@ -19,7 +19,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 {
     [DbContext(typeof(DiscoverEgyptDbContext))]
     [Migration("20261022154111_init")]
-    partial class init
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

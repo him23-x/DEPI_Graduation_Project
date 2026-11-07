@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Experiences;
+namespace DiscoverEgypt.Domain.Enums.Experiences
+{
+    public enum EvidenceKind { MenuAndAllergenInfo, FoodAreaPhoto, PortfolioPhoto, WorkshopPhoto, RouteDetails, VenueProof, VenuePermission }
+}
 
-public enum EvidenceKind { MenuAndAllergenInfo, FoodAreaPhoto, PortfolioPhoto, WorkshopPhoto, RouteDetails, VenueProof, VenuePermission }

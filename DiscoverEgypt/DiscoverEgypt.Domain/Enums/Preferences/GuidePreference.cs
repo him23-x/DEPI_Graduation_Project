@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Preferences;
+namespace DiscoverEgypt.Domain.Enums.Preferences
+{
+    public enum GuidePreference { Preferred, NoGuide, Either }
+}
 
-public enum GuidePreference { Preferred, NoGuide, Either }

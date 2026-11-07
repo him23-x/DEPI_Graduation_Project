@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Bookings;
+namespace DiscoverEgypt.Domain.Enums.Bookings
+{
+    public enum BookingStatus { Pending, Confirmed, Rejected, Cancelled, Completed }
+}
 
-public enum BookingStatus { Pending, Confirmed, Rejected, Cancelled, Completed }

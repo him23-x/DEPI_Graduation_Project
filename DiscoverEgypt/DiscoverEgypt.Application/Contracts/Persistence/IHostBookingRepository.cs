@@ -1,36 +1,32 @@
-using DiscoverEgypt.Application.DTOs.Bookings;
+using DiscoverEgypt.Domain.Entities;
 
 using DiscoverEgypt.Application.Enums.Bookings;
 
-namespace DiscoverEgypt.Application.Contracts.Persistence;
-
-public interface IHostBookingRepository
+namespace DiscoverEgypt.Application.Contracts.Persistence
 {
-    Task<IReadOnlyList<HostBookingListItemDto>> GetForHostAsync(
-        string userId,
-        HostBookingTab tab,
-        CancellationToken cancellationToken = default);
+    public interface IHostBookingRepository
+    {
+        Task<IReadOnlyList<Booking>> GetForHostAsync(
+            string userId,
+            HostBookingTab tab,
+            CancellationToken cancellationToken = default);
 
-    Task<HostBookingDetailDto?> GetDetailsAsync(
-        string userId,
-        int bookingId,
-        CancellationToken cancellationToken = default);
+        Task<Booking?> GetDetailsAsync(
+            string userId,
+            int bookingId,
+            CancellationToken cancellationToken = default);
 
-    Task<HostBookingActionOutcome> AcceptAsync(
-        string userId,
-        int bookingId,
-        DateTime now,
-        CancellationToken cancellationToken = default);
+        Task<IReadOnlyDictionary<string, ApplicationUser>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default);
 
-    Task<HostBookingActionOutcome> RejectAsync(
-        string userId,
-        int bookingId,
-        DateTime now,
-        CancellationToken cancellationToken = default);
+        Task<bool> IsProviderSuspendedAsync(string userId, DateTime now, CancellationToken cancellationToken = default);
 
-    Task<HostBookingActionOutcome> CompleteAsync(
-        string userId,
-        int bookingId,
-        DateTime now,
-        CancellationToken cancellationToken = default);
+        Task<bool> HasConfirmedOverlapAsync(string userId, DateTime scheduledStart, DateTime scheduledEnd, int exceptBookingId, CancellationToken cancellationToken = default);
+
+        Task<HostBookingActionOutcome> ExecuteActionAsync(
+            string userId,
+            int bookingId,
+            Func<HostBookingActionContext, CancellationToken, Task<HostBookingActionOutcome>> action,
+            CancellationToken cancellationToken = default);
+    }
 }
+

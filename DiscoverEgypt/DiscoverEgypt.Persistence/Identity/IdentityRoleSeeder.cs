@@ -1,26 +1,28 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DiscoverEgypt.Persistence.Identity;
-
-public static class IdentityRoleSeeder
+namespace DiscoverEgypt.Persistence.Identity
 {
-    public static async Task SeedAsync(IServiceProvider services)
+    public static class IdentityRoleSeeder
     {
-        using var scope = services.CreateScope();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-        foreach (var roleName in IdentityRoles.All)
+        public static async Task SeedAsync(IServiceProvider services)
         {
-            if (!await roleManager.RoleExistsAsync(roleName))
+            using var scope = services.CreateScope();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            foreach (var roleName in IdentityRoles.All)
             {
-                var result = await roleManager.CreateAsync(new IdentityRole(roleName));
-                if (!result.Succeeded)
+                if (!await roleManager.RoleExistsAsync(roleName))
                 {
-                    var errors = string.Join(", ", result.Errors.Select(error => error.Description));
-                    throw new InvalidOperationException($"Could not create the '{roleName}' role: {errors}");
+                    var result = await roleManager.CreateAsync(new IdentityRole(roleName));
+                    if (!result.Succeeded)
+                    {
+                        var errors = string.Join(", ", result.Errors.Select(error => error.Description));
+                        throw new InvalidOperationException($"Could not create the '{roleName}' role: {errors}");
+                    }
                 }
             }
         }
     }
 }
+

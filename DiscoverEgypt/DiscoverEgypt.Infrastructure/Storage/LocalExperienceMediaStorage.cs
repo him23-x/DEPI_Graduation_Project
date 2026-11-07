@@ -1,18 +1,25 @@
 using DiscoverEgypt.Application.Contracts.Storage;
-using DiscoverEgypt.Application.DTOs.HostExperiences;
+using DiscoverEgypt.Application.ViewModels.HostExperiences;
 
-namespace DiscoverEgypt.Infrastructure.Storage;
-
-public sealed class LocalExperienceMediaStorage(string rootPath) : IExperienceMediaStorage
+namespace DiscoverEgypt.Infrastructure.Storage
 {
-    private readonly LocalExperienceFileStorage _storage = new(rootPath);
+    public sealed class LocalExperienceMediaStorage : IExperienceMediaStorage
+    {
+        private readonly LocalExperienceFileStorage _storage;
 
-    public Task UploadAsync(string storageKey, string contentType, Stream content, CancellationToken cancellationToken = default)
-        => _storage.UploadAsync(storageKey, content, cancellationToken);
+        public LocalExperienceMediaStorage(string rootPath)
+        {
+            _storage = new LocalExperienceFileStorage(rootPath);
+        }
 
-    public async Task<ExperienceMediaDownload> OpenReadAsync(string storageKey, CancellationToken cancellationToken = default)
-        => new(await _storage.OpenReadAsync(storageKey, cancellationToken), LocalExperienceFileStorage.GetContentType(storageKey));
+        public Task UploadAsync(string storageKey, string contentType, Stream content, CancellationToken cancellationToken = default)
+            => _storage.UploadAsync(storageKey, content, cancellationToken);
 
-    public Task DeleteAsync(string storageKey, CancellationToken cancellationToken = default)
-        => _storage.DeleteAsync(storageKey, cancellationToken);
+        public async Task<ExperienceMediaDownload> OpenReadAsync(string storageKey, CancellationToken cancellationToken = default)
+            => new(await _storage.OpenReadAsync(storageKey, cancellationToken), LocalExperienceFileStorage.GetContentType(storageKey));
+
+        public Task DeleteAsync(string storageKey, CancellationToken cancellationToken = default)
+            => _storage.DeleteAsync(storageKey, cancellationToken);
+    }
 }
+

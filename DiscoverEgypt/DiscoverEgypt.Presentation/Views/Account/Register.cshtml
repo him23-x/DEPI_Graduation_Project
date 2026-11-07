@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.ViewModels.Account.RegisterViewModel
+@model DiscoverEgypt.Application.ViewModels.Account.RegisterViewModel
 @{
     Layout = "_AuthLayout";
     ViewData["Title"] = "Create your account";
@@ -33,7 +33,7 @@
             <label asp-for="ConfirmPassword"></label>
             <input asp-for="ConfirmPassword" class="auth-input" autocomplete="new-password" placeholder="Re-enter your password" />
             <span asp-validation-for="ConfirmPassword" class="field-error"></span>
-            <label class="remember-row terms-row"><input asp-for="AcceptTerms" /><span>I agree to the <a href="#terms">Terms of Service</a> and <a href="#privacy">Privacy Policy</a>.</span></label>
+            <label class="remember-row terms-row"><input asp-for="AcceptTerms" /><span>I agree to the Terms of Service and Privacy Policy.</span></label>
             <span asp-validation-for="AcceptTerms" class="field-error"></span>
             <button class="auth-submit" type="submit">Create account <span aria-hidden="true">→</span></button>
         </form>

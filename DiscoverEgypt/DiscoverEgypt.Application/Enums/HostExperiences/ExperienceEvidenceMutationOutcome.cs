@@ -1,9 +1,11 @@
 using DiscoverEgypt.Application.Enums.HostExperiences;
 
-namespace DiscoverEgypt.Application.Enums.HostExperiences;
-
-public enum ExperienceEvidenceMutationOutcome
+namespace DiscoverEgypt.Application.Enums.HostExperiences
 {
-    Success, ExperienceUnavailable, EvidenceUnavailable, InvalidEvidenceKind,
-    InvalidFile, FileLimitReached, TextRequired, TextTooLong
+    public enum ExperienceEvidenceMutationOutcome
+    {
+        Success, ExperienceUnavailable, EvidenceUnavailable, InvalidEvidenceKind,
+        InvalidFile, FileLimitReached, TextRequired, TextTooLong
+    }
 }
+

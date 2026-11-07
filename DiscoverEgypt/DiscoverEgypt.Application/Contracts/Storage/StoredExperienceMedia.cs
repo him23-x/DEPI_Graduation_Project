@@ -2,6 +2,8 @@ using DiscoverEgypt.Application.Contracts.Storage;
 
 using DiscoverEgypt.Domain.Enums.Experiences;
 
-namespace DiscoverEgypt.Application.Contracts.Storage;
+namespace DiscoverEgypt.Application.Contracts.Storage
+{
+    public sealed record StoredExperienceMedia(string StorageKey, MediaType MediaType);
+}
 
-public sealed record StoredExperienceMedia(string StorageKey, MediaType MediaType);

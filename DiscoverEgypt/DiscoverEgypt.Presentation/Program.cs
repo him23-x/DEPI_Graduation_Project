@@ -4,6 +4,7 @@ using DiscoverEgypt.Persistence;
 using DiscoverEgypt.Presentation;
 using DiscoverEgypt.Persistence.Identity;
 using DiscoverEgypt.Persistence.Seeding;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,13 @@ builder.Services.AddInfrastructureServices(builder.Configuration, builder.Enviro
 builder.Services.AddPresentationServices();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<DiscoverEgyptDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 await IdentityRoleSeeder.SeedAsync(app.Services);
 if (app.Environment.IsDevelopment())

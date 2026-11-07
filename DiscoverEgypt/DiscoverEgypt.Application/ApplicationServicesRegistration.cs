@@ -1,5 +1,4 @@
 using AutoMapper;
-using DiscoverEgypt.Application.Common.Behaviors;
 using DiscoverEgypt.Application.Contracts.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Services;
 using FluentValidation;
@@ -7,23 +6,23 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace DiscoverEgypt.Application;
-
-public static class ApplicationServicesRegistration
+namespace DiscoverEgypt.Application
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static class ApplicationServicesRegistration
     {
-        var applicationAssembly = Assembly.GetExecutingAssembly();
-        services.AddMediatR(applicationAssembly);
-        services.AddAutoMapper(configuration =>
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            configuration.LicenseKey = Environment.GetEnvironmentVariable("AUTOMAPPER_LICENSE_KEY");
-        }, applicationAssembly);
-        services.AddValidatorsFromAssembly(applicationAssembly, ServiceLifetime.Transient);
-        services.AddTransient<Features.HostExperiences.Validators.DTOs.HostExperienceSubmissionReviewValidator>();
-        services.AddScoped<IExperienceReadinessService, ExperienceReadinessService>();
-        services.AddScoped<IExperienceStatusService, ExperienceStatusService>();
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        return services;
+            var applicationAssembly = Assembly.GetExecutingAssembly();
+            services.AddMediatR(applicationAssembly);
+            services.AddAutoMapper(configuration =>
+            {
+                configuration.LicenseKey = Environment.GetEnvironmentVariable("AUTOMAPPER_LICENSE_KEY");
+            }, applicationAssembly);
+            services.AddValidatorsFromAssembly(applicationAssembly, ServiceLifetime.Transient);
+            services.AddTransient<Features.HostExperiences.Validators.ViewModels.HostExperienceSubmissionReviewValidator>();
+            services.AddScoped<IExperienceReadinessService, ExperienceReadinessService>();
+            return services;
+        }
     }
 }
+

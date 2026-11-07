@@ -1,15 +1,16 @@
 
 using DiscoverEgypt.Domain.Enums.Experiences;
 
-namespace DiscoverEgypt.Domain.Entities;
-
-public class ExperienceDeclaration : BaseEntity
+namespace DiscoverEgypt.Domain.Entities
 {
-    public int ExperienceId { get; set; }
-    public Experience Experience { get; set; } = null!;
-    public string HostUserId { get; set; }
-    public DeclarationType DeclarationType { get; set; }
-    public string DeclarationText { get; set; } = string.Empty;
-    public DateTime AcceptedAt { get; set; }
+    public class ExperienceDeclaration : BaseEntity
+    {
+        public int ExperienceId { get; set; }
+        public Experience Experience { get; set; } = null!;
+        public string HostUserId { get; set; }
+        public DeclarationType DeclarationType { get; set; }
+        public string DeclarationText { get; set; } = string.Empty;
+        public DateTime AcceptedAt { get; set; }
+    }
 }
 

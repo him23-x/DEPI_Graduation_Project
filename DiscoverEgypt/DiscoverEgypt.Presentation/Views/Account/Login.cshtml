@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Presentation.ViewModels.Account.LoginViewModel
+@model DiscoverEgypt.Application.ViewModels.Account.LoginViewModel
 @{
     Layout = "_AuthLayout";
     ViewData["Title"] = "Log in";
@@ -16,7 +16,7 @@
             <label asp-for="Email"></label>
             <input asp-for="Email" class="auth-input" autocomplete="email" placeholder="you@example.com" />
             <span asp-validation-for="Email" class="field-error"></span>
-            <div class="password-label"><label asp-for="Password"></label><a href="#" aria-disabled="true">Forgot password?</a></div>
+            <div class="password-label"><label asp-for="Password"></label></div>
             <input asp-for="Password" class="auth-input" autocomplete="current-password" placeholder="Enter your password" />
             <span asp-validation-for="Password" class="field-error"></span>
             <label class="remember-row"><input asp-for="RememberMe" /><span>Remember me for 30 days</span></label>

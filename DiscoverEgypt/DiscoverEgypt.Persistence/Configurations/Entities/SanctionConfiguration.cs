@@ -4,23 +4,24 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using DiscoverEgypt.Domain.Enums.Sanctions;
 
-namespace DiscoverEgypt.Persistence.Configurations.Entities;
-
-public class SanctionConfiguration : IEntityTypeConfiguration<Sanction>
+namespace DiscoverEgypt.Persistence.Configurations.Entities
 {
-    public void Configure(EntityTypeBuilder<Sanction> builder)
+    public class SanctionConfiguration : IEntityTypeConfiguration<Sanction>
     {
-        builder.Property(x => x.UserId).IsRequired().HasMaxLength(450);
-        builder.Property(x => x.SanctionType).HasConversion<string>().HasMaxLength(30).IsRequired();
-        builder.Property(x => x.DecidedByAdminId).IsRequired().HasMaxLength(450);
-        builder.HasOne(x => x.Dispute).WithMany(x => x.Sanctions).HasForeignKey(x => x.DisputeId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.DecidedByAdminId).OnDelete(DeleteBehavior.Restrict);
-        builder.ToTable(t =>
+        public void Configure(EntityTypeBuilder<Sanction> builder)
         {
-            t.HasCheckConstraint("CK_Sanction_Days_Positive", "[Days] > 0");
-            t.HasCheckConstraint("CK_Sanction_ValidPeriod", "[EndsAt] > [StartsAt]");
-        });
+            builder.Property(x => x.UserId).IsRequired().HasMaxLength(450);
+            builder.Property(x => x.SanctionType).HasConversion<string>().HasMaxLength(30).IsRequired();
+            builder.Property(x => x.DecidedByAdminId).IsRequired().HasMaxLength(450);
+            builder.HasOne(x => x.Dispute).WithMany(x => x.Sanctions).HasForeignKey(x => x.DisputeId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.DecidedByAdminId).OnDelete(DeleteBehavior.Restrict);
+            builder.ToTable(t =>
+            {
+                t.HasCheckConstraint("CK_Sanction_Days_Positive", "[Days] > 0");
+                t.HasCheckConstraint("CK_Sanction_ValidPeriod", "[EndsAt] > [StartsAt]");
+            });
+        }
     }
 }
 

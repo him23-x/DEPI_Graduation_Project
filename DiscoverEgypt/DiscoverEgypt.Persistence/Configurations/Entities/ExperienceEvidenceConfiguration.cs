@@ -4,17 +4,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using DiscoverEgypt.Domain.Enums.Experiences;
 
-namespace DiscoverEgypt.Persistence.Configurations.Entities;
-
-public class ExperienceEvidenceConfiguration : IEntityTypeConfiguration<ExperienceEvidence>
+namespace DiscoverEgypt.Persistence.Configurations.Entities
 {
-    public void Configure(EntityTypeBuilder<ExperienceEvidence> builder)
+    public class ExperienceEvidenceConfiguration : IEntityTypeConfiguration<ExperienceEvidence>
     {
-        builder.Property(x => x.EvidenceKind).HasConversion<string>().HasMaxLength(40).IsRequired();
-        builder.Property(x => x.TextContent).HasMaxLength(5000);
-        builder.Property(x => x.StorageKey).HasMaxLength(500);
-        builder.ToTable(t => t.HasCheckConstraint("CK_ExperienceEvidence_HasContent", "[TextContent] IS NOT NULL OR [StorageKey] IS NOT NULL"));
-        builder.HasOne(x => x.Experience).WithMany(x => x.Evidence).HasForeignKey(x => x.ExperienceId).OnDelete(DeleteBehavior.Cascade);
+        public void Configure(EntityTypeBuilder<ExperienceEvidence> builder)
+        {
+            builder.Property(x => x.EvidenceKind).HasConversion<string>().HasMaxLength(40).IsRequired();
+            builder.Property(x => x.TextContent).HasMaxLength(5000);
+            builder.Property(x => x.StorageKey).HasMaxLength(500);
+            builder.ToTable(t => t.HasCheckConstraint("CK_ExperienceEvidence_HasContent", "[TextContent] IS NOT NULL OR [StorageKey] IS NOT NULL"));
+            builder.HasOne(x => x.Experience).WithMany(x => x.Evidence).HasForeignKey(x => x.ExperienceId).OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }
 

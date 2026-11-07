@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Disputes;
+namespace DiscoverEgypt.Domain.Enums.Disputes
+{
+    public enum DisputeOutcome { ProviderFault, TouristFault, NoFault }
+}
 
-public enum DisputeOutcome { ProviderFault, TouristFault, NoFault }

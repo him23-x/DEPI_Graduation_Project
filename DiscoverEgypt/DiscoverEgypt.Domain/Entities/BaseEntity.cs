@@ -1,7 +1,9 @@
-namespace DiscoverEgypt.Domain.Entities;
-
-/// <summary>Shared base for all domain entities.</summary>
-public abstract class BaseEntity
+namespace DiscoverEgypt.Domain.Entities
 {
-    public int Id { get; set; } 
+    /// <summary>Shared base for all domain entities.</summary>
+    public abstract class BaseEntity
+    {
+        public int Id { get; set; }
+    }
 }
+

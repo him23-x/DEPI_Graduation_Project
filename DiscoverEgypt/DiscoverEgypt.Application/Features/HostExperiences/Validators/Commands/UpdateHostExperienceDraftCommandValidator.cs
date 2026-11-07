@@ -1,15 +1,17 @@
 using FluentValidation;
-using DiscoverEgypt.Application.DTOs.HostExperiences;
+using DiscoverEgypt.Application.ViewModels.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 
-namespace DiscoverEgypt.Application.Features.HostExperiences.Validators.Commands;
-
-public sealed class UpdateHostExperienceDraftCommandValidator : AbstractValidator<UpdateHostExperienceDraftCommand>
+namespace DiscoverEgypt.Application.Features.HostExperiences.Validators.Commands
 {
-    public UpdateHostExperienceDraftCommandValidator(IValidator<CreateHostExperienceDraftDto> draftValidator)
+    public sealed class UpdateHostExperienceDraftCommandValidator : AbstractValidator<UpdateHostExperienceDraftCommand>
     {
-        RuleFor(x => x.UserId).NotEmpty();
-        RuleFor(x => x.ExperienceId).GreaterThan(0);
-        RuleFor(x => x.Draft).NotNull().SetValidator(draftValidator);
+        public UpdateHostExperienceDraftCommandValidator(IValidator<HostExperienceDraftViewModel> draftValidator)
+        {
+            RuleFor(x => x.UserId).NotEmpty();
+            RuleFor(x => x.ExperienceId).GreaterThan(0);
+            RuleFor(x => x.Draft).NotNull().SetValidator(draftValidator);
+        }
     }
 }
+

@@ -1,11 +1,12 @@
 
-namespace DiscoverEgypt.Domain.Entities;
-
-public class PreferenceCulturalArea : BaseEntity
+namespace DiscoverEgypt.Domain.Entities
 {
-    public int TouristPreferenceId { get; set; }
-    public TouristPreference TouristPreference { get; set; } = null!;
-    public int CulturalAreaId { get; set; }
-    public CulturalArea CulturalArea { get; set; } = null!;
+    public class PreferenceCulturalArea : BaseEntity
+    {
+        public int TouristPreferenceId { get; set; }
+        public TouristPreference TouristPreference { get; set; } = null!;
+        public int CulturalAreaId { get; set; }
+        public CulturalArea CulturalArea { get; set; } = null!;
+    }
 }
 

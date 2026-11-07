@@ -2,31 +2,49 @@ using DiscoverEgypt.Application.Contracts.Persistence;
 using DiscoverEgypt.Domain.Enums.Experiences;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscoverEgypt.Persistence.Repositories.Host.Experiences;
-
-public sealed class HostExperienceStatusRepository(DiscoverEgyptDbContext dbContext)
-    : IExperienceStatusRepository
+namespace DiscoverEgypt.Persistence.Repositories.Host.Experiences
 {
-    public async Task<bool> ReturnToPendingApprovalAsync(
-        string userId,
-        int experienceId,
-        CancellationToken cancellationToken = default)
+    public sealed class HostExperienceStatusRepository
+        : IExperienceStatusRepository
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(userId);
+        private readonly DiscoverEgyptDbContext _dbContext;
 
-        var experience = await dbContext.Experiences.SingleOrDefaultAsync(
-            item => item.Id == experienceId
-                && item.HostProfile.UserId == userId
-                && item.Status == ExperienceStatus.Published,
-            cancellationToken);
+        public HostExperienceStatusRepository(DiscoverEgyptDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
-        if (experience is null)
-            return false;
+        public Task<ExperienceStatus?> GetStatusAsync(
+            string userId,
+            int experienceId,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(userId);
+            return _dbContext.Experiences
+                .Where(item => item.Id == experienceId && item.HostProfile.UserId == userId)
+                .Select(item => (ExperienceStatus?)item.Status)
+                .SingleOrDefaultAsync(cancellationToken);
+        }
 
-        experience.Status = ExperienceStatus.PendingApproval;
-        experience.RejectionReason = null;
-        experience.UpdatedAt = DateTime.UtcNow;
-        await dbContext.SaveChangesAsync(cancellationToken);
-        return true;
+        public async Task<bool> UpdateStatusAsync(
+            string userId,
+            int experienceId,
+            ExperienceStatus expectedStatus,
+            ExperienceStatus newStatus,
+            string? rejectionReason,
+            DateTime updatedAt,
+            CancellationToken cancellationToken = default)
+        {
+            var updated = await _dbContext.Experiences
+                .Where(item => item.Id == experienceId
+                    && item.HostProfile.UserId == userId
+                    && item.Status == expectedStatus)
+                .ExecuteUpdateAsync(update => update
+                    .SetProperty(item => item.Status, newStatus)
+                    .SetProperty(item => item.RejectionReason, rejectionReason)
+                    .SetProperty(item => item.UpdatedAt, updatedAt), cancellationToken);
+            return updated == 1;
+        }
     }
 }
+

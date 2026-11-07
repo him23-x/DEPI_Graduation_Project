@@ -1,9 +1,11 @@
 using DiscoverEgypt.Application.Enums.HostExperiences;
 
-namespace DiscoverEgypt.Application.Enums.HostExperiences;
-
-public enum ExperienceMediaMutationOutcome
+namespace DiscoverEgypt.Application.Enums.HostExperiences
 {
-    Success, ExperienceUnavailable, ImageLimitReached, VideoLimitReached,
-    InvalidFile, MediaUnavailable, CoverMustBeImage, InvalidOrder
+    public enum ExperienceMediaMutationOutcome
+    {
+        Success, ExperienceUnavailable, ImageLimitReached, VideoLimitReached,
+        InvalidFile, MediaUnavailable, CoverMustBeImage, InvalidOrder
+    }
 }
+

@@ -1,13 +1,15 @@
 using DiscoverEgypt.Application.Features.Bookings.Requests.Queries;
 using FluentValidation;
 
-namespace DiscoverEgypt.Application.Features.Bookings.Validators;
-
-public sealed class GetHostBookingDetailsQueryValidator : AbstractValidator<GetHostBookingDetailsQuery>
+namespace DiscoverEgypt.Application.Features.Bookings.Validators
 {
-    public GetHostBookingDetailsQueryValidator()
+    public sealed class GetHostBookingDetailsQueryValidator : AbstractValidator<GetHostBookingDetailsQuery>
     {
-        RuleFor(x => x.UserId).NotEmpty();
-        RuleFor(x => x.BookingId).GreaterThan(0);
+        public GetHostBookingDetailsQueryValidator()
+        {
+            RuleFor(x => x.UserId).NotEmpty();
+            RuleFor(x => x.BookingId).GreaterThan(0);
+        }
     }
 }
+

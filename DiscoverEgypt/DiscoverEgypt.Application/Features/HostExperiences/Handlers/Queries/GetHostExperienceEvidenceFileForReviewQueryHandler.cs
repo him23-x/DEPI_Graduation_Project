@@ -3,23 +3,34 @@ using DiscoverEgypt.Application.Contracts.Storage;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Queries;
 using MediatR;
 
-namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Queries;
-
-public sealed class GetHostExperienceEvidenceFileForReviewQueryHandler(
-    IHostExperienceEvidenceRepository repository,
-    IExperienceEvidenceStorage storage)
-    : IRequestHandler<GetHostExperienceEvidenceFileForReviewQuery, ExperienceEvidenceDownload?>
+namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Queries
 {
-    public async Task<ExperienceEvidenceDownload?> Handle(
-        GetHostExperienceEvidenceFileForReviewQuery request,
-        CancellationToken cancellationToken)
+    public sealed class GetHostExperienceEvidenceFileForReviewQueryHandler
+        : IRequestHandler<GetHostExperienceEvidenceFileForReviewQuery, ExperienceEvidenceDownload?>
     {
-        if (request.EvidenceId <= 0)
-            return null;
+        private readonly IHostExperienceEvidenceRepository _repository;
+        private readonly IExperienceEvidenceStorage _storage;
 
-        var file = await repository.GetFileForReviewAsync(request.EvidenceId, cancellationToken);
-        return file is null
-            ? null
-            : await storage.OpenReadAsync(file.StorageKey, cancellationToken);
+        public GetHostExperienceEvidenceFileForReviewQueryHandler(
+            IHostExperienceEvidenceRepository repository,
+            IExperienceEvidenceStorage storage)
+        {
+            _repository = repository;
+            _storage = storage;
+        }
+
+        public async Task<ExperienceEvidenceDownload?> Handle(
+            GetHostExperienceEvidenceFileForReviewQuery request,
+            CancellationToken cancellationToken)
+        {
+            if (request.EvidenceId <= 0)
+                return null;
+
+            var file = await _repository.GetFileForReviewAsync(request.EvidenceId, cancellationToken);
+            return file is null
+                ? null
+                : await _storage.OpenReadAsync(file.StorageKey, cancellationToken);
+        }
     }
 }
+

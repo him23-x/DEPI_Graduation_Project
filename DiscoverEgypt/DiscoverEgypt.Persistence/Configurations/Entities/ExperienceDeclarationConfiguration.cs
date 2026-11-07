@@ -4,17 +4,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using DiscoverEgypt.Domain.Enums.Experiences;
 
-namespace DiscoverEgypt.Persistence.Configurations.Entities;
-
-public class ExperienceDeclarationConfiguration : IEntityTypeConfiguration<ExperienceDeclaration>
+namespace DiscoverEgypt.Persistence.Configurations.Entities
 {
-    public void Configure(EntityTypeBuilder<ExperienceDeclaration> builder)
+    public class ExperienceDeclarationConfiguration : IEntityTypeConfiguration<ExperienceDeclaration>
     {
-        builder.Property(x => x.HostUserId).IsRequired().HasMaxLength(450);
-        builder.Property(x => x.DeclarationType).HasConversion<string>().HasMaxLength(40).IsRequired();
-        builder.Property(x => x.DeclarationText).IsRequired().HasMaxLength(5000);
-        builder.HasOne(x => x.Experience).WithMany(x => x.Declarations).HasForeignKey(x => x.ExperienceId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.HostUserId).OnDelete(DeleteBehavior.Restrict);
+        public void Configure(EntityTypeBuilder<ExperienceDeclaration> builder)
+        {
+            builder.Property(x => x.HostUserId).IsRequired().HasMaxLength(450);
+            builder.Property(x => x.DeclarationType).HasConversion<string>().HasMaxLength(40).IsRequired();
+            builder.Property(x => x.DeclarationText).IsRequired().HasMaxLength(5000);
+            builder.HasOne(x => x.Experience).WithMany(x => x.Declarations).HasForeignKey(x => x.ExperienceId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.HostUserId).OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
 

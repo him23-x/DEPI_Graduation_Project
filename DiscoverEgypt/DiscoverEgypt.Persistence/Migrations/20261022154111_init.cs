@@ -12,7 +12,7 @@ using DiscoverEgypt.Domain.Enums.Sanctions;
 namespace DiscoverEgypt.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class InitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

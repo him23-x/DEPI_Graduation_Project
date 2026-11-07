@@ -1,6 +1,8 @@
-using DiscoverEgypt.Application.DTOs.Dashboard;
+using DiscoverEgypt.Application.ViewModels.Dashboard;
 using MediatR;
 
-namespace DiscoverEgypt.Application.Features.Dashboard.Requests.Queries;
+namespace DiscoverEgypt.Application.Features.Dashboard.Requests.Queries
+{
+    public sealed record GetHostDashboardQuery(string UserId) : IRequest<HostDashboardViewModel>;
+}
 
-public sealed record GetHostDashboardQuery(string UserId) : IRequest<HostDashboardDto>;

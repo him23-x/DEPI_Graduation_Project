@@ -23,16 +23,18 @@
             <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Earnings" ? "active" : string.Empty)" asp-controller="Earnings" asp-action="Index"><span class="nav-icon">◈</span> Earnings</a>
             <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reviews" ? "active" : string.Empty)" asp-controller="Reviews" asp-action="Index"><span class="nav-icon">❝</span> Reviews</a>
             <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Disputes" ? "active" : string.Empty)" asp-controller="Disputes" asp-action="Index"><span class="nav-icon">⚖</span> Disputes</a>
-            <a class="host-nav-link" href="#" aria-disabled="true"><span class="nav-icon">◷</span> Availability</a>
         </nav>
         <div class="host-sidebar-bottom">
             <div class="sidebar-section-label">ACCOUNT</div>
-            <a class="host-nav-link" href="#" aria-disabled="true"><span class="nav-icon">⚙</span> Settings</a>
             <div class="host-profile"><span class="host-avatar">@(User.Identity?.Name?.FirstOrDefault().ToString().ToUpperInvariant() ?? "H")</span><span>@(User.Identity?.Name ?? "Host")<small>Host account</small></span></div>
         </div>
     </aside>
     <main class="host-main">
-        <header class="host-topbar"><span>Host workspace <span class="breadcrumb-separator">/</span> <strong>@(ViewData["Section"] ?? "My Experiences")</strong></span><span class="topbar-avatar">@(User.Identity?.Name?.FirstOrDefault().ToString().ToUpperInvariant() ?? "H")</span></header>
+        <header class="host-topbar">
+            <span>Host workspace <span class="breadcrumb-separator">/</span> <strong>@(ViewData["Section"] ?? "My Experiences")</strong></span>
+            @await Component.InvokeAsync("HostNotificationBell")
+            <span class="topbar-avatar">@(User.Identity?.Name?.FirstOrDefault().ToString().ToUpperInvariant() ?? "H")</span>
+        </header>
         <div class="host-content">@RenderBody()</div>
     </main>
     @await RenderSectionAsync("Scripts", required: false)

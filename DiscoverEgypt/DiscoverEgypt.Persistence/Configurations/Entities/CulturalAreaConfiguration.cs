@@ -2,14 +2,15 @@ using DiscoverEgypt.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DiscoverEgypt.Persistence.Configurations.Entities;
-
-public class CulturalAreaConfiguration : IEntityTypeConfiguration<CulturalArea>
+namespace DiscoverEgypt.Persistence.Configurations.Entities
 {
-    public void Configure(EntityTypeBuilder<CulturalArea> builder)
+    public class CulturalAreaConfiguration : IEntityTypeConfiguration<CulturalArea>
     {
-        builder.Property(x => x.Name).IsRequired().HasMaxLength(150);
-        builder.HasIndex(x => x.Name).IsUnique();
+        public void Configure(EntityTypeBuilder<CulturalArea> builder)
+        {
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(150);
+            builder.HasIndex(x => x.Name).IsUnique();
+        }
     }
 }
 

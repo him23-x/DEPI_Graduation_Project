@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Verification;
+namespace DiscoverEgypt.Domain.Enums.Verification
+{
+    public enum VerificationDocType { NationalId, License, Language, Residence, Permission }
+}
 
-public enum VerificationDocType { NationalId, License, Language, Residence, Permission }

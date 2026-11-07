@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 @model DiscoverEgypt.Application.DTOs.HostExperiences.EvidenceFileGroupDto
+=======
+@model DiscoverEgypt.Application.ViewModels.HostExperiences.EvidenceFileGroupViewModel
+>>>>>>> f567d3a (modificaion)
 @{
     var files = Model.Editor.Files.Where(item => item.Kind == Model.Kind).OrderBy(item => item.UploadedAt).ToArray();
 }

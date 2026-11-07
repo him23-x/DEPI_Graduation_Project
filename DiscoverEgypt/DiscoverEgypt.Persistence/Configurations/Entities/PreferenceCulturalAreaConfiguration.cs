@@ -2,16 +2,17 @@ using DiscoverEgypt.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DiscoverEgypt.Persistence.Configurations.Entities;
-
-public class PreferenceCulturalAreaConfiguration : IEntityTypeConfiguration<PreferenceCulturalArea>
+namespace DiscoverEgypt.Persistence.Configurations.Entities
 {
-    public void Configure(EntityTypeBuilder<PreferenceCulturalArea> builder)
+    public class PreferenceCulturalAreaConfiguration : IEntityTypeConfiguration<PreferenceCulturalArea>
     {
-        builder.Ignore(x => x.Id);
-        builder.HasKey(x => new { x.TouristPreferenceId, x.CulturalAreaId });
-        builder.HasOne(x => x.TouristPreference).WithMany(x => x.PreferenceCulturalAreas).HasForeignKey(x => x.TouristPreferenceId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(x => x.CulturalArea).WithMany(x => x.PreferenceCulturalAreas).HasForeignKey(x => x.CulturalAreaId).OnDelete(DeleteBehavior.Restrict);
+        public void Configure(EntityTypeBuilder<PreferenceCulturalArea> builder)
+        {
+            builder.Ignore(x => x.Id);
+            builder.HasKey(x => new { x.TouristPreferenceId, x.CulturalAreaId });
+            builder.HasOne(x => x.TouristPreference).WithMany(x => x.PreferenceCulturalAreas).HasForeignKey(x => x.TouristPreferenceId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.CulturalArea).WithMany(x => x.PreferenceCulturalAreas).HasForeignKey(x => x.CulturalAreaId).OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
 

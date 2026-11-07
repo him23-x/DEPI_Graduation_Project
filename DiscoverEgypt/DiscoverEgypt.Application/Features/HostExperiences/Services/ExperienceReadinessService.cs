@@ -1,27 +1,36 @@
 using DiscoverEgypt.Application.Contracts.HostExperiences;
-using DiscoverEgypt.Application.DTOs.HostExperiences;
+using DiscoverEgypt.Application.ViewModels.HostExperiences;
 using DiscoverEgypt.Application.Enums.HostExperiences;
-using DiscoverEgypt.Application.Features.HostExperiences.Validators.DTOs;
+using DiscoverEgypt.Application.Features.HostExperiences.Validators.ViewModels;
 
-namespace DiscoverEgypt.Application.Features.HostExperiences.Services;
-
-public sealed class ExperienceReadinessService(HostExperienceSubmissionReviewValidator validator)
-    : IExperienceReadinessService
+namespace DiscoverEgypt.Application.Features.HostExperiences.Services
 {
-    private const string VenueChoiceRequiredMessage =
-        "Confirm whether this experience is a public route, private/home venue, or controlled third-party venue.";
-
-    public IReadOnlyList<string> GetIssues(
-        HostExperienceSubmissionReviewDto review,
-        ExperienceVenueUse? venueUse = null,
-        bool evidenceInHostName = true)
+    public sealed class ExperienceReadinessService
+        : IExperienceReadinessService
     {
-        ArgumentNullException.ThrowIfNull(review);
+        private readonly HostExperienceSubmissionReviewValidator _validator;
 
-        var issues = validator.GetIssues(review, venueUse, evidenceInHostName).ToList();
-        if (review.ExperienceType == EvidenceExperienceType.LocalTraditions && !venueUse.HasValue)
-            issues.Add(VenueChoiceRequiredMessage);
+        public ExperienceReadinessService(HostExperienceSubmissionReviewValidator validator)
+        {
+            _validator = validator;
+        }
 
-        return issues;
+        private const string VenueChoiceRequiredMessage =
+            "Confirm whether this experience is a public route, private/home venue, or controlled third-party venue.";
+
+        public IReadOnlyList<string> GetIssues(
+            ExperienceSubmissionReviewViewModel review,
+            ExperienceVenueUse? venueUse = null,
+            bool evidenceInHostName = true)
+        {
+            ArgumentNullException.ThrowIfNull(review);
+
+            var issues = _validator.GetIssues(review, venueUse, evidenceInHostName).ToList();
+            if (review.ExperienceType == EvidenceExperienceType.LocalTraditions && !venueUse.HasValue)
+                issues.Add(VenueChoiceRequiredMessage);
+
+            return issues;
+        }
     }
 }
+

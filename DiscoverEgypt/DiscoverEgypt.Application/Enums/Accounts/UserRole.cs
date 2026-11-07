@@ -1,9 +1,11 @@
-namespace DiscoverEgypt.Application.Enums.Accounts;
-
-public enum UserRole
+namespace DiscoverEgypt.Application.Enums.Accounts
 {
-    Tourist,
-    Host,
-    Guide,
-    Admin
+    public enum UserRole
+    {
+        Tourist,
+        Host,
+        Guide,
+        Admin
+    }
 }
+

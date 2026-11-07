@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Disputes;
+namespace DiscoverEgypt.Domain.Enums.Disputes
+{
+    public enum DisputeStatus { Open, UnderReview, Resolved, Closed }
+}
 
-public enum DisputeStatus { Open, UnderReview, Resolved, Closed }

@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Payments;
+namespace DiscoverEgypt.Domain.Enums.Payments
+{
+    public enum PayoutStatus { Pending, Paid, Cancelled }
+}
 
-public enum PayoutStatus { Pending, Paid, Cancelled }

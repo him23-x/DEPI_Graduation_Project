@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Sanctions;
+namespace DiscoverEgypt.Domain.Enums.Sanctions
+{
+    public enum SanctionType { ProviderSuspension, TouristBan }
+}
 
-public enum SanctionType { ProviderSuspension, TouristBan }

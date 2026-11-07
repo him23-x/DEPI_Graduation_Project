@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Experiences;
+namespace DiscoverEgypt.Domain.Enums.Experiences
+{
+    public enum DeclarationType { FoodSafety, ToolsMaterialsSafety, PrivacyVenuePermission }
+}
 
-public enum DeclarationType { FoodSafety, ToolsMaterialsSafety, PrivacyVenuePermission }

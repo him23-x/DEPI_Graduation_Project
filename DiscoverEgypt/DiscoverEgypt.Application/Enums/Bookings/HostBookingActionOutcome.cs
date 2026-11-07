@@ -1,10 +1,12 @@
 using DiscoverEgypt.Application.Enums.Bookings;
 
-namespace DiscoverEgypt.Application.Enums.Bookings;
-
-public enum HostBookingActionOutcome
+namespace DiscoverEgypt.Application.Enums.Bookings
 {
-    Success, BookingUnavailable, NotPending, PaymentNotPaid, ResponseWindowExpired,
-    ProviderSuspended, Overlap, ConcurrencyUnavailable, PayoutAlreadyExists,
-    InvalidRefundAmount, NotConfirmed, NotEnded, OpenDispute
+    public enum HostBookingActionOutcome
+    {
+        Success, BookingUnavailable, NotPending, PaymentNotPaid, ResponseWindowExpired,
+        ProviderSuspended, Overlap, ConcurrencyUnavailable, PayoutAlreadyExists,
+        InvalidRefundAmount, NotConfirmed, NotEnded, OpenDispute
+    }
 }
+

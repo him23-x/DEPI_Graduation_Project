@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Bookings;
+namespace DiscoverEgypt.Domain.Enums.Bookings
+{
+    public enum BookingType { Experience, Guide }
+}
 
-public enum BookingType { Experience, Guide }

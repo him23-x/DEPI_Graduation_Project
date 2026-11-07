@@ -1,10 +1,12 @@
 using DiscoverEgypt.Application.Enums.Notifications;
 
-namespace DiscoverEgypt.Application.Enums.Notifications;
-
-public enum NotificationReadFilter
+namespace DiscoverEgypt.Application.Enums.Notifications
 {
-    All,
-    Unread,
-    Read
+    public enum NotificationReadFilter
+    {
+        All,
+        Unread,
+        Read
+    }
 }
+

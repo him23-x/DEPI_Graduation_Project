@@ -1,13 +1,15 @@
 using DiscoverEgypt.Application.Features.Disputes.Requests.Queries;
 using FluentValidation;
 
-namespace DiscoverEgypt.Application.Features.Disputes.Validators;
-
-public sealed class GetHostDisputeDetailsQueryValidator : AbstractValidator<GetHostDisputeDetailsQuery>
+namespace DiscoverEgypt.Application.Features.Disputes.Validators
 {
-    public GetHostDisputeDetailsQueryValidator()
+    public sealed class GetHostDisputeDetailsQueryValidator : AbstractValidator<GetHostDisputeDetailsQuery>
     {
-        RuleFor(query => query.UserId).NotEmpty();
-        RuleFor(query => query.DisputeId).GreaterThan(0);
+        public GetHostDisputeDetailsQueryValidator()
+        {
+            RuleFor(query => query.UserId).NotEmpty();
+            RuleFor(query => query.DisputeId).GreaterThan(0);
+        }
     }
 }
+

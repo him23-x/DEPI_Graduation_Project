@@ -1,3 +1,5 @@
-namespace DiscoverEgypt.Domain.Enums.Experiences;
+namespace DiscoverEgypt.Domain.Enums.Experiences
+{
+    public enum ExperienceStatus { Draft, PendingApproval, Published, Rejected, Unpublished }
+}
 
-public enum ExperienceStatus { Draft, PendingApproval, Published, Rejected, Unpublished }
