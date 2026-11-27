@@ -1,6 +1,6 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
 using DiscoverEgypt.Application.Contracts.Storage;
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Queries;
 using MediatR;
 

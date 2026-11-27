@@ -1,4 +1,7 @@
+using DiscoverEgypt.Application.Contracts.Payments;
 using DiscoverEgypt.Application.Contracts.Storage;
+using DiscoverEgypt.Application.Models;
+using DiscoverEgypt.Infrastructure.Payments;
 using DiscoverEgypt.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +16,9 @@ namespace DiscoverEgypt.Infrastructure
             IConfiguration configuration,
             IHostEnvironment environment)
         {
+            services.Configure<StripeSettings>(configuration.GetSection(StripeSettings.SectionName));
+            services.AddScoped<IStripePaymentGateway, StripePaymentGateway>();
+
             var provider = configuration["ExperienceStorage:Provider"];
             if (string.IsNullOrWhiteSpace(provider))
                 provider = environment.IsDevelopment() ? "Local" : "Azure";
@@ -55,4 +61,3 @@ namespace DiscoverEgypt.Infrastructure
         }
     }
 }
-

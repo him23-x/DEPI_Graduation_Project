@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 @model DiscoverEgypt.Application.DTOs.HostExperiences.ExperiencesIndexDto
-=======
-@model DiscoverEgypt.Application.ViewModels.HostExperiences.ExperiencesIndexViewModel
->>>>>>> f567d3a (modificaion)
 @using DiscoverEgypt.Domain.Enums.Bookings
 @using DiscoverEgypt.Domain.Enums.Disputes
 @using DiscoverEgypt.Domain.Enums.Experiences
@@ -98,7 +94,7 @@ else
                     <span class="cover-caption">DISCOVER EGYPT</span>
                 </div>
                 <div class="experience-card-body">
-                    <div class="card-meta"><span class="status-badge @StatusClass(experience.Status)"><span></span>@StatusLabel(experience.Status)</span><span class="updated-label">Added @experience.CreatedAt.ToString("MMM d, yyyy")</span></div>
+                    <div class="card-meta"><span class="status-badge @StatusClass(experience.Status)"><span></span>@StatusLabel(experience.Status)</span><span class="updated-label">Added @HostDateTimeFormatter.Cairo(experience.CreatedAt, "MMM d, yyyy")</span></div>
                     <h2>@experience.Title</h2>
                     <div class="experience-location"><span aria-hidden="true">⌖</span> @experience.CulturalArea <span class="meta-dot">·</span> @experience.ExperienceType</div>
                     <p class="experience-description">@experience.Description</p>

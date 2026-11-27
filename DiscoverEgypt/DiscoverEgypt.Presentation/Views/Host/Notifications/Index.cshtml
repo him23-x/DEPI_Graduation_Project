@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-@model DiscoverEgypt.Application.DTOs.Notifications.HostNotificationsPageDto
-@using DiscoverEgypt.Application.DTOs.Notifications
-=======
-@model DiscoverEgypt.Application.ViewModels.Notifications.HostNotificationsViewModel
-@using DiscoverEgypt.Application.ViewModels.Notifications
->>>>>>> f567d3a (modificaion)
+@model DiscoverEgypt.Application.Responses.Notifications.NotificationsResponse
 @{
     ViewData["Title"] = "Notifications";
     ViewData["Section"] = "Notifications";
-    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
-    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d · h:mm tt");
+    string Cairo(DateTime value) => HostDateTimeFormatter.Cairo(value, "ddd, MMM d · h:mm tt");
     string TypeLabel(DiscoverEgypt.Domain.Enums.Notifications.NotificationType type) => type switch
     {
         DiscoverEgypt.Domain.Enums.Notifications.NotificationType.NewBooking => "New booking",

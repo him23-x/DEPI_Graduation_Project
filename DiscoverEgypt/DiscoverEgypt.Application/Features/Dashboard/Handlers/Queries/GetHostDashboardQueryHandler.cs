@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
-using DiscoverEgypt.Application.ViewModels.Dashboard;
+using DiscoverEgypt.Application.Responses.Dashboard;
 using DiscoverEgypt.Application.Features.Dashboard.Requests.Queries;
 using MediatR;
 using AutoMapper;
@@ -9,7 +9,7 @@ using FluentValidation;
 
 namespace DiscoverEgypt.Application.Features.Dashboard.Handlers.Queries
 {
-    public sealed class GetHostDashboardQueryHandler : IRequestHandler<GetHostDashboardQuery, HostDashboardViewModel>
+    public sealed class GetHostDashboardQueryHandler : IRequestHandler<GetHostDashboardQuery, HostDashboardResponse>
     {
         private readonly IHostDashboardRepository _repository;
         private readonly TimeProvider _timeProvider;
@@ -24,14 +24,14 @@ namespace DiscoverEgypt.Application.Features.Dashboard.Handlers.Queries
             _validator = validator;
         }
 
-        public async Task<HostDashboardViewModel> Handle(GetHostDashboardQuery request, CancellationToken cancellationToken)
+        public async Task<HostDashboardResponse> Handle(GetHostDashboardQuery request, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
             var now = _timeProvider.GetUtcNow().UtcDateTime;
             var experiences = await _repository.GetExperiencesAsync(request.UserId, cancellationToken);
             var statuses = Enum.GetValues<ExperienceStatus>()
-                .Select(status => new HostDashboardExperienceStatusViewModel(status, experiences.Count(item => item.Status == status)))
+                .Select(status => new HostDashboardExperienceStatusResponse(status, experiences.Count(item => item.Status == status)))
                 .ToArray();
             var pendingCount = await _repository.GetPendingRequestCountAsync(request.UserId, cancellationToken);
             var pending = await _repository.GetPendingRequestsAsync(request.UserId, 3, cancellationToken);
@@ -42,12 +42,12 @@ namespace DiscoverEgypt.Application.Features.Dashboard.Handlers.Queries
             var averageRating = await _repository.GetAverageRatingAsync(request.UserId, cancellationToken);
             var unreadCount = await _repository.GetUnreadNotificationCountAsync(request.UserId, cancellationToken);
 
-            return new HostDashboardViewModel(
+            return new HostDashboardResponse(
                 statuses,
                 pendingCount,
-                _mapper.Map<IReadOnlyList<HostDashboardBookingViewModel>>(pending),
+                _mapper.Map<IReadOnlyList<HostDashboardBookingResponse>>(pending),
                 confirmedCount,
-                _mapper.Map<IReadOnlyList<HostDashboardBookingViewModel>>(upcoming),
+                _mapper.Map<IReadOnlyList<HostDashboardBookingResponse>>(upcoming),
                 payouts.GetValueOrDefault(PayoutStatus.Pending),
                 payouts.GetValueOrDefault(PayoutStatus.Paid),
                 payouts.GetValueOrDefault(PayoutStatus.Cancelled),

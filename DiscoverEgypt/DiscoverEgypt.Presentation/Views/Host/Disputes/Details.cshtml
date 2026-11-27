@@ -2,8 +2,7 @@
 @{
     ViewData["Title"] = "Dispute details";
     ViewData["Section"] = "Dispute details";
-    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
-    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d, yyyy · h:mm tt");
+    string Cairo(DateTime value) => HostDateTimeFormatter.Cairo(value, "ddd, MMM d, yyyy · h:mm tt");
     string OutcomeLabel(DisputeOutcome? outcome) => outcome switch
     {
         DisputeOutcome.ProviderFault => "Provider at fault",

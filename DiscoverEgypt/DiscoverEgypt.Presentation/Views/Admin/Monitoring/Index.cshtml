@@ -1,0 +1,68 @@
+@model DiscoverEgypt.Application.Responses.AdminMonitoring.AdminMonitoringDashboardResponse
+@using System.Globalization
+@{
+    ViewData["Title"] = "Transaction monitoring";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/admin-monitoring.css" asp-append-version="true" />
+
+<main class="admin-monitoring-page">
+    <header class="admin-monitoring-heading">
+        <span>ADMIN WORKSPACE · OPERATIONS</span>
+        <h1>Transaction monitoring</h1>
+        <p>Read-only overview of stored bookings, payments, and provider payouts.</p>
+        <small>Updated @Model.GeneratedAtUtc.ToString("MMM d, yyyy · h:mm tt", english) UTC</small>
+    </header>
+
+    <section class="admin-monitoring-overview" aria-label="Transaction totals">
+        <article><span>Bookings</span><strong>@Model.BookingCount.ToString("N0", english)</strong><small>EGP @Model.BookingAmount.ToString("N2", english) in stored booking totals</small></article>
+        <article><span>Payments</span><strong>@Model.PaymentCount.ToString("N0", english)</strong><small>EGP @Model.PaymentAmount.ToString("N2", english) in recorded payment amounts</small></article>
+        <article><span>Payouts</span><strong>@Model.PayoutCount.ToString("N0", english)</strong><small>EGP @Model.PayoutAmount.ToString("N2", english) in recorded payout amounts</small></article>
+    </section>
+
+    <section class="admin-monitoring-breakdowns" aria-label="Status breakdowns">
+        <section class="admin-monitoring-panel">
+            <h2>Bookings by status</h2>
+            @if (Model.Bookings.Count == 0)
+            {
+                <p class="admin-monitoring-empty">No records yet.</p>
+            }
+            else
+            {
+                <div class="admin-monitoring-table-wrap"><table>
+                    <thead><tr><th>Status</th><th>Records</th><th>Amount (EGP)</th></tr></thead>
+                    <tbody>@foreach (var row in Model.Bookings) { <tr><th scope="row">@row.Status</th><td>@row.RecordCount.ToString("N0", english)</td><td>@row.Amount.ToString("N2", english)</td></tr> }</tbody>
+                </table></div>
+            }
+        </section>
+        <section class="admin-monitoring-panel">
+            <h2>Payments by status</h2>
+            @if (Model.Payments.Count == 0)
+            {
+                <p class="admin-monitoring-empty">No records yet.</p>
+            }
+            else
+            {
+                <div class="admin-monitoring-table-wrap"><table>
+                    <thead><tr><th>Status</th><th>Records</th><th>Amount (EGP)</th></tr></thead>
+                    <tbody>@foreach (var row in Model.Payments) { <tr><th scope="row">@row.Status</th><td>@row.RecordCount.ToString("N0", english)</td><td>@row.Amount.ToString("N2", english)</td></tr> }</tbody>
+                </table></div>
+            }
+        </section>
+        <section class="admin-monitoring-panel">
+            <h2>Payouts by status</h2>
+            @if (Model.Payouts.Count == 0)
+            {
+                <p class="admin-monitoring-empty">No records yet.</p>
+            }
+            else
+            {
+                <div class="admin-monitoring-table-wrap"><table>
+                    <thead><tr><th>Status</th><th>Records</th><th>Amount (EGP)</th></tr></thead>
+                    <tbody>@foreach (var row in Model.Payouts) { <tr><th scope="row">@row.Status</th><td>@row.RecordCount.ToString("N0", english)</td><td>@row.Amount.ToString("N2", english)</td></tr> }</tbody>
+                </table></div>
+            }
+        </section>
+    </section>
+</main>

@@ -4,7 +4,7 @@ using DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 using MediatR;
 using AutoMapper;
 using FluentValidation;
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Commands
 {
@@ -42,17 +42,17 @@ namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Commands
             return await _repository.CreateDraftAsync(request.UserId, experience, cancellationToken);
         }
 
-        private async Task<ExperienceCreateOptionsViewModel> GetCreateOptionsAsync(CancellationToken cancellationToken)
+        private async Task<ExperienceCreateOptionsDto> GetCreateOptionsAsync(CancellationToken cancellationToken)
         {
             var types = await _repository.GetExperienceTypesAsync(cancellationToken);
             var areas = await _repository.GetCulturalAreasAsync(cancellationToken);
             var interests = await _repository.GetInterestsAsync(cancellationToken);
             var languages = await _repository.GetLanguagesAsync(cancellationToken);
-            return new ExperienceCreateOptionsViewModel(
-                _mapper.Map<IReadOnlyList<ExperienceLookupViewModel>>(types),
-                _mapper.Map<IReadOnlyList<ExperienceLookupViewModel>>(areas),
-                _mapper.Map<IReadOnlyList<ExperienceLookupViewModel>>(interests),
-                _mapper.Map<IReadOnlyList<ExperienceLookupViewModel>>(languages));
+            return new ExperienceCreateOptionsDto(
+                _mapper.Map<IReadOnlyList<ExperienceLookupDto>>(types),
+                _mapper.Map<IReadOnlyList<ExperienceLookupDto>>(areas),
+                _mapper.Map<IReadOnlyList<ExperienceLookupDto>>(interests),
+                _mapper.Map<IReadOnlyList<ExperienceLookupDto>>(languages));
         }
     }
 }

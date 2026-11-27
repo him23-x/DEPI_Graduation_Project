@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Discover Egypt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/tourist-explore.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tourist-pages.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/account-menu.css" asp-append-version="true" />
+    @if (ViewData["TouristPage"]?.ToString() == "tourist-dashboard")
+    {
+        <link rel="stylesheet" href="~/css/tourist-dashboard.css" asp-append-version="true" />
+    }
+</head>
+<body class="tourist-site">
+    <header class="public-header">
+        <a class="public-brand" asp-controller="Explore" asp-action="Index" aria-label="Discover Egypt home">
+            <span class="brand-emblem" aria-hidden="true">✳</span>
+            <span><strong>DISCOVER EGYPT</strong><small>SMART CULTURAL PLATFORM</small></span>
+        </a>
+        <nav class="public-nav" aria-label="Main navigation">
+            @if (ViewData["TouristPage"]?.ToString() == "details")
+            {
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+                <a href="#experience-story">Cultural Story</a>
+                <a href="#reviews">Guest Reviews</a>
+                <a asp-controller="Guides" asp-action="Index">Approved Guides</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "guides")
+            {
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+                <a asp-controller="Guides" asp-action="Index" class="active">Approved Guides</a>
+                <a asp-controller="Explore" asp-action="Index" asp-fragment="realms">Cultural Realms</a>
+                <a asp-controller="Explore" asp-action="Index" asp-fragment="transparency">Trust &amp; Safety</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "guide-details")
+            {
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+                <a asp-controller="Guides" asp-action="Index" class="active">Approved Guides</a>
+                <a href="#guide-reviews">Guide Reviews</a>
+                <a asp-controller="Explore" asp-action="Index" asp-fragment="transparency">Trust &amp; Safety</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "preferences")
+            {
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+                <a asp-controller="Guides" asp-action="Index">Approved Guides</a>
+                <a asp-controller="Recommendations" asp-action="Index">Recommended for You</a>
+                <a asp-controller="TouristPreferences" asp-action="Index" class="active">My Preferences</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "recommendations")
+            {
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+                <a asp-controller="Guides" asp-action="Index">Approved Guides</a>
+                <a asp-controller="Recommendations" asp-action="Index" class="active">Recommended for You</a>
+                <a asp-controller="TouristPreferences" asp-action="Index">My Preferences</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "booking")
+            {
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+                <a asp-controller="Guides" asp-action="Index">Approved Guides</a>
+                <a asp-controller="Recommendations" asp-action="Index">Recommended for You</a>
+                <a asp-controller="TouristDisputes" asp-action="Index">My Disputes</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "disputes")
+            {
+                <a asp-controller="TouristDashboard" asp-action="Index">My Dashboard</a>
+                <a asp-controller="TouristBookings" asp-action="Index">My Bookings</a>
+                <a asp-controller="TouristDisputes" asp-action="Index" class="active">My Disputes</a>
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "notifications")
+            {
+                <a asp-controller="TouristDashboard" asp-action="Index">My Dashboard</a>
+                <a asp-controller="TouristBookings" asp-action="Index">My Bookings</a>
+                <a asp-controller="TouristNotifications" asp-action="Index" class="active">Notifications</a>
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "shared-booking")
+            {
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+                <a asp-controller="Guides" asp-action="Index">Approved Guides</a>
+            }
+            else if (ViewData["TouristPage"]?.ToString() == "tourist-dashboard")
+            {
+                <a asp-controller="TouristDashboard" asp-action="Index" class="active">My Dashboard</a>
+                <a asp-controller="Explore" asp-action="Index">Explore Experiences</a>
+                <a asp-controller="Guides" asp-action="Index">Approved Guides</a>
+                <a asp-controller="TouristDisputes" asp-action="Index">My Disputes</a>
+            }
+            else
+            {
+                <a href="#difference">The Difference</a>
+                <a href="#realms">Cultural Realms</a>
+                <a href="#experiences" class="active">Experiences</a>
+                <a asp-controller="Guides" asp-action="Index">Approved Guides</a>
+                <a href="#transparency">Transparency</a>
+                <a href="#trust">Safety &amp; Trust</a>
+            }
+        </nav>
+        <div class="public-actions">
+            <a class="language-choice" href="#" aria-label="Language: English">◎ <span>EN</span></a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                @await Component.InvokeAsync("AccountMenu", new { placement = "public" })
+            }
+            else
+            {
+                <a class="button button-outline" asp-controller="Account" asp-action="Register" asp-route-Role="Host">Host an Experience</a>
+                <a class="button button-gold" asp-controller="Account" asp-action="Login">Log in</a>
+            }
+        </div>
+    </header>
+    <main>@RenderBody()</main>
+    <footer class="public-footer" id="footer">
+        <div class="footer-main">
+            <div class="footer-about">
+                <a class="public-brand footer-brand" asp-controller="Explore" asp-action="Index">
+                    <span class="brand-emblem" aria-hidden="true">✳</span>
+                    <span><strong>DISCOVER EGYPT</strong><small>INSIDE EGYPT PLATFORM</small></span>
+                </a>
+                <p>The smart cultural marketplace connecting global travelers with verified Egyptian locals, artisans, and heritage storytellers.</p>
+            </div>
+            <div><h2>Cultural Regions</h2><a asp-controller="Explore" asp-action="Index" asp-fragment="realms">Old Cairo &amp; Historic Al-Mu'izz</a><a asp-controller="Explore" asp-action="Index" asp-fragment="realms">Tunis Village (Fayoum)</a><a asp-controller="Explore" asp-action="Index" asp-fragment="realms">Gharb Soheil &amp; Nubia</a><a asp-controller="Explore" asp-action="Index" asp-fragment="realms">West Bank (Luxor)</a><a asp-controller="Explore" asp-action="Index" asp-fragment="realms">Alexandria Coastal Heritage</a></div>
+            <div><h2>Platform &amp; Trust</h2><a asp-controller="Explore" asp-action="Index" asp-fragment="difference">The Inside Egypt Philosophy</a><a asp-controller="Explore" asp-action="Index" asp-fragment="transparency">Host Revenue Split</a><a asp-controller="Explore" asp-action="Index" asp-fragment="trust">Booking Safety</a><a asp-controller="Explore" asp-action="Index" asp-fragment="trust">Support &amp; Disputes</a></div>
+            <div><h2>Join Us</h2><a asp-controller="Account" asp-action="Register" asp-route-Role="Host">Become a Verified Host</a><a asp-controller="Account" asp-action="Register" asp-route-Role="Guide">Register as Tour Guide</a><a asp-controller="Guides" asp-action="Index">Browse approved guides</a>@if (User.Identity?.IsAuthenticated != true){<a asp-controller="Account" asp-action="Login">Log in</a>}</div>
+        </div>
+        <div class="footer-bottom"><span>© @DateTime.UtcNow.Year Discover Egypt (Inside Egypt). All cultural stories &amp; artisan profiles are protected.</span><span>Crafted with Egyptian Pride 🇪🇬</span></div>
+    </footer>
+    <script src="~/js/account-menu.js" asp-append-version="true"></script>
+</body>
+</html>

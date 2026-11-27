@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -19,6 +19,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiscoverEgypt.Domain\DiscoverEgypt.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Enums\Payments\PaymentSimulationOutcome.cs" />
+    <Compile Remove="Features\Payments\Requests\Commands\ProcessMockPaymentCommand.cs" />
+    <Compile Remove="Features\Payments\Handlers\Commands\ProcessMockPaymentCommandHandler.cs" />
+    <Compile Remove="Features\Payments\Validators\ProcessMockPaymentCommandValidator.cs" />
   </ItemGroup>
 
 </Project>

@@ -31,7 +31,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DiscoverEgypt.Domain.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("DiscoverEgypt.Persistence.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -1304,13 +1304,13 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .HasForeignKey("GuideProfileId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("ProviderUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("TouristUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1340,13 +1340,13 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("OpenedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("ResolvedByAdminId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1374,7 +1374,7 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("ReviewedByAdminId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1394,7 +1394,7 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("HostUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1503,7 +1503,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 
             modelBuilder.Entity("DiscoverEgypt.Domain.Entities.GuideProfile", b =>
                 {
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1512,7 +1512,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 
             modelBuilder.Entity("DiscoverEgypt.Domain.Entities.HostProfile", b =>
                 {
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1526,7 +1526,7 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1641,7 +1641,7 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("DecidedByAdminId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1669,7 +1669,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 
             modelBuilder.Entity("DiscoverEgypt.Domain.Entities.Sanction", b =>
                 {
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("DecidedByAdminId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1681,7 +1681,7 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1692,7 +1692,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 
             modelBuilder.Entity("DiscoverEgypt.Domain.Entities.TouristPreference", b =>
                 {
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1732,7 +1732,7 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("ReviewedByAdminId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1751,7 +1751,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1760,7 +1760,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1775,7 +1775,7 @@ namespace DiscoverEgypt.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1784,7 +1784,7 @@ namespace DiscoverEgypt.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("DiscoverEgypt.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("DiscoverEgypt.Persistence.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

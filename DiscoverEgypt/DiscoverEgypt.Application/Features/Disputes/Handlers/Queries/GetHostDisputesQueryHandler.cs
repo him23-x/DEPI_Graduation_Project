@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
-using DiscoverEgypt.Application.ViewModels.Disputes;
+using DiscoverEgypt.Application.DTOs.Disputes;
 using DiscoverEgypt.Application.Features.Disputes.Requests.Queries;
 using MediatR;
 using AutoMapper;
@@ -8,7 +8,7 @@ using FluentValidation;
 namespace DiscoverEgypt.Application.Features.Disputes.Handlers.Queries
 {
     public sealed class GetHostDisputesQueryHandler
-        : IRequestHandler<GetHostDisputesQuery, HostDisputesIndexViewModel>
+        : IRequestHandler<GetHostDisputesQuery, HostDisputesIndexDto>
     {
         private readonly IHostDisputesRepository _repository;
         private readonly IMapper _mapper;
@@ -21,13 +21,13 @@ namespace DiscoverEgypt.Application.Features.Disputes.Handlers.Queries
             _validator = validator;
         }
 
-        public async Task<HostDisputesIndexViewModel> Handle(GetHostDisputesQuery request, CancellationToken cancellationToken)
+        public async Task<HostDisputesIndexDto> Handle(GetHostDisputesQuery request, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
             var disputes = await _repository.GetForHostAsync(request.UserId, request.Page, request.PageSize, cancellationToken);
             var tourists = await _repository.GetTouristsAsync(disputes.Select(dispute => dispute.Booking.TouristUserId), cancellationToken);
-            var items = _mapper.Map<IReadOnlyList<HostDisputeListItemViewModel>>(disputes).Select((item, index) =>
+            var items = _mapper.Map<IReadOnlyList<HostDisputeListItemDto>>(disputes).Select((item, index) =>
             {
                 var dispute = disputes[index];
                 var tourist = tourists.GetValueOrDefault(dispute.Booking.TouristUserId);
@@ -39,7 +39,7 @@ namespace DiscoverEgypt.Application.Features.Disputes.Handlers.Queries
                 };
             }).ToArray();
             var totalCount = await _repository.GetCountAsync(request.UserId, cancellationToken);
-            return new HostDisputesIndexViewModel(items, request.Page, request.PageSize, totalCount);
+            return new HostDisputesIndexDto(items, request.Page, request.PageSize, totalCount);
         }
     }
 }

@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
-using DiscoverEgypt.Application.ViewModels.Bookings;
+using DiscoverEgypt.Application.Responses.Bookings;
 using DiscoverEgypt.Application.Features.Bookings.Requests.Queries;
 using DiscoverEgypt.Application.Features.Bookings.Options;
 using DiscoverEgypt.Application.Features.Bookings.Policies;
@@ -11,7 +11,7 @@ using FluentValidation;
 
 namespace DiscoverEgypt.Application.Features.Bookings.Handlers.Queries
 {
-    public sealed class GetHostBookingDetailsQueryHandler : IRequestHandler<GetHostBookingDetailsQuery, BookingDetailsViewModel?>
+    public sealed class GetHostBookingDetailsQueryHandler : IRequestHandler<GetHostBookingDetailsQuery, HostBookingDetailResponse?>
     {
         private readonly IHostBookingRepository _repository;
         private readonly IOptions<BookingLifecycleOptions> _lifecycleOptions;
@@ -30,7 +30,7 @@ namespace DiscoverEgypt.Application.Features.Bookings.Handlers.Queries
             _validator = validator;
         }
 
-        public async Task<BookingDetailsViewModel?> Handle(GetHostBookingDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<HostBookingDetailResponse?> Handle(GetHostBookingDetailsQuery request, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
@@ -38,10 +38,11 @@ namespace DiscoverEgypt.Application.Features.Bookings.Handlers.Queries
             if (bookingEntity is null) return null;
             var tourist = (await _repository.GetTouristsAsync([bookingEntity.TouristUserId], cancellationToken)).GetValueOrDefault(bookingEntity.TouristUserId);
             var now = DateTime.UtcNow;
-            var isSuspended = await _repository.IsProviderSuspendedAsync(request.UserId, now, cancellationToken);
+            var isSuspended = await _repository.IsProviderSuspendedAsync(
+                request.UserId, bookingEntity.CreatedAt, now, cancellationToken);
             var hasOverlap = bookingEntity.Status == DiscoverEgypt.Domain.Enums.Bookings.BookingStatus.Pending
                 && await _repository.HasConfirmedOverlapAsync(request.UserId, bookingEntity.ScheduledStart, bookingEntity.ScheduledEnd, bookingEntity.Id, cancellationToken);
-            var booking = _mapper.Map<BookingDetailsViewModel>(bookingEntity) with
+            var booking = _mapper.Map<HostBookingDetailResponse>(bookingEntity) with
             {
                 TouristName = !string.IsNullOrWhiteSpace(tourist?.FullName) ? tourist.FullName : tourist?.UserName ?? "Discover Egypt guest",
                 TouristEmail = tourist?.Email ?? string.Empty,

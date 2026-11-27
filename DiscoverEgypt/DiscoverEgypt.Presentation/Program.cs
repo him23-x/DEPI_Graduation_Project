@@ -66,6 +66,12 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.MapControllerRoute(
+    name: "host-profile",
+    pattern: "Host/Profile/{action=Index}",
+    defaults: new { controller = "Profile" })
+    .WithStaticAssets();
+
+app.MapControllerRoute(
     name: "host-experiences",
     pattern: "Host/Experiences/{action=Index}/{id?}",
     defaults: new { controller = "Experiences" })
@@ -73,7 +79,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Experiences}/{action=Index}/{id?}")
+    pattern: "{controller=Explore}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.Run();

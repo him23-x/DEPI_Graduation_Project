@@ -1,0 +1,124 @@
+@model DiscoverEgypt.Application.Responses.Notifications.NotificationsResponse
+@using DiscoverEgypt.Application.Enums.Notifications
+@using DiscoverEgypt.Presentation.Formatting
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "My notifications";
+    ViewData["TouristPage"] = "notifications";
+    var notice = TempData["TouristNotificationsNotice"] as string;
+    string TypeLabel(DiscoverEgypt.Domain.Enums.Notifications.NotificationType type) => type switch
+    {
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.NewBooking => "Booking request",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.BookingConfirmation => "Booking confirmed",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.BookingStatusUpdate => "Booking update",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.ExperienceApprovalUpdate => "Experience update",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.VerificationUpdate => "Verification update",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.PaymentUpdate => "Payment update",
+        DiscoverEgypt.Domain.Enums.Notifications.NotificationType.DisputeUpdate => "Dispute update",
+        _ => "Account update"
+    };
+    var filters = new (NotificationReadFilter Value, string Label)[]
+    {
+        (NotificationReadFilter.All, "All"),
+        (NotificationReadFilter.Unread, "Unread"),
+        (NotificationReadFilter.Read, "Read")
+    };
+}
+
+<link rel="stylesheet" href="~/css/tourist-notifications.css" asp-append-version="true" />
+
+<section class="tourist-notifications-page" aria-labelledby="tourist-notifications-title">
+    <header class="tourist-notifications-heading">
+        <div>
+            <span>YOUR BOOKING &amp; ACCOUNT UPDATES</span>
+            <h1 id="tourist-notifications-title">Notifications</h1>
+            <p>Important updates about your bookings and account appear here.</p>
+        </div>
+        @if (Model.UnreadCount > 0)
+        {
+            <form asp-action="MarkAllRead" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="filter" value="@Model.Filter" />
+                <button class="button button-outline" type="submit">Mark all as read</button>
+            </form>
+        }
+    </header>
+
+    @if (!string.IsNullOrWhiteSpace(notice))
+    {
+        <div class="tourist-notifications-notice" role="status">@notice</div>
+    }
+
+    <nav class="tourist-notification-filters" aria-label="Filter notifications">
+        @foreach (var filter in filters)
+        {
+            <a class="@(Model.Filter == filter.Value ? "selected" : string.Empty)"
+               asp-action="Index" asp-route-filter="@filter.Value" aria-current="@(Model.Filter == filter.Value ? "page" : null)">
+                @filter.Label
+                @if (filter.Value == NotificationReadFilter.Unread && Model.UnreadCount > 0)
+                {
+                    <span>@Model.UnreadCount</span>
+                }
+            </a>
+        }
+    </nav>
+
+    @if (Model.Notifications.Count == 0)
+    {
+        <section class="tourist-notification-empty">
+            <span aria-hidden="true">✳</span>
+            <h2>No @Model.Filter.ToString().ToLowerInvariant() notifications</h2>
+            <p>You’re all caught up. New booking and account updates will appear here.</p>
+        </section>
+    }
+    else
+    {
+        <section class="tourist-notification-list" aria-label="@Model.Filter notifications">
+            @foreach (var notification in Model.Notifications)
+            {
+                <article class="tourist-notification-row @(notification.IsRead ? "is-read" : "is-unread")">
+                    <span class="tourist-notification-dot" aria-hidden="true"></span>
+                    <div class="tourist-notification-content">
+                        <div class="tourist-notification-meta">
+                            <strong>@TypeLabel(notification.Type)</strong>
+                            <time datetime="@DateTime.SpecifyKind(notification.CreatedAt, DateTimeKind.Utc).ToString("O")">
+                                @HostDateTimeFormatter.Cairo(notification.CreatedAt, "ddd, MMM d · h:mm tt")
+                            </time>
+                        </div>
+                        <p>@notification.Message</p>
+                        <div class="tourist-notification-actions">
+                            @if (notification.BookingId.HasValue)
+                            {
+                                <a asp-controller="TouristBookings" asp-action="Details" asp-route-id="@notification.BookingId.Value">View booking</a>
+                            }
+                            @if (!notification.IsRead)
+                            {
+                                <form asp-action="MarkRead" asp-route-id="@notification.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="filter" value="@Model.Filter" />
+                                    <input type="hidden" name="page" value="@Model.Page" />
+                                    <button type="submit">Mark as read</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </article>
+            }
+        </section>
+    }
+
+    @if (Model.PageCount > 1)
+    {
+        <nav class="tourist-notification-pagination" aria-label="Notification pages">
+            @if (Model.Page > 1)
+            {
+                <a asp-action="Index" asp-route-filter="@Model.Filter" asp-route-page="@(Model.Page - 1)">Previous</a>
+            }
+            <span>Page @Model.Page of @Model.PageCount</span>
+            @if (Model.Page < Model.PageCount)
+            {
+                <a asp-action="Index" asp-route-filter="@Model.Filter" asp-route-page="@(Model.Page + 1)">Next</a>
+            }
+        </nav>
+    }
+</section>

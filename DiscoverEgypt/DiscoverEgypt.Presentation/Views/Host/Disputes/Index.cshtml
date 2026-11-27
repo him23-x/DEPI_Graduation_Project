@@ -1,9 +1,8 @@
-@model DiscoverEgypt.Application.DTOs.Disputes.HostDisputesPageDto
+@model DiscoverEgypt.Application.DTOs.Disputes.HostDisputesIndexDto
 @{
     ViewData["Title"] = "Host Disputes";
     ViewData["Section"] = "Disputes";
-    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
-    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("MMM d, yyyy · h:mm tt");
+    string Cairo(DateTime value) => HostDateTimeFormatter.Cairo(value, "MMM d, yyyy · h:mm tt");
     string StatusLabel(DisputeStatus status) => status switch
     {
         DisputeStatus.UnderReview => "Under review",

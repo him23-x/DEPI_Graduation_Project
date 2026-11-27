@@ -1,0 +1,154 @@
+@model DiscoverEgypt.Application.Responses.Bookings.TouristBookingDetailsResponse
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Booking details";
+    ViewData["TouristPage"] = "booking";
+    var english = CultureInfo.GetCultureInfo("en-US");
+    var notice = TempData["TouristBookingNotice"] as string;
+    var error = TempData["TouristBookingError"] as string;
+    var disputeError = TempData["TouristDisputeError"] as string;
+    var reviewNotice = TempData["TouristReviewNotice"] as string;
+    var reviewError = TempData["TouristReviewError"] as string;
+    var shareUrl = TempData["TouristBookingShareUrl"] as string;
+    var shareNotice = TempData["TouristBookingShareNotice"] as string;
+    var shareError = TempData["TouristBookingShareError"] as string;
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/tourist-my-bookings.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/tourist-booking-share.css" asp-append-version="true" />
+
+<section class="tourist-booking-page tourist-booking-details-page">
+    <a class="booking-back-link" asp-action="Index">← Back to my bookings</a>
+    @if (!string.IsNullOrWhiteSpace(notice)){<div class="tourist-booking-alert tourist-booking-alert-success" role="status">@notice</div>}
+    @if (!string.IsNullOrWhiteSpace(error)){<div class="tourist-booking-alert tourist-booking-alert-error" role="alert">@error</div>}
+    @if (!string.IsNullOrWhiteSpace(disputeError)){<div class="tourist-booking-alert tourist-booking-alert-error" role="alert">@disputeError</div>}
+    @if (!string.IsNullOrWhiteSpace(reviewNotice)){<div class="tourist-booking-alert tourist-booking-alert-success" role="status">@reviewNotice</div>}
+    @if (!string.IsNullOrWhiteSpace(reviewError)){<div class="tourist-booking-alert tourist-booking-alert-error" role="alert">@reviewError</div>}
+    @if (!string.IsNullOrWhiteSpace(shareNotice)){<div class="tourist-booking-alert tourist-booking-alert-success" role="status">@shareNotice</div>}
+    @if (!string.IsNullOrWhiteSpace(shareError)){<div class="tourist-booking-alert tourist-booking-alert-error" role="alert">@shareError</div>}
+    <header class="tourist-booking-heading"><span>@(Model.BookingType == DiscoverEgypt.Domain.Enums.Bookings.BookingType.Guide ? "GUIDE BOOKING" : "EXPERIENCE BOOKING") · #@Model.BookingId</span><h1>@Model.Title</h1><p>Booking, payment, refund, and payout information for this reservation.</p></header>
+
+    <div class="tourist-booking-detail-grid">
+        <section class="tourist-booking-detail-card">
+            <h2>Schedule and booking</h2>
+            <dl>
+                <div><dt>Booking status</dt><dd>@Model.BookingStatus</dd></div>
+                <div><dt>Payment status</dt><dd>@Model.PaymentStatus</dd></div>
+                <div><dt>Start</dt><dd>@HostDateTimeFormatter.Cairo(Model.ScheduledStartUtc, "dddd, MMMM d, yyyy · h:mm tt")</dd></div>
+                <div><dt>End</dt><dd>@HostDateTimeFormatter.Cairo(Model.ScheduledEndUtc, "dddd, MMMM d, yyyy · h:mm tt")</dd></div>
+                @if (!string.IsNullOrWhiteSpace(Model.CulturalArea)){<div><dt>Cultural area</dt><dd>@Model.CulturalArea</dd></div>}
+                @if (!string.IsNullOrWhiteSpace(Model.Destination)){<div><dt>Destination</dt><dd>@Model.Destination</dd></div>}
+                @if (Model.NumberOfGuests.HasValue){<div><dt>Guests</dt><dd>@Model.NumberOfGuests</dd></div>}
+                @if (Model.GuideHours.HasValue){<div><dt>Guide hours</dt><dd>@Model.GuideHours</dd></div>}
+            </dl>
+            @if (Model.BookingType == DiscoverEgypt.Domain.Enums.Bookings.BookingType.Experience
+                && !string.IsNullOrWhiteSpace(Model.ExactMeetingPoint))
+            {
+                <div class="booking-privacy-note"><strong>Exact meeting point:</strong><br />@Model.ExactMeetingPoint</div>
+            }
+            else if (Model.BookingType == DiscoverEgypt.Domain.Enums.Bookings.BookingType.Experience)
+            {
+                <p class="booking-privacy-note">The exact meeting point becomes available after the booking is confirmed.</p>
+            }
+        </section>
+
+        <section class="tourist-booking-detail-card">
+            <h2>Price snapshot</h2>
+            <dl>
+                <div><dt>Service amount</dt><dd>EGP @Model.ServiceAmount.ToString("N2", english)</dd></div>
+                <div><dt>Platform fee (@Model.PlatformFeeRate.ToString("P0", english))</dt><dd>EGP @Model.PlatformFeeAmount.ToString("N2", english)</dd></div>
+                <div class="booking-total"><dt>Total amount</dt><dd>EGP @Model.TotalAmount.ToString("N2", english)</dd></div>
+                <div><dt>Payment record amount</dt><dd>EGP @Model.PaymentAmount.ToString("N2", english)</dd></div>
+                <div><dt>Total simulated refunds</dt><dd>EGP @Model.RefundedAmount.ToString("N2", english)</dd></div>
+            </dl>
+            @if (Model.Refunds.Count > 0)
+            {
+                <div class="tourist-refund-list"><h3>Refund records</h3>@foreach (var refund in Model.Refunds){<article><strong>EGP @refund.Amount.ToString("N2", english)</strong><time>@HostDateTimeFormatter.Cairo(refund.CreatedAtUtc, "MMM d, yyyy · h:mm tt")</time><p>@refund.Reason</p></article>}</div>
+            }
+        </section>
+
+        <section class="tourist-booking-detail-card tourist-payout-card">
+            <h2>Provider payout</h2>
+            @if (Model.PayoutStatus.HasValue)
+            {
+                <dl><div><dt>Payout status</dt><dd>@Model.PayoutStatus</dd></div><div><dt>Allocated amount</dt><dd>EGP @Model.PayoutAmount?.ToString("N2", english)</dd></div>@if (Model.PayoutEligibleAtUtc.HasValue){<div><dt>Eligibility</dt><dd>@HostDateTimeFormatter.Cairo(Model.PayoutEligibleAtUtc.Value, "MMM d, yyyy · h:mm tt")</dd></div>}<div><dt>Open dispute hold</dt><dd>@(Model.HasOpenDispute ? "Yes" : "No")</dd></div></dl>
+                <p class="booking-field-hint">Payout release is simulated and remains subject to the 24-hour window and any open dispute.</p>
+            }
+            else
+            {
+                <p>No provider payout is currently recorded for this booking.</p>
+            }
+        </section>
+    </div>
+
+    @if (Model.CanShareBooking)
+    {
+        <section class="tourist-booking-share-action" aria-labelledby="booking-share-title">
+            <p id="booking-share-title">Share your service, schedule, provider, and meeting point with someone you trust.</p>
+            @if (!string.IsNullOrWhiteSpace(shareUrl))
+            {
+                <div class="tourist-booking-share-link">
+                    <input id="booking-share-url" type="url" value="@shareUrl" readonly aria-label="Read-only booking share link" />
+                    <button type="button" data-copy-booking-share="booking-share-url" data-copy-feedback="booking-share-copy-feedback">Copy link</button>
+                </div>
+                <span id="booking-share-copy-feedback" class="tourist-booking-share-feedback" role="status" aria-live="polite"></span>
+            }
+            else
+            {
+                <form asp-controller="BookingShares" asp-action="Create" asp-route-bookingId="@Model.BookingId" method="post">
+                    @Html.AntiForgeryToken()
+                    <button class="button button-outline" type="submit">Create a share link</button>
+                </form>
+            }
+        </section>
+    }
+
+    @if (Model.CanReview)
+    {
+        <div class="tourist-dispute-booking-action">
+            <p>Your booking is complete. Share a numeric rating and an optional comment about it.</p>
+            <a class="button button-gold" asp-controller="TouristReviews" asp-action="Create" asp-route-bookingId="@Model.BookingId">Leave a review</a>
+        </div>
+    }
+    else if (Model.ReviewRating.HasValue)
+    {
+        <section class="tourist-booking-detail-card" aria-labelledby="your-review-title">
+            <h2 id="your-review-title">Your review</h2>
+            <p><strong>Rating:</strong> @Model.ReviewRating.Value / 5</p>
+            @if (!string.IsNullOrWhiteSpace(Model.ReviewComment)){<p>@Model.ReviewComment</p>}
+            @if (Model.ReviewCreatedAtUtc.HasValue){<p class="booking-field-hint">Submitted @HostDateTimeFormatter.Cairo(Model.ReviewCreatedAtUtc.Value, "MMMM d, yyyy")</p>}
+        </section>
+    }
+
+    @if (Model.BookingStatus == DiscoverEgypt.Domain.Enums.Bookings.BookingStatus.Pending
+        && (Model.PaymentStatus == DiscoverEgypt.Domain.Enums.Payments.PaymentStatus.Pending
+            || Model.PaymentStatus == DiscoverEgypt.Domain.Enums.Payments.PaymentStatus.Failed))
+    {
+        <div class="tourist-dispute-booking-action">
+            <p>Your booking is saved, and payment has not been completed yet. Complete your payment via Stripe while the booking is pending.</p>
+            <a class="button button-gold" asp-controller="MockPayments" asp-action="Index" asp-route-bookingId="@Model.BookingId">Pay with Stripe</a>
+        </div>
+    }
+
+    @if (Model.CanCancel)
+    {
+        <form asp-action="Cancel" asp-route-id="@Model.BookingId" method="post" class="tourist-cancel-form" onsubmit="return confirm('Cancel this booking? The refund will follow the cancellation policy.');">
+            @Html.AntiForgeryToken()
+            <p>Cancellation refund is calculated from the booking status and time until the scheduled start. The platform fee is not refundable.</p>
+            <button type="submit" class="button button-outline">Cancel this booking</button>
+        </form>
+    }
+
+    @if (Model.CanOpenDispute)
+    {
+        <div class="tourist-dispute-booking-action">
+            <p>If something went wrong with this booking, you can submit it for review within the dispute window.</p>
+            <a class="button button-outline" asp-controller="TouristDisputes" asp-action="Open" asp-route-bookingId="@Model.BookingId">Open a dispute</a>
+        </div>
+    }
+</section>
+
+<script src="~/js/tourist-booking-share.js" asp-append-version="true"></script>

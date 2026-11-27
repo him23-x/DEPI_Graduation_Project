@@ -1,4 +1,4 @@
-@model DiscoverEgypt.Application.ViewModels.Account.RegisterViewModel
+@model DiscoverEgypt.Presentation.ViewModels.Account.RegisterViewModel
 @{
     Layout = "_AuthLayout";
     ViewData["Title"] = "Create your account";
@@ -27,11 +27,11 @@
             </select>
             <span asp-validation-for="Role" class="field-error"></span>
             <label asp-for="Password"></label>
-            <input asp-for="Password" class="auth-input" autocomplete="new-password" placeholder="Create a password" />
+            <input asp-for="Password" type="password" class="auth-input" autocomplete="new-password" placeholder="Create a password" />
             <span asp-validation-for="Password" class="field-error"></span>
             <p class="password-hint">Use at least 8 characters, including a number and a symbol.</p>
             <label asp-for="ConfirmPassword"></label>
-            <input asp-for="ConfirmPassword" class="auth-input" autocomplete="new-password" placeholder="Re-enter your password" />
+            <input asp-for="ConfirmPassword" type="password" class="auth-input" autocomplete="new-password" placeholder="Re-enter your password" />
             <span asp-validation-for="ConfirmPassword" class="field-error"></span>
             <label class="remember-row terms-row"><input asp-for="AcceptTerms" /><span>I agree to the Terms of Service and Privacy Policy.</span></label>
             <span asp-validation-for="AcceptTerms" class="field-error"></span>

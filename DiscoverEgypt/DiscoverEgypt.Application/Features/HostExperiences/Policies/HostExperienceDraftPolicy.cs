@@ -1,5 +1,5 @@
 using DiscoverEgypt.Domain.Enums.Experiences;
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Policies
 {
@@ -8,7 +8,7 @@ namespace DiscoverEgypt.Application.Features.HostExperiences.Policies
         public static bool IsEditable(ExperienceStatus status) =>
             status is ExperienceStatus.Draft or ExperienceStatus.Rejected;
 
-        public static bool HasValidOptions(HostExperienceDraftViewModel draft, ExperienceCreateOptionsViewModel options)
+        public static bool HasValidOptions(HostExperienceDraftDto draft, ExperienceCreateOptionsDto options)
         {
             return options.ExperienceTypes.Any(item => item.Id == draft.ExperienceTypeId)
                 && options.CulturalAreas.Any(item => item.Id == draft.CulturalAreaId)
@@ -18,9 +18,9 @@ namespace DiscoverEgypt.Application.Features.HostExperiences.Policies
                 && draft.LanguageIds.All(id => options.Languages.Any(item => item.Id == id));
         }
 
-        public static HostExperienceDraftViewModel Normalize(HostExperienceDraftViewModel draft)
+        public static HostExperienceDraftDto Normalize(HostExperienceDraftDto draft)
         {
-            return new HostExperienceDraftViewModel
+            return new HostExperienceDraftDto
             {
                 ExperienceTypeId = draft.ExperienceTypeId,
                 CulturalAreaId = draft.CulturalAreaId,

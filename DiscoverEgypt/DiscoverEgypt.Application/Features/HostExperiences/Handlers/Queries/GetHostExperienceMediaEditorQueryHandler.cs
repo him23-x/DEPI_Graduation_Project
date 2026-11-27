@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Requests.Queries;
 using MediatR;
 using AutoMapper;
@@ -7,7 +7,7 @@ using AutoMapper;
 namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Queries
 {
     public sealed class GetHostExperienceMediaEditorQueryHandler
-        : IRequestHandler<GetHostExperienceMediaEditorQuery, ExperienceMediaViewModel?>
+        : IRequestHandler<GetHostExperienceMediaEditorQuery, ExperienceMediaDto?>
     {
         private readonly IHostExperienceMediaRepository _repository;
         private readonly IMapper _mapper;
@@ -18,13 +18,13 @@ namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Queries
             _mapper = mapper;
         }
 
-        public async Task<ExperienceMediaViewModel?> Handle(GetHostExperienceMediaEditorQuery request, CancellationToken cancellationToken)
+        public async Task<ExperienceMediaDto?> Handle(GetHostExperienceMediaEditorQuery request, CancellationToken cancellationToken)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
             var experience = await _repository.GetDraftEditorAsync(request.UserId, request.ExperienceId, cancellationToken);
             if (experience is null) return null;
 
-            var model = _mapper.Map<ExperienceMediaViewModel>(experience);
+            var model = _mapper.Map<ExperienceMediaDto>(experience);
             return model with { Media = model.Media.Select(item => item with
             {
                 ContentType = GetContentType(experience.Media.Single(media => media.Id == item.Id).StorageKey, item.MediaType)

@@ -1,0 +1,41 @@
+.tourist-bookings-page{max-width:1060px}
+.tourist-bookings-list{display:grid;gap:14px}
+.tourist-booking-item,.tourist-booking-detail-card,.tourist-booking-alert,.tourist-cancel-form,.tourist-bookings-empty{padding:22px;border:1px solid #e7e5dc;border-radius:14px;background:#fff;box-shadow:0 8px 24px #153a320c}
+.tourist-booking-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px}
+.tourist-booking-item h2{margin:10px 0 5px;font:600 1.35rem 'Playfair Display',Georgia,serif}
+.tourist-booking-item h2 a{color:#193a32;text-decoration:none}
+.tourist-booking-item-main>p{margin:0;color:#718079;font-size:.86rem}
+.tourist-booking-statuses{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:15px;color:#75827c;font-size:.8rem}
+.tourist-booking-statuses strong{color:#284b40}
+.tourist-booking-item-side{display:grid;justify-items:end;gap:6px}
+.tourist-booking-item-side>strong{color:#193a32;font-size:1.08rem}
+.tourist-booking-item-side>small{color:#7b8982;font-size:.75rem}
+.tourist-booking-item-side .button{margin-top:7px}
+.tourist-bookings-empty{text-align:center;padding:42px 24px}
+.tourist-bookings-empty h2,.tourist-booking-detail-card h2{margin:0 0 10px;font:600 1.45rem 'Playfair Display',Georgia,serif;color:#193a32}
+.tourist-bookings-empty p{color:#718079}
+.tourist-bookings-empty .button{margin-top:10px}
+.tourist-booking-alert{margin-bottom:14px;font-weight:700}
+.tourist-booking-alert-success{border-color:#cbdccb;background:#f2f7ef;color:#44684b}
+.tourist-booking-alert-error{border-color:#ebc7bd;background:#fff4f1;color:#98432f}
+.tourist-booking-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tourist-booking-detail-card h2{font-size:1.25rem}
+.tourist-booking-detail-card dl{display:grid;gap:0;margin:0}
+.tourist-booking-detail-card dl>div{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid #edf0ea;font-size:.84rem}
+.tourist-booking-detail-card dt{color:#75827c}
+.tourist-booking-detail-card dd{margin:0;color:#284b40;font-weight:750;text-align:right}
+.tourist-booking-detail-card .booking-total dt,.tourist-booking-detail-card .booking-total dd{color:#193a32;font-weight:850}
+.tourist-refund-list{margin-top:19px}
+.tourist-refund-list h3{font:600 1.05rem 'Playfair Display',Georgia,serif}
+.tourist-refund-list article{padding:12px 0;border-top:1px solid #edf0ea}
+.tourist-refund-list article strong{color:#284b40}
+.tourist-refund-list article time{float:right;color:#7b8982;font-size:.75rem}
+.tourist-refund-list article p{margin:6px 0 0;color:#718079;font-size:.8rem;line-height:1.5}
+.tourist-cancel-form{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:16px;border-color:#e8d7cd;background:#fffaf7}
+.tourist-cancel-form p{margin:0;color:#756a61;font-size:.84rem;line-height:1.5}
+.tourist-cancel-form button{flex:0 0 auto;color:#9b4636}
+.tourist-dispute-booking-action{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;padding:14px 16px;border:1px solid #eadfc9;border-radius:9px;background:#fbf8f1}
+.tourist-dispute-booking-action p{margin:0;color:#756a5e;font-size:.8rem;line-height:1.6}
+.tourist-dispute-booking-action .button{flex:0 0 auto}
+@media(max-width:700px){.tourist-booking-item{grid-template-columns:1fr}.tourist-booking-item-side{justify-items:start}.tourist-booking-detail-grid{grid-template-columns:1fr}.tourist-cancel-form{align-items:stretch;flex-direction:column}.tourist-cancel-form button{width:100%}}
+@media(max-width:520px){.tourist-dispute-booking-action{align-items:stretch;flex-direction:column}}

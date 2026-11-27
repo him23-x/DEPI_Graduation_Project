@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Features.Accounts.Requests;
-using DiscoverEgypt.Application.ViewModels.Account;
+using DiscoverEgypt.Presentation.ViewModels.Account;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
@@ -27,7 +27,7 @@ namespace DiscoverEgypt.Presentation.Controllers.Account
         {
             try
             {
-                var result = await _mediator.Send(new LoginAccountCommand(model), cancellationToken);
+                var result = await _mediator.Send(new LoginAccountCommand(model.Email, model.Password, model.RememberMe), cancellationToken);
                 if (!result.Succeeded)
                 {
                     AddErrors(result.Errors);
@@ -37,7 +37,9 @@ namespace DiscoverEgypt.Presentation.Controllers.Account
                 if (!string.IsNullOrWhiteSpace(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     return Redirect(model.ReturnUrl);
 
-                return result.IsHost ? RedirectToAction("Index", "Experiences") : RedirectToAction(nameof(Welcome));
+                if (result.IsHost) return RedirectToAction("Index", "Experiences");
+                if (result.IsTourist) return RedirectToAction("Index", "TouristDashboard");
+                return RedirectToAction(nameof(Welcome));
             }
             catch (FluentValidation.ValidationException exception)
             {
@@ -55,7 +57,13 @@ namespace DiscoverEgypt.Presentation.Controllers.Account
         {
             try
             {
-                var result = await _mediator.Send(new RegisterAccountCommand(model), cancellationToken);
+                var result = await _mediator.Send(new RegisterAccountCommand(
+                    model.FullName,
+                    model.Email,
+                    model.Password,
+                    model.ConfirmPassword,
+                    model.Role,
+                    model.AcceptTerms), cancellationToken);
                 if (!result.Succeeded)
                 {
                     AddErrors(result.Errors);

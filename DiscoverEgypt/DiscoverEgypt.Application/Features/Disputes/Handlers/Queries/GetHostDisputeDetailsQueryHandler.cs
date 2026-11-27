@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
-using DiscoverEgypt.Application.ViewModels.Disputes;
+using DiscoverEgypt.Application.DTOs.Disputes;
 using DiscoverEgypt.Application.Features.Disputes.Requests.Queries;
 using MediatR;
 using AutoMapper;
@@ -8,7 +8,7 @@ using FluentValidation;
 namespace DiscoverEgypt.Application.Features.Disputes.Handlers.Queries
 {
     public sealed class GetHostDisputeDetailsQueryHandler
-        : IRequestHandler<GetHostDisputeDetailsQuery, HostDisputeDetailsViewModel?>
+        : IRequestHandler<GetHostDisputeDetailsQuery, HostDisputeDetailsDto?>
     {
         private readonly IHostDisputesRepository _repository;
         private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ namespace DiscoverEgypt.Application.Features.Disputes.Handlers.Queries
             _validator = validator;
         }
 
-        public async Task<HostDisputeDetailsViewModel?> Handle(GetHostDisputeDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<HostDisputeDetailsDto?> Handle(GetHostDisputeDetailsQuery request, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
@@ -30,7 +30,7 @@ namespace DiscoverEgypt.Application.Features.Disputes.Handlers.Queries
             if (dispute is null) return null;
             var tourist = (await _repository.GetTouristsAsync([dispute.Booking.TouristUserId], cancellationToken))
                 .GetValueOrDefault(dispute.Booking.TouristUserId);
-            var model = _mapper.Map<HostDisputeDetailsViewModel>(dispute);
+            var model = _mapper.Map<HostDisputeDetailsDto>(dispute);
             return model with
             {
                 GuestName = !string.IsNullOrWhiteSpace(tourist?.FullName) ? tourist.FullName : tourist?.UserName ?? "Discover Egypt guest",

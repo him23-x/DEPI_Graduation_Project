@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/host-experiences.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/account-menu.css" asp-append-version="true" />
 </head>
 <body class="host-shell">
     <aside class="host-sidebar">
@@ -23,20 +24,17 @@
             <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Earnings" ? "active" : string.Empty)" asp-controller="Earnings" asp-action="Index"><span class="nav-icon">◈</span> Earnings</a>
             <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reviews" ? "active" : string.Empty)" asp-controller="Reviews" asp-action="Index"><span class="nav-icon">❝</span> Reviews</a>
             <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Disputes" ? "active" : string.Empty)" asp-controller="Disputes" asp-action="Index"><span class="nav-icon">⚖</span> Disputes</a>
+            <a class="host-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : string.Empty)" asp-controller="Profile" asp-action="Index"><span class="nav-icon">●</span> Profile</a>
         </nav>
-        <div class="host-sidebar-bottom">
-            <div class="sidebar-section-label">ACCOUNT</div>
-            <div class="host-profile"><span class="host-avatar">@(User.Identity?.Name?.FirstOrDefault().ToString().ToUpperInvariant() ?? "H")</span><span>@(User.Identity?.Name ?? "Host")<small>Host account</small></span></div>
-        </div>
     </aside>
     <main class="host-main">
         <header class="host-topbar">
             <span>Host workspace <span class="breadcrumb-separator">/</span> <strong>@(ViewData["Section"] ?? "My Experiences")</strong></span>
-            @await Component.InvokeAsync("HostNotificationBell")
-            <span class="topbar-avatar">@(User.Identity?.Name?.FirstOrDefault().ToString().ToUpperInvariant() ?? "H")</span>
+            @await Component.InvokeAsync("AccountMenu", new { placement = "host" })
         </header>
         <div class="host-content">@RenderBody()</div>
     </main>
+    <script src="~/js/account-menu.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

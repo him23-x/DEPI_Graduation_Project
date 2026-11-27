@@ -1,0 +1,68 @@
+@model DiscoverEgypt.Application.DTOs.HostProfile.HostProfileDto
+@using DiscoverEgypt.Domain.Enums.Hosts
+@{
+    ViewData["Title"] = "Host Profile";
+    ViewData["Section"] = "Profile";
+}
+
+<section class="create-heading">
+    <div>
+        <div class="eyebrow">YOUR HOST ACCOUNT</div>
+        <h1>Host profile</h1>
+        <p>Tell guests a little about who you are and the kind of host you’ll be.</p>
+    </div>
+</section>
+
+@if (TempData["HostProfileSaved"] is string savedMessage)
+{
+    <div class="setup-notice" role="status">@savedMessage</div>
+}
+
+<form asp-controller="Profile" asp-action="Index" method="post" enctype="multipart/form-data" class="host-profile-form">
+    <div class="create-form-column">
+        <div asp-validation-summary="ModelOnly" class="form-validation-summary" role="alert"></div>
+        <section class="form-panel">
+            <header class="form-panel-heading">
+                <h2>About you</h2>
+                <p>This information helps guests understand the person behind the experience.</p>
+            </header>
+
+            <div class="host-profile-photo">
+                <div class="host-profile-photo-preview">
+                    @if (Model.HasProfileImage)
+                    {
+                        <img src="@Url.Action("Image", "Profile")" alt="Your host profile" />
+                    }
+                    else
+                    {
+                        <span aria-hidden="true">@(User.Identity?.Name?.FirstOrDefault().ToString().ToUpperInvariant() ?? "H")</span>
+                    }
+                </div>
+                <div class="host-profile-photo-fields">
+                    <div class="form-field">
+                        <label for="profileImage">Profile photo</label>
+                        <input id="profileImage" name="profileImage" type="file" accept="image/jpeg,image/png,image/webp" />
+                        <p class="field-hint">JPG, PNG, or WebP. Maximum file size: 20 MB.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="HostType">Host type <span>*</span></label>
+                <select asp-for="HostType" asp-items="Html.GetEnumSelectList<HostType>()"></select>
+                <span asp-validation-for="HostType" class="field-error"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Bio">Your story <span>*</span></label>
+                <textarea asp-for="Bio" maxlength="2000" rows="7" placeholder="Share your background, traditions, or what you enjoy sharing with guests."></textarea>
+                <span asp-validation-for="Bio" class="field-error"></span>
+                <p class="field-hint">Up to 2,000 characters.</p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button button-primary">Save profile</button>
+            </div>
+        </section>
+    </div>
+</form>

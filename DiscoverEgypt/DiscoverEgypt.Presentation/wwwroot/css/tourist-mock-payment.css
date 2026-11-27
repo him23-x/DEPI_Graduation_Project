@@ -1,0 +1,6 @@
+.mock-payment-card{max-width:720px;margin:0 auto}
+.mock-payment-card .booking-confirmation-details{margin-top:0}
+.mock-payment-actions{display:flex;justify-content:center;margin:22px auto 0;max-width:540px}
+.mock-payment-actions .booking-submit{width:100%;padding:12px 16px}
+.mock-payment-card>.mock-payment-note{display:block;max-width:540px;margin:12px auto 0;color:#718079;font-size:.8rem;line-height:1.55}
+.mock-payment-failed-mark{background:#fff0ed;color:#a74632}

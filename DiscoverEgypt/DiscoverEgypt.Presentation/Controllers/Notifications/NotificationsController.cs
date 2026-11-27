@@ -1,24 +1,12 @@
 using System.Security.Claims;
 using DiscoverEgypt.Application.Contracts.Notifications;
-<<<<<<< HEAD
-using DiscoverEgypt.Application.DTOs.Notifications;
-=======
-using DiscoverEgypt.Application.ViewModels.Notifications;
->>>>>>> f567d3a (modificaion)
+using DiscoverEgypt.Application.Responses.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using DiscoverEgypt.Application.Enums.Notifications;
 
-<<<<<<< HEAD
-namespace DiscoverEgypt.Presentation.Controllers.Notifications;
-
-[Authorize(Roles = "Host")]
-[Route("Host/Notifications")]
-public sealed class NotificationsController(INotificationService notificationService) : Controller
-=======
 namespace DiscoverEgypt.Presentation.Controllers.Notifications
->>>>>>> f567d3a (modificaion)
 {
     [Authorize(Roles = "Host")]
     [Route("Host/Notifications")]
@@ -26,19 +14,10 @@ namespace DiscoverEgypt.Presentation.Controllers.Notifications
     {
         private readonly INotificationService _notificationService;
 
-<<<<<<< HEAD
-        var notifications = await notificationService.GetForUserAsync(
-            userId, filter, page, PageSize, cancellationToken);
-        ViewData["Title"] = "Notifications";
-        ViewData["Section"] = "Notifications";
-        return View(notifications);
-    }
-=======
         public NotificationsController(INotificationService notificationService)
         {
             _notificationService = notificationService;
         }
->>>>>>> f567d3a (modificaion)
 
         private const int PageSize = 20;
 

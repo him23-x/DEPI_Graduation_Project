@@ -1,62 +1,23 @@
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
-<<<<<<< HEAD
-using DiscoverEgypt.Application.DTOs.Earnings;
-=======
-using DiscoverEgypt.Application.ViewModels.Earnings;
->>>>>>> f567d3a (modificaion)
+using DiscoverEgypt.Application.Responses.Earnings;
 using DiscoverEgypt.Application.Features.Earnings.Requests.Queries;
 using DiscoverEgypt.Domain.Enums.Payments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-<<<<<<< HEAD
-namespace DiscoverEgypt.Presentation.Controllers.Earnings;
-
-[Authorize(Roles = "Host")]
-public sealed class EarningsController(IMediator mediator) : Controller
-=======
 namespace DiscoverEgypt.Presentation.Controllers.Earnings
->>>>>>> f567d3a (modificaion)
 {
     [Authorize(Roles = "Host")]
     public sealed class EarningsController : Controller
     {
         private readonly IMediator _mediator;
 
-<<<<<<< HEAD
-        var result = await mediator.Send(new GetHostEarningsQuery(userId, status, page, PageSize), cancellationToken);
-        var totalPages = Math.Max(1, (int)Math.Ceiling(result.TotalCount / (double)PageSize));
-        if (page > totalPages)
-            return RedirectToAction(nameof(Index), new { status, page = totalPages });
-
-        ViewData["Section"] = "Earnings";
-        return View(result with { SelectedStatus = status });
-    }
-
-    public async Task<IActionResult> Export(PayoutStatus? status, CancellationToken cancellationToken = default)
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId)) return Challenge();
-        if (status.HasValue && !Enum.IsDefined(status.Value)) status = null;
-
-        const int exportPageSize = 50;
-        var firstPage = await mediator.Send(
-            new GetHostEarningsQuery(userId, status, 1, exportPageSize), cancellationToken);
-        var payouts = new List<HostPayoutListItemDto>(firstPage.Payouts);
-        var totalPages = (int)Math.Ceiling(firstPage.TotalCount / (double)exportPageSize);
-        for (var page = 2; page <= totalPages; page++)
-        {
-            var result = await mediator.Send(
-                new GetHostEarningsQuery(userId, status, page, exportPageSize), cancellationToken);
-            payouts.AddRange(result.Payouts);
-=======
         public EarningsController(IMediator mediator)
         {
             _mediator = mediator;
->>>>>>> f567d3a (modificaion)
         }
 
         private const int PageSize = 10;
@@ -85,7 +46,7 @@ namespace DiscoverEgypt.Presentation.Controllers.Earnings
             const int exportPageSize = 50;
             var firstPage = await _mediator.Send(
                 new GetHostEarningsQuery(userId, status, 1, exportPageSize), cancellationToken);
-            var payouts = new List<HostPayoutItemViewModel>(firstPage.Payouts);
+            var payouts = new List<HostPayoutItemResponse>(firstPage.Payouts);
             var totalPages = (int)Math.Ceiling(firstPage.TotalCount / (double)exportPageSize);
             for (var page = 2; page <= totalPages; page++)
             {

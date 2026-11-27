@@ -1,0 +1,110 @@
+@model DiscoverEgypt.Application.DTOs.TouristPreferences.TouristPreferenceFormDto
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Your preferences";
+    ViewData["TouristPage"] = "preferences";
+}
+
+<link rel="stylesheet" href="~/css/tourist-preferences.css" asp-append-version="true" />
+
+<section class="preferences-page">
+    <header class="preferences-heading">
+        <a asp-controller="Explore" asp-action="Index" class="preferences-back">← Explore experiences</a>
+        <span class="preferences-eyebrow">A JOURNEY THAT FEELS LIKE YOURS</span>
+        <h1>Set your travel preferences</h1>
+        <p>Tell us what you enjoy. We’ll use your choices to highlight cultural experiences that fit your trip.</p>
+    </header>
+
+    @if (TempData["TouristPreferencesSaved"] is string savedMessage)
+    {
+        <div class="preferences-success" role="status">@savedMessage</div>
+    }
+
+    <form asp-action="Index" method="post" class="preferences-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="preferences-errors" role="alert"></div>
+
+        <section class="preference-card">
+            <div class="preference-card-heading"><span>01</span><div><h2>Your trip style</h2><p>Choose the pace and support that suit you.</p></div></div>
+            <div class="preference-fields">
+                <div class="preference-field">
+                    <label asp-for="Budget">Budget per person</label>
+                    <select asp-for="Budget">
+                        <option value="">Choose a budget</option>
+                        @foreach (var option in Model.BudgetOptions)
+                        {
+                            <option value="@option.Value" selected="@(Model.Budget?.ToString() == option.Value ? "selected" : null)">@option.Label</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Budget"></span>
+                </div>
+                <div class="preference-field">
+                    <label asp-for="Duration">Preferred duration</label>
+                    <select asp-for="Duration">
+                        <option value="">Choose a duration</option>
+                        @foreach (var option in Model.DurationOptions)
+                        {
+                            <option value="@option.Value" selected="@(Model.Duration?.ToString() == option.Value ? "selected" : null)">@option.Label</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Duration"></span>
+                </div>
+                <div class="preference-field preference-field-wide">
+                    <label asp-for="GuidePreference">Guide preference</label>
+                    <select asp-for="GuidePreference">
+                        <option value="">Choose your preference</option>
+                        @foreach (var option in Model.GuidePreferenceOptions)
+                        {
+                            <option value="@option.Value" selected="@(Model.GuidePreference?.ToString() == option.Value ? "selected" : null)">@option.Label</option>
+                        }
+                    </select>
+                    <span asp-validation-for="GuidePreference"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="preference-card">
+            <div class="preference-card-heading"><span>02</span><div><h2>What interests you?</h2><p>Select the themes you’d like to explore.</p></div></div>
+            <div class="preference-options">
+                @foreach (var option in Model.Interests)
+                {
+                    <label class="preference-option"><input type="checkbox" name="InterestIds" value="@option.Id" checked="@(Model.InterestIds.Contains(option.Id) ? "checked" : null)" /><span>@option.Name</span></label>
+                }
+                @if (Model.Interests.Count == 0) { <p class="preference-empty">Interest options are not available yet.</p> }
+            </div>
+        </section>
+
+        <section class="preference-card">
+            <div class="preference-card-heading"><span>03</span><div><h2>Choose your cultural regions</h2><p>Pick the areas you’re interested in visiting.</p></div></div>
+            <div class="preference-options">
+                @foreach (var option in Model.CulturalAreas)
+                {
+                    <label class="preference-option"><input type="checkbox" name="CulturalAreaIds" value="@option.Id" checked="@(Model.CulturalAreaIds.Contains(option.Id) ? "checked" : null)" /><span>@option.Name</span></label>
+                }
+                @if (Model.CulturalAreas.Count == 0) { <p class="preference-empty">Cultural areas are not available yet.</p> }
+            </div>
+        </section>
+
+        <section class="preference-card">
+            <div class="preference-card-heading"><span>04</span><div><h2>Languages and experience types</h2><p>Choose the languages and styles that work for you.</p></div></div>
+            <h3 class="preference-subheading">Languages</h3>
+            <div class="preference-options">
+                @foreach (var option in Model.Languages)
+                {
+                    <label class="preference-option"><input type="checkbox" name="LanguageIds" value="@option.Id" checked="@(Model.LanguageIds.Contains(option.Id) ? "checked" : null)" /><span>@option.Name</span></label>
+                }
+                @if (Model.Languages.Count == 0) { <p class="preference-empty">Language options are not available yet.</p> }
+            </div>
+            <h3 class="preference-subheading">Experience types</h3>
+            <div class="preference-options">
+                @foreach (var option in Model.ExperienceTypes)
+                {
+                    <label class="preference-option"><input type="checkbox" name="ExperienceTypeIds" value="@option.Id" checked="@(Model.ExperienceTypeIds.Contains(option.Id) ? "checked" : null)" /><span>@option.Name</span></label>
+                }
+                @if (Model.ExperienceTypes.Count == 0) { <p class="preference-empty">Experience types are not available yet.</p> }
+            </div>
+        </section>
+
+        <div class="preferences-actions"><span>Your preferences can be updated any time.</span><button type="submit" class="button button-gold">Save preferences <span aria-hidden="true">→</span></button></div>
+    </form>
+</section>

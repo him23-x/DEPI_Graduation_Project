@@ -1,0 +1,97 @@
+@model DiscoverEgypt.Application.Responses.Experiences.ExploreExperiencesResponse
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Discover authentic Egyptian experiences";
+}
+
+<section class="home-hero" aria-labelledby="home-title">
+    <img class="home-hero-image" src="@Url.Content("~/images/tourist/home-coppercraft.jpeg")" alt="A master craftsman sharing his workshop with a young visitor" />
+    <div class="home-hero-shade"></div>
+    <div class="home-hero-eyebrow"><span class="hero-sparkle" aria-hidden="true">✳</span> #1 AUTHENTIC CULTURAL EXPERIENCES · LOCAL HOST NETWORK</div>
+    <div class="home-hero-content">
+        <div class="home-hero-copy">
+            <h1 id="home-title">DON’T JUST VISIT<br />EGYPT.<br /><em>LIVE ITS SOUL.</em></h1>
+            <p>Step beyond overcrowded tourist buses. Connect with verified Egyptian local families, master craftsmen, and heritage storytellers for genuine cultural immersion.</p>
+            <div class="home-hero-actions"><a class="button button-gold" href="#experiences">Explore Experiences <span aria-hidden="true">↗</span></a><a class="hero-services-link" href="#realms">Our Services <span aria-hidden="true">↗</span></a></div>
+        </div>
+        <a class="hero-featured-card" href="#experiences" aria-label="Explore traditional Egyptian cooking experiences">
+            <div class="hero-featured-image"><img src="@Url.Content("~/images/tourist/home-family.jpeg")" alt="An Egyptian family sharing a home-cooked meal" /><span>•••</span></div>
+            <div class="hero-featured-caption"><span>DISCOVER OUR<small>Recent Experience</small></span><span aria-hidden="true">↗</span></div>
+        </a>
+    </div>
+    <div class="hero-proof-panel" aria-label="Discover Egypt benefits">
+        <div><strong>AUTHENTIC</strong><span>Local Cultural Experiences</span></div>
+        <div><strong>VERIFIED</strong><span>100% Vetted Local Hosts</span></div>
+        <div><strong>PERSONALIZED</strong><span>Smart Match Recommendations</span></div>
+    </div>
+</section>
+
+<section class="home-section difference-section" id="difference">
+    <header class="centered-section-heading"><span class="eyebrow">A PARADIGM SHIFT IN TOURISM</span><h2>Why Discover Egypt is Different</h2><p>Commercial travel treats culture like a souvenir shop. We treat it as a sacred human exchange between thoughtful travelers and local keepers of generational heritage.</p></header>
+    <div class="comparison-grid">
+        <article class="comparison-card conventional-card"><span class="eyebrow">CONVENTIONAL MASS TOURISM</span><h3>The Tourist Bubble</h3><ul><li>Rushed bus tours through commercialized gift shops paying kickbacks to agencies.</li><li>Intermediary brokers and global booking platforms siphon traveler spend away from Egypt.</li><li>Standardized buffet dinners far removed from genuine home culinary traditions.</li><li>Zero cultural context, rushed photo stops, and no authentic human bonds formed.</li></ul><div class="comparison-foot"><span>Typical Host Earnings</span><strong>Less than 18% of booking</strong></div></article>
+        <article class="comparison-card authentic-card"><span class="eyebrow">THE DISCOVER EGYPT EXPERIENCE</span><span class="ethical-badge">ETHICAL &amp; DIRECT</span><h3>Living The Authentic Culture</h3><ul><li>Warm shared dinners inside welcoming Egyptian family homes, learning intimate stories and rituals.</li><li><strong>85% Direct Payout</strong> empowering Egyptian master artisans, families, and neighborhood keepers.</li><li>Tactile, hands-on master workshops: ancient pottery wheels, copper beating, and Baladi bread making.</li><li>In-person vetted local cultural storytellers with official safety standards.</li></ul><div class="comparison-foot"><span>Direct Host Remittance</span><strong>85% Fixed Minimum</strong></div></article>
+    </div>
+</section>
+
+<section class="home-section realms-section" id="realms">
+    <header class="centered-section-heading"><span class="eyebrow">FOUR PILLARS OF HERITAGE</span><h2>Explore by Cultural Realm</h2><p>Every corner of Egypt has a rhythm of its own. Choose the realm that speaks directly to your curiosity.</p></header>
+    <div class="realm-grid">
+        <a class="realm-card" href="#experiences"><div class="realm-image"><img src="@Url.Content("~/images/tourist/home-family.jpeg")" alt="Family gathering around Egyptian dishes" /></div><div class="realm-copy"><span class="eyebrow">FAMILY KITCHENS</span><h3>Culinary Heritage</h3><p>Home-cooked feasts, ancient spice alchemy, and baking authentic Baladi bread beside Cairo and Alexandria matriarchs.</p><span class="realm-link">Explore Realm <b aria-hidden="true">↗</b></span></div></a>
+        <a class="realm-card" href="#experiences"><div class="realm-image"><img src="@Url.Content("~/images/tourist/home-potter.jpeg")" alt="A master potter teaching a visitor on a pottery wheel" /></div><div class="realm-copy"><span class="eyebrow">MASTER CRAFTS</span><h3>Fayoum Pottery</h3><p>Hands-on ancient foot-spun pottery wheels in Tunis Village, desert clay alchemy, and generational ceramic glazing.</p><span class="realm-link">Explore Realm <b aria-hidden="true">↗</b></span></div></a>
+        <a class="realm-card" href="#experiences"><div class="realm-image"><img src="@Url.Content("~/images/tourist/home-coppercraft.jpeg")" alt="A craftswoman and a master artisan working with copper" /></div><div class="realm-copy"><span class="eyebrow">LIVING HERITAGE</span><h3>Metalwork &amp; Lanterns</h3><p>Intricate copper shaping, Islamic geometric etching, and brass lantern craftsmanship inside historical Mamluk quarters.</p><span class="realm-link">Explore Realm <b aria-hidden="true">↗</b></span></div></a>
+        <a class="realm-card" href="#experiences"><div class="realm-image"><img src="@Url.Content("~/images/tourist/home-herbal.jpeg")" alt="An Egyptian herbalist introducing traditional spices" /></div><div class="realm-copy"><span class="eyebrow">APOTHECARY &amp; SOUK</span><h3>Herbal Mastery</h3><p>Saffron, karkadeh, botanical infusions, and perfume oils deciphered with fifth-generation Khan el-Khalili herbalists.</p><span class="realm-link">Explore Realm <b aria-hidden="true">↗</b></span></div></a>
+    </div>
+</section>
+
+<section class="home-section match-section" id="match">
+    <header class="centered-section-heading"><span class="eyebrow">PERSONALIZED MATCHING</span><h2>Discover Your Perfect Egyptian Match</h2><p>Tell us what sparks your curiosity, where you want to wander, and what kind of day you want to have.</p></header>
+    <div class="match-preview">
+        <div class="match-steps">
+            <fieldset><legend>1. What ignites your passion?</legend><a href="#experiences">Cooking with Locals</a><a href="#experiences">Ancient Pottery</a><a href="#experiences">Folklore &amp; Oral History</a><a href="#experiences">Nubian Music</a></fieldset>
+            <fieldset><legend>2. Preferred destination atmosphere</legend><a href="#experiences">Historic Al-Darb Al-Ahmar</a><a href="#experiences">Peaceful Fayoum Oasis</a><a href="#experiences">Nubian Cataracts &amp; Aswan</a></fieldset>
+            <fieldset><legend>3. Ideal budget &amp; group dynamic</legend><a href="#experiences">$35–$50 · Intimate Dinner</a><a href="#experiences">$60–$85 · Full Day Immersion</a></fieldset>
+            <a class="button button-outline match-explore" href="#experiences">Explore experiences for you <span aria-hidden="true">↗</span></a>
+        </div>
+        <article class="match-result-card"><img src="@Url.Content("~/images/tourist/home-family.jpeg")" alt="A host family welcoming guests to dinner" /><div class="match-result-body"><div class="match-status"><span>LOCAL EXPERIENCE</span><span>CURATED FOR YOU</span></div><small>Cairo · Historic Bab Zuweila</small><h3>Traditional Egyptian Family Dinner &amp; Cooking</h3><p>Join a local family in their courtyard home. Learn the culinary art of slow-cooked Molokhia and hand-folded Mahshi, followed by rooftop mint tea.</p><div class="host-share"><span>Transparent host share</span><strong>85% goes directly to the host</strong></div><div class="match-result-footer"><strong>Explore authentic experiences</strong><a class="button button-gold" href="#experiences">View experiences</a></div></div></article>
+    </div>
+</section>
+
+<section class="home-section experiences-section" id="experiences">
+    <header class="centered-section-heading"><span class="eyebrow">DIRECT FROM VERIFIED LOCALS</span><h2>Curated Cultural Experiences</h2><p>Discover published experiences from Egyptian hosts, each sharing a cultural story and a personal connection to place.</p></header>
+    <nav class="experience-tabs" aria-label="Browse experiences by interest"><a class="@(string.IsNullOrWhiteSpace(Model.Search) ? "selected" : string.Empty)" asp-controller="Explore" asp-action="Index" asp-fragment="experience-search">All Experiences</a><a class="@(Model.Search.Contains("food", StringComparison.OrdinalIgnoreCase) ? "selected" : string.Empty)" asp-controller="Explore" asp-action="Index" asp-route-search="food" asp-fragment="experience-search">Family Dining</a><a class="@(Model.Search.Contains("craft", StringComparison.OrdinalIgnoreCase) || Model.Search.Contains("pottery", StringComparison.OrdinalIgnoreCase) ? "selected" : string.Empty)" asp-controller="Explore" asp-action="Index" asp-route-search="craft" asp-fragment="experience-search">Master Artisans</a><a class="@(Model.Search.Contains("rural", StringComparison.OrdinalIgnoreCase) ? "selected" : string.Empty)" asp-controller="Explore" asp-action="Index" asp-route-search="rural" asp-fragment="experience-search">Rural Life</a><a class="@(Model.Search.Contains("nubian", StringComparison.OrdinalIgnoreCase) ? "selected" : string.Empty)" asp-controller="Explore" asp-action="Index" asp-route-search="nubian" asp-fragment="experience-search">Nubian Culture</a></nav>
+    <form method="get" asp-controller="Explore" asp-action="Index" class="explore-filter-panel" id="experience-search">
+        <div class="explore-search-field"><label for="explore-search">Search experiences</label><div><span class="search-icon" aria-hidden="true">⌕</span><input id="explore-search" name="search" value="@Model.Search" placeholder="Try food, crafts, Cairo..." maxlength="150" /></div></div>
+        <div class="explore-filter-field"><label for="typeId">Experience type</label><select id="typeId" name="typeId"><option value="">All experiences</option>@foreach (var type in Model.Types){<option value="@type.Id" selected="@(Model.TypeId == type.Id)">@type.Name</option>}</select></div>
+        <div class="explore-filter-field"><label for="areaId">Cultural area</label><select id="areaId" name="areaId"><option value="">All areas</option>@foreach (var area in Model.Areas){<option value="@area.Id" selected="@(Model.AreaId == area.Id)">@area.Name</option>}</select></div>
+        <div class="explore-filter-field price-filter"><label>Price per guest (EGP)</label><div class="price-inputs"><input type="number" name="minPrice" min="0" step="1" value="@Model.MinPrice" placeholder="Min" aria-label="Minimum price" /><span>–</span><input type="number" name="maxPrice" min="0" step="1" value="@Model.MaxPrice" placeholder="Max" aria-label="Maximum price" /></div></div>
+        <input type="hidden" name="sort" value="@Model.Sort" /><button class="button button-gold filter-submit" type="submit">Find experiences</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search) || Model.TypeId.HasValue || Model.AreaId.HasValue || Model.MinPrice.HasValue || Model.MaxPrice.HasValue){<a class="clear-filters" asp-controller="Explore" asp-action="Index">Clear filters</a>}
+    </form>
+    <div class="results-toolbar"><span>Showing <strong>@(Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1)–@Math.Min(Model.Page * Model.PageSize, Model.TotalCount)</strong> of <strong>@Model.TotalCount</strong></span><form method="get" asp-controller="Explore" asp-action="Index" class="sort-form"><input type="hidden" name="search" value="@Model.Search" /><input type="hidden" name="typeId" value="@Model.TypeId" /><input type="hidden" name="areaId" value="@Model.AreaId" /><input type="hidden" name="minPrice" value="@Model.MinPrice" /><input type="hidden" name="maxPrice" value="@Model.MaxPrice" /><label for="sort">Sort by</label><select id="sort" name="sort" onchange="this.form.submit()"><option value="newest" selected="@(Model.Sort == "newest")">Recently added</option><option value="price-low" selected="@(Model.Sort == "price-low")">Price: low to high</option><option value="price-high" selected="@(Model.Sort == "price-high")">Price: high to low</option><option value="rating" selected="@(Model.Sort == "rating")">Highest rated</option></select></form></div>
+    @if (Model.Items.Count == 0){<div class="empty-experiences"><span aria-hidden="true">✦</span><h3>No experiences found</h3><p>Try a different search or clear some filters to see more of Egypt.</p><a class="button button-outline" asp-controller="Explore" asp-action="Index">Show all experiences</a></div>}
+    else
+    {
+        <div class="experience-grid">
+            @foreach (var experience in Model.Items)
+            {
+                <article class="experience-card"><a class="experience-image" asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@experience.Id" aria-label="View @experience.Title">@if (!string.IsNullOrWhiteSpace(experience.CoverImageKey)){<img src="@Url.Action("Image", "Explore", new { id = experience.Id })" alt="" loading="lazy" />}else{<span class="image-fallback" aria-hidden="true">✦</span>}<span class="experience-type">@experience.ExperienceType</span></a>
+                    <div class="experience-card-body"><div class="host-summary"><span class="host-initial">@(string.IsNullOrWhiteSpace(experience.HostName) ? "H" : experience.HostName.Trim()[0].ToString().ToUpperInvariant())</span><span><strong>@experience.HostName</strong><small>@experience.CulturalArea</small></span><span class="verified-mark" title="Admin-approved published experience">✓</span></div><h3><a asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@experience.Id">@experience.Title</a></h3><div class="story-callout"><span>THE CULTURAL STORY</span><p>@experience.CulturalStory</p></div><div class="card-meta"><span>@(experience.ReviewCount > 0 ? $"{experience.AverageRating:0.0} · {experience.ReviewCount} reviews" : "New experience")</span><span>@(experience.DurationMinutes / 60)h @(experience.DurationMinutes % 60)m</span></div><div class="card-bottom"><span class="price-label"><strong>@experience.PricePerPerson.ToString("N0") EGP</strong><small>per guest</small></span><a class="button button-gold" asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@experience.Id">View experience</a></div></div>
+                </article>
+            }
+        </div>
+        @if (Model.TotalPages > 1){<nav class="pagination" aria-label="Experience pages">@if (Model.HasPreviousPage){<a class="page-link" asp-controller="Explore" asp-action="Index" asp-route-search="@Model.Search" asp-route-typeId="@Model.TypeId" asp-route-areaId="@Model.AreaId" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page - 1)" aria-label="Previous page">←</a>}@for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++){<a class="page-link @(pageNumber == Model.Page ? "current" : string.Empty)" asp-controller="Explore" asp-action="Index" asp-route-search="@Model.Search" asp-route-typeId="@Model.TypeId" asp-route-areaId="@Model.AreaId" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice" asp-route-sort="@Model.Sort" asp-route-page="@pageNumber" aria-current="@(pageNumber == Model.Page ? "page" : null)">@pageNumber</a>}@if (Model.HasNextPage){<a class="page-link" asp-controller="Explore" asp-action="Index" asp-route-search="@Model.Search" asp-route-typeId="@Model.TypeId" asp-route-areaId="@Model.AreaId" asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page + 1)" aria-label="Next page">→</a>}</nav>}
+    }
+</section>
+
+<section class="home-section payment-section" id="transparency">
+    <div class="payment-copy"><span class="eyebrow">OPEN FISCAL BREAKDOWN</span><h2>Where Does Your Payment Go?</h2><p>Your booking directly supports the people who welcome you. The platform share helps fund verification, secure payments, and guest support.</p><a class="text-link" href="#trust">Learn about trust &amp; safety <span aria-hidden="true">→</span></a></div>
+    <div class="payment-ledger"><div class="ledger-host"><span class="ledger-icon" aria-hidden="true">✦</span><div><strong>85% <span>Direct to your local host</span></strong><small>Families, artisans, and local culture keepers</small></div><b>85%</b></div><div class="ledger-platform"><span class="ledger-icon" aria-hidden="true">✓</span><div><strong>15% <span>Platform &amp; escrow safety</span></strong><small>Verification, payment protection, and support</small></div><b>15%</b></div></div>
+</section>
+
+<section class="home-section safety-section" id="trust">
+    <header class="centered-section-heading"><span class="eyebrow">TRAVEL WITH CONFIDENCE</span><h2>Safety, Verification &amp; Dispute Protection</h2><p>Human connection feels better when the details are clear and your booking is supported.</p></header>
+    <div class="safety-grid"><article><span class="safety-icon">✓</span><h3>Verified local hosts</h3><p>Host profiles and experience submissions are reviewed before publication.</p></article><article><span class="safety-icon">⌑</span><h3>Secure booking</h3><p>Booking details and payments are handled through the platform.</p></article><article><span class="safety-icon">♡</span><h3>Clear expectations</h3><p>Read the experience details, host story, duration, and price before you book.</p></article><article><span class="safety-icon">↗</span><h3>Support when needed</h3><p>Reach out to the platform if a booking needs attention or resolution.</p></article></div>
+</section>
+
+<section class="home-cta"><div><span class="eyebrow">YOUR STORY STARTS HERE</span><h2>Ready to Experience the Real Egypt?</h2><p>Find an experience that brings you closer to Egyptian culture and the people who carry it forward.</p></div><div class="home-cta-actions"><a class="button button-gold" href="#experiences">Explore Experiences <span aria-hidden="true">↗</span></a><a class="button button-outline" asp-controller="Account" asp-action="Register" asp-route-Role="Host">Become a Host</a></div></section>

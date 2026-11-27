@@ -1,16 +1,16 @@
 using DiscoverEgypt.Application.Contracts.HostExperiences;
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.Enums.HostExperiences;
-using DiscoverEgypt.Application.Features.HostExperiences.Validators.ViewModels;
+using DiscoverEgypt.Application.Features.HostExperiences.Validators.DTOs;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Services
 {
     public sealed class ExperienceReadinessService
         : IExperienceReadinessService
     {
-        private readonly HostExperienceSubmissionReviewValidator _validator;
+        private readonly HostExperienceSubmissionReviewDtoValidator _validator;
 
-        public ExperienceReadinessService(HostExperienceSubmissionReviewValidator validator)
+        public ExperienceReadinessService(HostExperienceSubmissionReviewDtoValidator validator)
         {
             _validator = validator;
         }
@@ -19,7 +19,7 @@ namespace DiscoverEgypt.Application.Features.HostExperiences.Services
             "Confirm whether this experience is a public route, private/home venue, or controlled third-party venue.";
 
         public IReadOnlyList<string> GetIssues(
-            ExperienceSubmissionReviewViewModel review,
+            ExperienceSubmissionReviewDto review,
             ExperienceVenueUse? venueUse = null,
             bool evidenceInHostName = true)
         {

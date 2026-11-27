@@ -1,9 +1,8 @@
-@model DiscoverEgypt.Application.DTOs.Reviews.HostReviewsPageDto
+@model DiscoverEgypt.Application.Responses.Reviews.HostReviewsResponse
 @{
     ViewData["Title"] = "Host Reviews";
     ViewData["Section"] = "Reviews";
-    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
-    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("MMM d, yyyy");
+    string Cairo(DateTime value) => HostDateTimeFormatter.Cairo(value, "MMM d, yyyy");
     var firstRow = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
     var lastRow = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
 }

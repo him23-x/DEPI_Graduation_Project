@@ -1,0 +1,57 @@
+@model DiscoverEgypt.Application.Responses.Reviews.TouristReviewFormResponse
+@using DiscoverEgypt.Presentation.Formatting
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Review your booking";
+    ViewData["TouristPage"] = "booking";
+}
+
+<link rel="stylesheet" href="~/css/tourist-reviews.css" asp-append-version="true" />
+
+<section class="tourist-review-page" aria-labelledby="tourist-review-title">
+    <a class="tourist-review-back" asp-controller="TouristBookings" asp-action="Details" asp-route-id="@Model.Booking.BookingId">← Back to booking</a>
+    <header class="tourist-review-heading">
+        <span>COMPLETED BOOKING · #@Model.Booking.BookingId</span>
+        <h1 id="tourist-review-title">Share your experience</h1>
+        <p>Your feedback helps other travelers make informed choices.</p>
+    </header>
+
+    <div class="tourist-review-grid">
+        <section class="tourist-review-booking-card">
+            <span class="tourist-review-eyebrow">BOOKING DETAILS</span>
+            <h2>@Model.Booking.Title</h2>
+            <dl>
+                <div><dt>Booking type</dt><dd>@Model.Booking.BookingType</dd></div>
+                <div><dt>Completed</dt><dd>@HostDateTimeFormatter.Cairo(Model.Booking.ScheduledEndUtc, "MMMM d, yyyy")</dd></div>
+            </dl>
+            <p>Reviews can be submitted once for each completed booking.</p>
+        </section>
+
+        <form class="tourist-review-form" asp-controller="TouristReviews" asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="Form.BookingId" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="tourist-review-validation" role="alert"></div>
+            <label asp-for="Form.Rating">Your rating</label>
+            <select asp-for="Form.Rating" required aria-describedby="rating-help">
+                <option value="">Choose a rating</option>
+                <option value="5">5 / 5 — Excellent</option>
+                <option value="4">4 / 5 — Very good</option>
+                <option value="3">3 / 5 — Good</option>
+                <option value="2">2 / 5 — Fair</option>
+                <option value="1">1 / 5 — Poor</option>
+            </select>
+            <span asp-validation-for="Form.Rating" class="tourist-review-field-error"></span>
+            <small id="rating-help">Select a rating from 1 to 5.</small>
+
+            <label asp-for="Form.Comment">Comment <span>(optional)</span></label>
+            <textarea asp-for="Form.Comment" rows="6" maxlength="2000" placeholder="What should other travelers know about this experience?"></textarea>
+            <span asp-validation-for="Form.Comment" class="tourist-review-field-error"></span>
+            <small>Up to 2,000 characters.</small>
+
+            <div class="tourist-review-actions">
+                <a class="button button-outline" asp-controller="TouristBookings" asp-action="Details" asp-route-id="@Model.Booking.BookingId">Cancel</a>
+                <button class="button button-gold" type="submit">Submit review</button>
+            </div>
+        </form>
+    </div>
+</section>

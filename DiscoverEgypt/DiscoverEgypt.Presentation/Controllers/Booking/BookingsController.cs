@@ -1,9 +1,5 @@
 using System.Security.Claims;
-<<<<<<< HEAD
-using DiscoverEgypt.Application.DTOs.Bookings;
-=======
-using DiscoverEgypt.Application.ViewModels.Bookings;
->>>>>>> f567d3a (modificaion)
+using DiscoverEgypt.Application.Responses.Bookings;
 using DiscoverEgypt.Application.Features.Bookings.Requests.Commands;
 using DiscoverEgypt.Application.Features.Bookings.Requests.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -12,14 +8,7 @@ using MediatR;
 
 using DiscoverEgypt.Application.Enums.Bookings;
 
-<<<<<<< HEAD
-namespace DiscoverEgypt.Presentation.Controllers.Booking;
-
-[Authorize(Roles = "Host")]
-public sealed class BookingsController(IMediator mediator) : Controller
-=======
 namespace DiscoverEgypt.Presentation.Controllers.Booking
->>>>>>> f567d3a (modificaion)
 {
     [Authorize(Roles = "Host")]
     public sealed class BookingsController : Controller
@@ -28,18 +17,8 @@ namespace DiscoverEgypt.Presentation.Controllers.Booking
 
         public BookingsController(IMediator mediator)
         {
-<<<<<<< HEAD
-            SelectedTab = tab,
-            Bookings = bookings,
-            Notice = TempData["BookingNotice"] as string,
-            Error = TempData["BookingError"] as string
-        };
-        return View(model);
-    }
-=======
             _mediator = mediator;
         }
->>>>>>> f567d3a (modificaion)
 
         [HttpGet]
         public async Task<IActionResult> Index(HostBookingTab tab = HostBookingTab.Pending, CancellationToken cancellationToken = default)
@@ -50,7 +29,7 @@ namespace DiscoverEgypt.Presentation.Controllers.Booking
 
             var bookings = await _mediator.Send(new GetHostBookingsQuery(userId, tab), cancellationToken);
             ViewData["Section"] = "Bookings";
-            var model = new HostBookingsIndexViewModel
+            var model = new HostBookingsResponse
             {
                 SelectedTab = tab,
                 Bookings = bookings,
@@ -70,7 +49,7 @@ namespace DiscoverEgypt.Presentation.Controllers.Booking
             var booking = await _mediator.Send(new GetHostBookingDetailsQuery(userId, id), cancellationToken);
             if (booking is null) return NotFound();
             ViewData["Section"] = "Booking details";
-            var model = new HostBookingDetailsViewModel
+            var model = new HostBookingDetailsResponse
             {
                 Booking = booking,
                 Notice = TempData["BookingNotice"] as string,
@@ -136,10 +115,6 @@ namespace DiscoverEgypt.Presentation.Controllers.Booking
             HostBookingActionOutcome.OpenDispute => "This booking cannot be marked completed while a dispute is open or under review.",
             _ => "The booking could not be updated. Refresh and try again."
         };
-<<<<<<< HEAD
-        return View(model);
-=======
->>>>>>> f567d3a (modificaion)
     }
 }
 

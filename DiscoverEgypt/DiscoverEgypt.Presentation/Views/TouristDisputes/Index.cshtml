@@ -1,0 +1,53 @@
+@model IReadOnlyList<DiscoverEgypt.Application.Responses.Disputes.TouristDisputeListItemResponse>
+@using DiscoverEgypt.Presentation.Formatting
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "My disputes";
+    ViewData["TouristPage"] = "disputes";
+    var notice = TempData["TouristDisputeNotice"] as string;
+    var error = TempData["TouristDisputeError"] as string;
+}
+
+<link rel="stylesheet" href="~/css/tourist-disputes.css" asp-append-version="true" />
+
+<section class="tourist-disputes-page" aria-labelledby="tourist-disputes-title">
+    <a class="tourist-disputes-back" asp-controller="TouristDashboard" asp-action="Index">← Back to dashboard</a>
+    @if (!string.IsNullOrWhiteSpace(notice)) { <div class="tourist-dispute-alert dispute-alert-success" role="status">@notice</div> }
+    @if (!string.IsNullOrWhiteSpace(error)) { <div class="tourist-dispute-alert dispute-alert-error" role="alert">@error</div> }
+    <header class="tourist-disputes-heading">
+        <span class="tourist-disputes-eyebrow">SUPPORT &amp; RESOLUTION</span>
+        <h1 id="tourist-disputes-title">My disputes</h1>
+        <p>Review the status of concerns you submitted about your bookings.</p>
+    </header>
+
+    @if (Model.Count == 0)
+    {
+        <div class="tourist-disputes-empty">
+            <span aria-hidden="true">✳</span>
+            <h2>No disputes submitted</h2>
+            <p>If a booking meets the dispute rules, you can open a dispute from its details page.</p>
+            <a class="button button-gold" asp-controller="TouristBookings" asp-action="Index">View my bookings</a>
+        </div>
+    }
+    else
+    {
+        <div class="tourist-dispute-list">
+            @foreach (var dispute in Model)
+            {
+                <article class="tourist-dispute-card">
+                    <div class="tourist-dispute-card-top">
+                        <span class="tourist-dispute-number">DISPUTE #@dispute.DisputeId</span>
+                        <span class="tourist-dispute-status dispute-status-@dispute.Status.ToString().ToLowerInvariant()">@dispute.Status</span>
+                    </div>
+                    <h2>@dispute.BookingTitle</h2>
+                    <dl>
+                        <div><dt>Booking</dt><dd>#@dispute.BookingId</dd></div>
+                        <div><dt>Experience time</dt><dd>@HostDateTimeFormatter.Cairo(dispute.ScheduledStartUtc, "MMM d, yyyy · h:mm tt")</dd></div>
+                        <div><dt>Submitted</dt><dd>@HostDateTimeFormatter.Cairo(dispute.CreatedAtUtc, "MMM d, yyyy · h:mm tt")</dd></div>
+                    </dl>
+                    <a class="tourist-dispute-link" asp-action="Details" asp-route-id="@dispute.DisputeId">View dispute details <span aria-hidden="true">↗</span></a>
+                </article>
+            }
+        </div>
+    }
+</section>

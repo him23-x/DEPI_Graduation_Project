@@ -1,9 +1,8 @@
-@model DiscoverEgypt.Application.DTOs.Earnings.HostEarningsDto
+@model DiscoverEgypt.Application.Responses.Earnings.HostEarningsResponse
 @{
     ViewData["Title"] = "Your Earnings";
     ViewData["Section"] = "Earnings";
-    var zone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
-    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), zone).ToString("MMM d, yyyy · h:mm tt");
+    string Cairo(DateTime value) => HostDateTimeFormatter.Cairo(value, "MMM d, yyyy · h:mm tt");
     var firstRow = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
     var lastRow = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
     var statuses = Enum.GetValues<PayoutStatus>();

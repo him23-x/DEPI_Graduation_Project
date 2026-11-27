@@ -1,0 +1,52 @@
+.tourist-disputes-page { width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: 38px 0 82px; }
+.tourist-disputes-back { display: inline-flex; margin-bottom: 16px; color: #80621f; font-size: 9px; font-weight: 700; text-decoration: none; }
+.tourist-disputes-back:hover,.tourist-dispute-link:hover { color: #b8860b; text-decoration: underline; }
+.tourist-disputes-heading { margin-bottom: 22px; }
+.tourist-disputes-eyebrow { color: #94701f; font-size: 8px; font-weight: 800; letter-spacing: .16em; }
+.tourist-disputes-heading h1 { margin: 8px 0 7px; color: #2c221e; font: 600 clamp(30px,3.3vw,40px)/1.15 "Playfair Display",serif; }
+.tourist-disputes-heading p { margin: 0; color: #756b62; font-size: 10px; line-height: 1.7; }
+.tourist-dispute-alert { margin: 0 0 14px; padding: 12px 14px; border: 1px solid; border-radius: 8px; font-size: 9px; }
+.dispute-alert-success { border-color: #d7e7d4; background: #f2f8f0; color: #4c6d4e; }
+.dispute-alert-error { border-color: #ecd4cb; background: #fff7f3; color: #8c4f3e; }
+.tourist-disputes-empty { display: grid; min-height: 310px; justify-items: center; align-content: center; padding: 28px; border: 1px dashed #e3d8c5; border-radius: 13px; background: #fdfbf7; text-align: center; }
+.tourist-disputes-empty > span { color: #b8860b; font-size: 28px; }
+.tourist-disputes-empty h2 { margin: 10px 0 5px; color: #352c24; font: 600 21px "Playfair Display",serif; }
+.tourist-disputes-empty p { max-width: 430px; color: #7c7166; font-size: 9px; line-height: 1.7; }
+.tourist-disputes-empty .button { margin-top: 9px; min-height: 35px; font-size: 8px; }
+.tourist-dispute-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px; }
+.tourist-dispute-card,.tourist-dispute-summary,.tourist-dispute-form,.tourist-dispute-detail-card,.tourist-dispute-next-step { min-width: 0; padding: 18px; border: 1px solid #e9e1d6; border-radius: 12px; background: #fff; box-shadow: 0 7px 20px rgba(65,48,27,.045); }
+.tourist-dispute-card-top,.tourist-dispute-detail-status { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.tourist-dispute-number { color: #90702e; font-size: 7px; font-weight: 800; letter-spacing: .12em; }
+.tourist-dispute-status { display: inline-flex; padding: 5px 8px; border: 1px solid #e7ddc7; border-radius: 999px; background: #faf7ef; color: #78602c; font-size: 7px; font-weight: 800; text-transform: uppercase; }
+.dispute-status-open,.dispute-status-underreview { border-color: #ead9b4; background: #fbf5e8; color: #806321; }
+.dispute-status-resolved { border-color: #d8e8d7; background: #f1f7ef; color: #4b7451; }
+.dispute-status-closed { border-color: #e5dfd8; background: #f6f4f1; color: #746a60; }
+.tourist-dispute-card h2,.tourist-dispute-summary h2,.tourist-dispute-detail-card h2,.tourist-dispute-next-step h2 { margin: 11px 0 12px; color: #332820; font: 600 19px/1.3 "Playfair Display",serif; }
+.tourist-dispute-card dl,.tourist-dispute-summary dl,.tourist-dispute-detail-card dl { display: grid; gap: 0; margin: 0; }
+.tourist-dispute-card dl > div,.tourist-dispute-summary dl > div,.tourist-dispute-detail-card dl > div { display: grid; grid-template-columns: 125px minmax(0,1fr); gap: 10px; padding: 8px 0; border-top: 1px solid #f0ebe4; }
+.tourist-dispute-card dt,.tourist-dispute-summary dt,.tourist-dispute-detail-card dt { color: #897e73; font-size: 8px; }
+.tourist-dispute-card dd,.tourist-dispute-summary dd,.tourist-dispute-detail-card dd { margin: 0; color: #463c33; font-size: 8px; font-weight: 700; line-height: 1.6; }
+.tourist-dispute-link { display: inline-flex; gap: 6px; margin-top: 11px; color: #83621e; font-size: 8px; font-weight: 800; text-decoration: none; }
+.tourist-dispute-form-grid { display: grid; grid-template-columns: minmax(260px,.75fr) minmax(0,1.25fr); align-items: start; gap: 15px; }
+.tourist-dispute-summary > h2 { margin-top: 9px; }
+.tourist-dispute-privacy-note { margin: 12px 0 0; padding: 10px; border-radius: 8px; background: #f6f3eb; color: #776c5d; font-size: 8px; line-height: 1.6; }
+.tourist-dispute-form { display: grid; gap: 8px; }
+.tourist-dispute-form label { color: #44392e; font-size: 9px; font-weight: 800; }
+.tourist-dispute-form textarea { width: 100%; resize: vertical; min-height: 170px; padding: 12px; border: 1px solid #e5ded1; border-radius: 8px; outline: 0; color: #3f362e; font: 500 9px/1.65 "Plus Jakarta Sans",sans-serif; }
+.tourist-dispute-form textarea:focus { border-color: #b8860b; box-shadow: 0 0 0 3px rgba(184,134,11,.1); }
+.tourist-dispute-form > small { color: #8a8076; font-size: 7px; }
+.tourist-dispute-validation,.tourist-dispute-field-error { color: #9a4c38; font-size: 8px; }
+.tourist-dispute-validation:empty { display: none; }
+.tourist-dispute-form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 9px; }
+.tourist-dispute-form-actions .button { min-height: 35px; font-size: 8px; cursor: pointer; }
+.tourist-dispute-detail-grid { display: grid; grid-template-columns: minmax(0,1fr) 260px; align-items: start; gap: 15px; }
+.tourist-dispute-detail-main { display: grid; gap: 13px; }
+.tourist-dispute-detail-status > span:last-child { color: #867b70; font-size: 8px; }
+.tourist-dispute-detail-card h2 { margin: 13px 0 7px; }
+.tourist-dispute-description { margin: 0; color: #62584f; font-size: 9px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.dispute-resolution-note { grid-template-columns: 125px minmax(0,1fr) !important; }
+.tourist-dispute-next-step { position: sticky; top: 96px; background: linear-gradient(145deg,#fbf7ed,#fff); }
+.tourist-dispute-next-step > span { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: #f3e9d2; color: #967127; font-size: 17px; }
+.tourist-dispute-next-step h2 { font-size: 17px; }
+.tourist-dispute-next-step p { margin: 0; color: #776d62; font-size: 8px; line-height: 1.7; }
+@media (max-width: 720px) { .tourist-disputes-page { width: min(100% - 28px,1080px); padding-top: 28px; } .tourist-dispute-list,.tourist-dispute-form-grid,.tourist-dispute-detail-grid { grid-template-columns: 1fr; } .tourist-dispute-next-step { position: static; } }

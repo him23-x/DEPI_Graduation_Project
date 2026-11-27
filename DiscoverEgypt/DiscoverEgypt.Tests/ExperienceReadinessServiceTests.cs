@@ -1,8 +1,8 @@
 using DiscoverEgypt.Application.Contracts.HostExperiences;
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 using DiscoverEgypt.Application.Enums.HostExperiences;
 using DiscoverEgypt.Application.Features.HostExperiences.Services;
-using DiscoverEgypt.Application.Features.HostExperiences.Validators.ViewModels;
+using DiscoverEgypt.Application.Features.HostExperiences.Validators.DTOs;
 using DiscoverEgypt.Domain.Enums.Experiences;
 
 namespace DiscoverEgypt.Tests
@@ -10,15 +10,15 @@ namespace DiscoverEgypt.Tests
     public sealed class ExperienceReadinessServiceTests
     {
         private readonly IExperienceReadinessService _service =
-            new ExperienceReadinessService(new HostExperienceSubmissionReviewValidator());
+            new ExperienceReadinessService(new HostExperienceSubmissionReviewDtoValidator());
 
         [Fact]
         public void GetIssues_ReturnsNoIssues_ForCompleteFoodExperience()
         {
             var review = CreateReview(
                 EvidenceExperienceType.Food,
-                new ExperienceEvidenceSummaryViewModel(EvidenceKind.MenuAndAllergenInfo, "Vegetarian menu", 0),
-                new ExperienceEvidenceSummaryViewModel(EvidenceKind.FoodAreaPhoto, null, 3));
+                new ExperienceEvidenceSummaryDto(EvidenceKind.MenuAndAllergenInfo, "Vegetarian menu", 0),
+                new ExperienceEvidenceSummaryDto(EvidenceKind.FoodAreaPhoto, null, 3));
 
             var issues = _service.GetIssues(review);
 
@@ -41,7 +41,7 @@ namespace DiscoverEgypt.Tests
         {
             var review = CreateReview(
                 EvidenceExperienceType.LocalTraditions,
-                new ExperienceEvidenceSummaryViewModel(EvidenceKind.RouteDetails, "A walk through the old market", 0));
+                new ExperienceEvidenceSummaryDto(EvidenceKind.RouteDetails, "A walk through the old market", 0));
 
             var issues = _service.GetIssues(review);
 
@@ -50,9 +50,9 @@ namespace DiscoverEgypt.Tests
                 issues);
         }
 
-        private static ExperienceSubmissionReviewViewModel CreateReview(
+        private static ExperienceSubmissionReviewDto CreateReview(
             EvidenceExperienceType type,
-            params ExperienceEvidenceSummaryViewModel[] evidence)
+            params ExperienceEvidenceSummaryDto[] evidence)
         {
             var typeName = type switch
             {
@@ -62,7 +62,7 @@ namespace DiscoverEgypt.Tests
                 _ => "Unknown"
             };
 
-            return new ExperienceSubmissionReviewViewModel(
+            return new ExperienceSubmissionReviewDto(
                 1,
                 "A meaningful local experience",
                 typeName,

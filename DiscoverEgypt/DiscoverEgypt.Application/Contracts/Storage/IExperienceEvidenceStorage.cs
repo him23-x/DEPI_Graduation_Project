@@ -1,4 +1,4 @@
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 
 using DiscoverEgypt.Application.Contracts.Storage;
 

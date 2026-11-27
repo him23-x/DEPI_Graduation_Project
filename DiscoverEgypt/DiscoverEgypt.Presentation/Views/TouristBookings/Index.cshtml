@@ -1,0 +1,39 @@
+@model IReadOnlyList<DiscoverEgypt.Application.Responses.Bookings.TouristBookingListItemResponse>
+@using DiscoverEgypt.Domain.Enums.Bookings
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "My bookings";
+    ViewData["TouristPage"] = "booking";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/tourist-my-bookings.css" asp-append-version="true" />
+
+<section class="tourist-booking-page tourist-bookings-page">
+    <header class="tourist-booking-heading"><span>YOUR TRAVEL PLANS</span><h1>My bookings</h1><p>Review your experience and guide booking requests, payment status, and refund details.</p></header>
+
+    @if (Model.Count == 0)
+    {
+        <div class="tourist-bookings-empty"><h2>No bookings yet</h2><p>Find a local experience or an approved guide for your next visit.</p><a class="button button-gold" asp-controller="Explore" asp-action="Index">Explore experiences</a></div>
+    }
+    else
+    {
+        <div class="tourist-bookings-list">
+            @foreach (var booking in Model)
+            {
+                <article class="tourist-booking-item">
+                    <div class="tourist-booking-item-main">
+                        <span class="booking-experience-type">@(booking.BookingType == BookingType.Guide ? "GUIDE BOOKING" : "EXPERIENCE BOOKING")</span>
+                        <h2><a asp-action="Details" asp-route-id="@booking.BookingId">@booking.Title</a></h2>
+                        <p>@HostDateTimeFormatter.Cairo(booking.ScheduledStartUtc, "dddd, MMMM d, yyyy · h:mm tt")</p>
+                        <div class="tourist-booking-statuses"><span>Booking: <strong>@booking.BookingStatus</strong></span><span>Payment: <strong>@booking.PaymentStatus</strong></span>@if (booking.PayoutStatus.HasValue){<span>Payout: <strong>@booking.PayoutStatus</strong></span>}</div>
+                    </div>
+                    <div class="tourist-booking-item-side"><strong>EGP @booking.TotalAmount.ToString("N2", english)</strong><small>@(booking.RefundedAmount > 0 ? $"EGP {booking.RefundedAmount.ToString("N2", english)} recorded refund" : "Total booking amount")</small><a class="button button-outline" asp-action="Details" asp-route-id="@booking.BookingId">View details</a></div>
+                </article>
+            }
+        </div>
+    }
+</section>

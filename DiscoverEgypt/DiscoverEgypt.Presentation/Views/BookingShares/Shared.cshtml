@@ -1,0 +1,33 @@
+@model DiscoverEgypt.Application.Responses.BookingShares.SharedBookingResponse
+@using DiscoverEgypt.Presentation.Formatting
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Shared booking details";
+    ViewData["TouristPage"] = "shared-booking";
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking-share.css" asp-append-version="true" />
+
+<section class="shared-booking-page" aria-labelledby="shared-booking-title">
+    <header class="shared-booking-heading">
+        <span>SHARED FOR YOUR TRIP</span>
+        <h1 id="shared-booking-title">Booking details</h1>
+        <p>A traveler shared these read-only details with you for safety.</p>
+    </header>
+
+    <section class="shared-booking-card">
+        <div class="shared-booking-type">@(Model.BookingType == DiscoverEgypt.Domain.Enums.Bookings.BookingType.Guide ? "GUIDE SERVICE" : "CULTURAL EXPERIENCE")</div>
+        <h2>@Model.ServiceName</h2>
+        <dl>
+            <div><dt>Host or guide</dt><dd>@Model.ProviderName</dd></div>
+            <div><dt>Starts</dt><dd>@HostDateTimeFormatter.Cairo(Model.ScheduledStartUtc, "dddd, MMMM d, yyyy · h:mm tt")</dd></div>
+            <div><dt>Ends</dt><dd>@HostDateTimeFormatter.Cairo(Model.ScheduledEndUtc, "dddd, MMMM d, yyyy · h:mm tt")</dd></div>
+            @if (!string.IsNullOrWhiteSpace(Model.PublicArea))
+            {
+                <div><dt>Area</dt><dd>@Model.PublicArea</dd></div>
+            }
+            <div><dt>Meeting point</dt><dd>@Model.Location</dd></div>
+        </dl>
+        <p class="shared-booking-privacy">This secure link is read-only and expires at the end of the scheduled booking. Payment and pricing details are not shared.</p>
+    </section>
+</section>

@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
-using DiscoverEgypt.Application.ViewModels.Earnings;
+using DiscoverEgypt.Application.Responses.Earnings;
 using DiscoverEgypt.Application.Features.Earnings.Requests.Queries;
 using MediatR;
 using AutoMapper;
@@ -9,7 +9,7 @@ using FluentValidation;
 namespace DiscoverEgypt.Application.Features.Earnings.Handlers.Queries
 {
     public sealed class GetHostEarningsQueryHandler
-        : IRequestHandler<GetHostEarningsQuery, HostEarningsIndexViewModel>
+        : IRequestHandler<GetHostEarningsQuery, HostEarningsResponse>
     {
         private readonly IHostEarningsRepository _repository;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace DiscoverEgypt.Application.Features.Earnings.Handlers.Queries
             _validator = validator;
         }
 
-        public async Task<HostEarningsIndexViewModel> Handle(GetHostEarningsQuery request, CancellationToken cancellationToken)
+        public async Task<HostEarningsResponse> Handle(GetHostEarningsQuery request, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
@@ -34,8 +34,8 @@ namespace DiscoverEgypt.Application.Features.Earnings.Handlers.Queries
                 cancellationToken);
             var totals = await _repository.GetTotalsAsync(request.UserId, cancellationToken);
             var count = await _repository.GetCountAsync(request.UserId, request.Status, cancellationToken);
-            return new HostEarningsIndexViewModel(
-                _mapper.Map<IReadOnlyList<HostPayoutItemViewModel>>(payouts),
+            return new HostEarningsResponse(
+                _mapper.Map<IReadOnlyList<HostPayoutItemResponse>>(payouts),
                 totals.GetValueOrDefault(PayoutStatus.Pending),
                 totals.GetValueOrDefault(PayoutStatus.Paid),
                 totals.GetValueOrDefault(PayoutStatus.Cancelled),

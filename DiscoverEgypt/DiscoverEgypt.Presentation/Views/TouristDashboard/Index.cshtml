@@ -1,0 +1,184 @@
+@model DiscoverEgypt.Application.Responses.Dashboard.TouristDashboardResponse
+@using DiscoverEgypt.Presentation.Formatting
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Your travel dashboard";
+    ViewData["TouristPage"] = "tourist-dashboard";
+    var preferences = Model.Preferences;
+    var selectedBudget = preferences.Budget is null
+        ? null
+        : preferences.BudgetOptions.FirstOrDefault(option => option.Value == preferences.Budget.Value.ToString())?.Label;
+    var selectedDuration = preferences.Duration is null
+        ? null
+        : preferences.DurationOptions.FirstOrDefault(option => option.Value == preferences.Duration.Value.ToString())?.Label;
+}
+
+<section class="tourist-dashboard" aria-labelledby="tourist-dashboard-title">
+    <header class="tourist-dashboard-heading">
+        <div>
+            <span class="tourist-dashboard-eyebrow">YOUR JOURNEY, IN ONE PLACE</span>
+            <h1 id="tourist-dashboard-title">Welcome back</h1>
+            <p>Keep your plans close, revisit your preferences, and find your next Egyptian experience.</p>
+        </div>
+        <div class="tourist-dashboard-actions">
+            <a class="button button-gold" asp-controller="Explore" asp-action="Index">Explore experiences <span aria-hidden="true">↗</span></a>
+            <a class="button button-outline" asp-controller="TouristBookings" asp-action="Index">My bookings</a>
+            <a class="button button-outline" asp-controller="TouristPreferences" asp-action="Index">Edit preferences</a>
+        </div>
+    </header>
+
+    <div class="tourist-dashboard-grid">
+        <section class="tourist-dashboard-card upcoming-booking-card" aria-labelledby="upcoming-booking-title">
+            <div class="tourist-dashboard-card-heading">
+                <div><span class="tourist-card-kicker">YOUR NEXT ADVENTURE</span><h2 id="upcoming-booking-title">Upcoming booking</h2></div>
+                <a asp-controller="TouristBookings" asp-action="Index">All bookings <span aria-hidden="true">→</span></a>
+            </div>
+            @if (Model.UpcomingBooking is { } booking)
+            {
+                <div class="upcoming-booking-content">
+                    <div class="booking-date-tile">
+                        <span>@HostDateTimeFormatter.Cairo(booking.ScheduledStartUtc, "MMM")</span>
+                        <strong>@HostDateTimeFormatter.Cairo(booking.ScheduledStartUtc, "dd")</strong>
+                        <small>@HostDateTimeFormatter.Cairo(booking.ScheduledStartUtc, "ddd")</small>
+                    </div>
+                    <div class="upcoming-booking-info">
+                        <div class="dashboard-statuses">
+                            <span class="dashboard-status status-confirmed">@booking.BookingStatus</span>
+                            <span class="dashboard-status status-paid">Payment: @booking.PaymentStatus</span>
+                        </div>
+                        <h3>@booking.Title</h3>
+                        <p class="booking-schedule">@HostDateTimeFormatter.Cairo(booking.ScheduledStartUtc, "dddd, MMMM d, yyyy") · @HostDateTimeFormatter.Cairo(booking.ScheduledStartUtc, "h:mm tt")</p>
+                        <div class="booking-facts-row">
+                            @if (booking.NumberOfGuests is int guests) { <span>@guests @(guests == 1 ? "guest" : "guests")</span> }
+                            else if (booking.GuideHours is int hours) { <span>@hours @(hours == 1 ? "hour" : "hours")</span> }
+                            <span>@booking.TotalAmount.ToString("N0") EGP</span>
+                        </div>
+                        <a class="dashboard-text-link" asp-controller="TouristBookings" asp-action="Details" asp-route-id="@booking.BookingId">View booking details <span aria-hidden="true">↗</span></a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="dashboard-empty-state">
+                    <span aria-hidden="true">✳</span>
+                    <h3>No upcoming confirmed booking</h3>
+                    <p>Your next confirmed, paid booking will appear here. Explore local experiences to plan your trip.</p>
+                    <a class="button button-gold" asp-controller="Explore" asp-action="Index">Explore experiences</a>
+                </div>
+            }
+        </section>
+
+        <section class="tourist-dashboard-card preferences-card" aria-labelledby="preferences-title">
+            <div class="tourist-dashboard-card-heading">
+                <div><span class="tourist-card-kicker">MADE FOR YOUR TRAVEL STYLE</span><h2 id="preferences-title">Your preferences</h2></div>
+                <a asp-controller="TouristPreferences" asp-action="Index" aria-label="Edit your preferences">Edit <span aria-hidden="true">↗</span></a>
+            </div>
+            @if (preferences.Budget is null && preferences.Duration is null && preferences.InterestIds.Count == 0 && preferences.CulturalAreaIds.Count == 0 && preferences.LanguageIds.Count == 0)
+            {
+                <div class="preferences-empty"><p>Add your interests, budget, trip length, regions, and languages to personalize recommendations.</p><a class="dashboard-text-link" asp-controller="TouristPreferences" asp-action="Index">Set your preferences <span aria-hidden="true">→</span></a></div>
+            }
+            else
+            {
+                <dl class="preference-summary">
+                    @if (selectedBudget is not null) { <div><dt>Budget</dt><dd>@selectedBudget</dd></div> }
+                    @if (selectedDuration is not null) { <div><dt>Trip length</dt><dd>@selectedDuration</dd></div> }
+                    @if (preferences.InterestIds.Count > 0) { <div><dt>Interests</dt><dd>@string.Join(", ", preferences.Interests.Where(option => preferences.InterestIds.Contains(option.Id)).Select(option => option.Name))</dd></div> }
+                    @if (preferences.CulturalAreaIds.Count > 0) { <div><dt>Regions</dt><dd>@string.Join(", ", preferences.CulturalAreas.Where(option => preferences.CulturalAreaIds.Contains(option.Id)).Select(option => option.Name))</dd></div> }
+                    @if (preferences.LanguageIds.Count > 0) { <div><dt>Languages</dt><dd>@string.Join(", ", preferences.Languages.Where(option => preferences.LanguageIds.Contains(option.Id)).Select(option => option.Name))</dd></div> }
+                    @if (preferences.ExperienceTypeIds.Count > 0) { <div><dt>Experience types</dt><dd>@string.Join(", ", preferences.ExperienceTypes.Where(option => preferences.ExperienceTypeIds.Contains(option.Id)).Select(option => option.Name))</dd></div> }
+                </dl>
+            }
+        </section>
+
+        <section class="tourist-dashboard-card notifications-card" aria-labelledby="dashboard-notifications-title">
+            <div class="tourist-dashboard-card-heading">
+                <div><span class="tourist-card-kicker">BOOKING &amp; ACCOUNT UPDATES</span><h2 id="dashboard-notifications-title">Notifications</h2></div>
+                @if (Model.RecentNotifications.UnreadCount > 0) { <span class="notification-count">@Model.RecentNotifications.UnreadCount unread</span> }
+                <a asp-controller="TouristNotifications" asp-action="Index">View all <span aria-hidden="true">→</span></a>
+            </div>
+            @if (Model.RecentNotifications.Notifications.Count == 0)
+            {
+                <p class="dashboard-muted-copy">You’re all caught up. New booking and account updates will appear here.</p>
+            }
+            else
+            {
+                <ul class="dashboard-notification-list">
+                    @foreach (var notification in Model.RecentNotifications.Notifications)
+                    {
+                        <li class="@(notification.IsRead ? "" : "notification-unread")">
+                            <span class="notification-marker" aria-hidden="true"></span>
+                            <div><p>@notification.Message</p><time datetime="@notification.CreatedAt.ToString("O")">@HostDateTimeFormatter.Cairo(notification.CreatedAt, "MMM d · h:mm tt")</time></div>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+        <section class="tourist-dashboard-card recent-bookings-card" aria-labelledby="recent-activity-title">
+            <div class="tourist-dashboard-card-heading">
+                <div><span class="tourist-card-kicker">YOUR TRAVEL PLANS</span><h2 id="recent-activity-title">Recent activity</h2></div>
+                <a asp-controller="TouristBookings" asp-action="Index">View all <span aria-hidden="true">→</span></a>
+            </div>
+            @if (Model.RecentBookings.Count == 0)
+            {
+                <p class="dashboard-muted-copy">Your bookings will show here as you plan your trip.</p>
+            }
+            else
+            {
+                <ul class="recent-booking-list">
+                    @foreach (var recentBooking in Model.RecentBookings)
+                    {
+                        <li>
+                            <a asp-controller="TouristBookings" asp-action="Details" asp-route-id="@recentBooking.BookingId">
+                                <span class="recent-booking-icon" aria-hidden="true">✳</span>
+                                <span class="recent-booking-copy"><strong>@recentBooking.Title</strong><small>@HostDateTimeFormatter.Cairo(recentBooking.ScheduledStartUtc, "MMM d, yyyy") · @recentBooking.BookingStatus</small></span>
+                                <span class="recent-booking-arrow" aria-hidden="true">↗</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    </div>
+
+    <section class="tourist-dashboard-recommendations" aria-labelledby="dashboard-recommendations-title">
+        <div class="tourist-dashboard-section-heading">
+            <div><span class="tourist-card-kicker">INSPIRED BY YOUR PREFERENCES</span><h2 id="dashboard-recommendations-title">Recommended for you</h2><p>Published experiences selected using your saved preferences.</p></div>
+            <a class="button button-outline" asp-controller="Recommendations" asp-action="Index">See all recommendations</a>
+        </div>
+        @if (!Model.Recommendations.HasPreferences)
+        {
+            <div class="dashboard-recommendation-empty"><p>Set your preferences to receive recommendations for your travel style.</p><a class="dashboard-text-link" asp-controller="TouristPreferences" asp-action="Index">Set preferences <span aria-hidden="true">→</span></a></div>
+        }
+        else if (Model.Recommendations.Items.Count == 0)
+        {
+            <div class="dashboard-recommendation-empty"><p>No published experiences match your preferences yet. Try updating your choices or explore all experiences.</p><a class="dashboard-text-link" asp-controller="Explore" asp-action="Index">Explore all experiences <span aria-hidden="true">→</span></a></div>
+        }
+        else
+        {
+            <div class="dashboard-recommendation-grid">
+                @foreach (var experience in Model.Recommendations.Items.Take(3))
+                {
+                    <article class="dashboard-experience-card">
+                        <a class="dashboard-experience-image" asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@experience.Id" aria-label="View @experience.Title">
+                            @if (!string.IsNullOrWhiteSpace(experience.CoverImageKey))
+                            {
+                                <img src="@Url.Action("Image", "Explore", new { id = experience.Id })" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span aria-hidden="true">✳</span>
+                            }
+                            <span class="dashboard-match-score">@experience.MatchPercentage.ToString("0.#")% match</span>
+                        </a>
+                        <div class="dashboard-experience-copy">
+                            <span class="dashboard-experience-area">@experience.CulturalArea · @experience.ExperienceType</span>
+                            <h3><a asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@experience.Id">@experience.Title</a></h3>
+                            <div class="dashboard-experience-meta"><span>@(experience.ReviewCount > 0 ? $"{experience.AverageRating:0.0} · {experience.ReviewCount} reviews" : "New experience")</span><strong>@experience.PricePerPerson.ToString("N0") EGP <small>/ guest</small></strong></div>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+</section>

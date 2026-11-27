@@ -1,0 +1,32 @@
+@model DiscoverEgypt.Presentation.ViewModels.Host.HostProfileAvatarViewModel
+@if (Model.Compact)
+{
+    <a class="host-avatar-profile-link" asp-controller="Profile" asp-action="Index" aria-label="Open host profile">
+        <span class="topbar-avatar">
+            @if (Model.HasProfileImage)
+            {
+                <img src="@Url.Action("Image", "Profile")" alt="" />
+            }
+            else
+            {
+                @Model.Initial
+            }
+        </span>
+    </a>
+}
+else
+{
+    <a class="host-profile host-profile-link" asp-controller="Profile" asp-action="Index" aria-label="Open host profile">
+        <span class="host-avatar">
+            @if (Model.HasProfileImage)
+            {
+                <img src="@Url.Action("Image", "Profile")" alt="" />
+            }
+            else
+            {
+                @Model.Initial
+            }
+        </span>
+        <span>@Model.DisplayName<small>Host account</small></span>
+    </a>
+}

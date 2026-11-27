@@ -1,22 +1,10 @@
 using System.Security.Claims;
 using DiscoverEgypt.Application.Features.Reviews.Requests.Queries;
-<<<<<<< HEAD
-=======
-using DiscoverEgypt.Application.ViewModels.Reviews;
->>>>>>> f567d3a (modificaion)
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-<<<<<<< HEAD
-namespace DiscoverEgypt.Presentation.Controllers.Reviews;
-
-[Authorize(Roles = "Host")]
-[Route("Host/Reviews")]
-public sealed class ReviewsController(IMediator mediator) : Controller
-=======
 namespace DiscoverEgypt.Presentation.Controllers.Reviews
->>>>>>> f567d3a (modificaion)
 {
     [Authorize(Roles = "Host")]
     [Route("Host/Reviews")]
@@ -29,11 +17,6 @@ namespace DiscoverEgypt.Presentation.Controllers.Reviews
             _mediator = mediator;
         }
 
-<<<<<<< HEAD
-        ViewData["Title"] = "Host Reviews";
-        ViewData["Section"] = "Reviews";
-        return View(result);
-=======
         private const int PageSize = 10;
 
         [HttpGet("")]
@@ -51,7 +34,6 @@ namespace DiscoverEgypt.Presentation.Controllers.Reviews
             ViewData["Section"] = "Reviews";
             return View(result);
         }
->>>>>>> f567d3a (modificaion)
     }
 }
 
