@@ -1,0 +1,25 @@
+@model DiscoverEgypt.Application.Responses.Guides.ApprovedGuidesResponse
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Approved Local Guides";
+    ViewData["TouristPage"] = "guides";
+}
+
+<main class="guide-directory-page">
+    <header class="guide-directory-heading"><div><nav class="detail-breadcrumb" aria-label="Breadcrumb"><a asp-controller="Explore" asp-action="Index">Home</a><span>›</span><span aria-current="page">Approved Guides</span></nav><span class="detail-section-label">LOCAL KNOWLEDGE · HUMAN CONNECTION</span><h1>Meet Egypt’s approved guides</h1><p>Find a local guide who knows the stories, languages, and places you want to explore.</p></div><div class="directory-count"><strong>@Model.TotalCount</strong><span>approved @(Model.TotalCount == 1 ? "guide" : "guides")</span></div></header>
+    <form method="get" asp-controller="Guides" asp-action="Index" class="guide-filter-panel">
+        <div class="guide-search"><label for="guideSearch">Search guides</label><input id="guideSearch" name="search" value="@Model.Search" maxlength="120" placeholder="Name, language, or area" /></div>
+        <div><label for="languageId">Language</label><select id="languageId" name="languageId"><option value="">All languages</option>@foreach(var language in Model.Languages){<option value="@language.Id" selected="@(Model.LanguageId == language.Id)">@language.Name</option>}</select></div>
+        <div><label for="culturalAreaId">Cultural area</label><select id="culturalAreaId" name="culturalAreaId"><option value="">All areas</option>@foreach(var area in Model.CulturalAreas){<option value="@area.Id" selected="@(Model.CulturalAreaId == area.Id)">@area.Name</option>}</select></div>
+        <button class="button button-gold" type="submit">Find guides</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search) || Model.LanguageId.HasValue || Model.CulturalAreaId.HasValue){<a class="guide-clear-filter" asp-controller="Guides" asp-action="Index">Clear filters</a>}
+    </form>
+    @if(Model.Items.Count == 0){<section class="guide-empty"><span aria-hidden="true">✳</span><h2>No approved guides match those filters</h2><p>Try another search or browse all approved local guides.</p><a class="button button-outline" asp-controller="Guides" asp-action="Index">Show all guides</a></section>}
+    else
+    {
+        <section class="guide-directory-grid" aria-label="Approved guides">
+        @foreach(var guide in Model.Items){<article class="guide-card"><a class="guide-card-photo" asp-controller="Guides" asp-action="Details" asp-route-id="@guide.Id" aria-label="View @guide.FullName's guide profile">@if(!string.IsNullOrWhiteSpace(guide.ProfileImageKey)){<img src="@Url.Action("Image", "Guides", new { id = guide.Id })" alt="Portrait of @guide.FullName" loading="lazy" />}else{<span class="guide-avatar-large">@(string.IsNullOrWhiteSpace(guide.FullName) ? "G" : guide.FullName.Trim()[0].ToString().ToUpperInvariant())</span>}<span class="approved-guide-badge"><b aria-hidden="true">✓</b> APPROVED GUIDE</span></a><div class="guide-card-body"><div class="guide-card-kicker">LOCAL KNOWLEDGE · EGYPT</div><h2><a asp-controller="Guides" asp-action="Details" asp-route-id="@guide.Id">@guide.FullName</a></h2><div class="guide-rating-line">@(guide.ReviewCount > 0 ? $"{guide.AverageRating:0.0} · {guide.ReviewCount} reviews" : "New guide")</div><p>@(string.IsNullOrWhiteSpace(guide.Bio) ? "A verified guide ready to share local history and culture." : guide.Bio)</p><div class="guide-card-tags">@foreach(var area in guide.CulturalAreas.Take(3)){<span>@area</span>}</div><div class="guide-card-meta"><span>@(guide.Languages.Count > 0 ? string.Join(", ", guide.Languages) : "Languages on profile")</span><strong>EGP @guide.HourlyRate.ToString("N0")<small> / hour</small></strong></div><a class="guide-profile-link" asp-controller="Guides" asp-action="Details" asp-route-id="@guide.Id">View guide profile <span aria-hidden="true">→</span></a></div></article>}
+        </section>
+        @if(Model.TotalPages > 1){<nav class="pagination guide-pagination" aria-label="Guide pages">@if(Model.HasPreviousPage){<a class="page-link" asp-controller="Guides" asp-action="Index" asp-route-search="@Model.Search" asp-route-languageId="@Model.LanguageId" asp-route-culturalAreaId="@Model.CulturalAreaId" asp-route-page="@(Model.Page-1)" aria-label="Previous page">←</a>}@for(var pageNumber=1;pageNumber<=Model.TotalPages;pageNumber++){<a class="page-link @(pageNumber==Model.Page?"current":string.Empty)" asp-controller="Guides" asp-action="Index" asp-route-search="@Model.Search" asp-route-languageId="@Model.LanguageId" asp-route-culturalAreaId="@Model.CulturalAreaId" asp-route-page="@pageNumber" aria-current="@(pageNumber==Model.Page?"page":null)">@pageNumber</a>}@if(Model.HasNextPage){<a class="page-link" asp-controller="Guides" asp-action="Index" asp-route-search="@Model.Search" asp-route-languageId="@Model.LanguageId" asp-route-culturalAreaId="@Model.CulturalAreaId" asp-route-page="@(Model.Page+1)" aria-label="Next page">→</a>}</nav>}
+    }
+</main>

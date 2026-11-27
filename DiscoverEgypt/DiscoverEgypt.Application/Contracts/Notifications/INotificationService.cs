@@ -1,6 +1,5 @@
-using DiscoverEgypt.Application.ViewModels.Notifications;
-
 using DiscoverEgypt.Application.Enums.Notifications;
+using DiscoverEgypt.Application.Responses.Notifications;
 
 using DiscoverEgypt.Domain.Enums.Notifications;
 
@@ -15,7 +14,7 @@ namespace DiscoverEgypt.Application.Contracts.Notifications
             int? bookingId = null,
             CancellationToken cancellationToken = default);
 
-        Task<HostNotificationsViewModel> GetForUserAsync(
+        Task<NotificationsResponse> GetForUserAsync(
             string userId,
             NotificationReadFilter filter,
             int page,

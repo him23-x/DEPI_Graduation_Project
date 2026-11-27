@@ -1,0 +1,46 @@
+@model DiscoverEgypt.Application.Responses.Bookings.GuideBookingReviewResponse
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Review your guide booking";
+    ViewData["TouristPage"] = "booking";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+
+<section class="tourist-booking-page booking-review-page">
+    <a class="booking-back-link" asp-action="Index" asp-route-guideProfileId="@Model.GuideProfileId">← Change tour details</a>
+    <header class="tourist-booking-heading"><span>CHECK THE DETAILS</span><h1>Review your guide booking</h1><p>Check the schedule and price before creating your pending booking request.</p></header>
+
+    <div class="booking-review-card">
+        <div class="booking-review-main">
+            <span class="booking-experience-type">APPROVED LOCAL GUIDE</span>
+            <h2>@Model.GuideName</h2>
+            <dl class="booking-review-facts">
+                <div><dt>Date</dt><dd>@Model.ScheduledStartLocal.ToString("dddd, MMMM d, yyyy", english)</dd></div>
+                <div><dt>Time in Cairo</dt><dd>@Model.ScheduledStartLocal.ToString("h:mm tt", english) – @Model.ScheduledEndLocal.ToString("h:mm tt", english)</dd></div>
+                <div><dt>Duration</dt><dd>@Model.GuideHours hour@(Model.GuideHours == 1 ? "" : "s")</dd></div>
+                <div><dt>Destination</dt><dd>@Model.Destination</dd></div>
+                <div><dt>Languages</dt><dd>@(Model.Languages.Count > 0 ? string.Join(", ", Model.Languages) : "Ask the guide")</dd></div>
+            </dl>
+            <p class="booking-privacy-note">The booking request is sent to the guide after payment is completed. The guide has 12 hours to respond.</p>
+        </div>
+
+        <div class="booking-review-price">
+            <h3>Price breakdown</h3>
+            <div><span>EGP @Model.HourlyRate.ToString("N2", english) × @Model.GuideHours hours</span><strong>EGP @Model.ServiceAmount.ToString("N2", english)</strong></div>
+            <div><span>Platform fee (@Model.PlatformFeeRate.ToString("P0", english))</span><strong>EGP @Model.PlatformFeeAmount.ToString("N2", english)</strong></div>
+            <div class="booking-total"><span>Total due</span><strong>EGP @Model.TotalAmount.ToString("N2", english)</strong></div>
+            <form asp-action="Confirm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="GuideProfileId" value="@Model.GuideProfileId" />
+                <input type="hidden" name="ScheduledStartLocal" value="@Model.ScheduledStartLocal.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="GuideHours" value="@Model.GuideHours" />
+                <input type="hidden" name="Destination" value="@Model.Destination" />
+                <button type="submit" class="button button-gold booking-submit">Create booking request <span aria-hidden="true">→</span></button>
+            </form>
+            <small>The guide’s approval, availability, and current rate are checked again when you submit.</small>
+        </div>
+    </div>
+</section>

@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
-using DiscoverEgypt.Application.ViewModels.Reviews;
+using DiscoverEgypt.Application.Responses.Reviews;
 using DiscoverEgypt.Application.Features.Reviews.Requests.Queries;
 using MediatR;
 using AutoMapper;
@@ -8,7 +8,7 @@ using FluentValidation;
 namespace DiscoverEgypt.Application.Features.Reviews.Handlers.Queries
 {
     public sealed class GetHostReviewsQueryHandler
-        : IRequestHandler<GetHostReviewsQuery, HostReviewsIndexViewModel>
+        : IRequestHandler<GetHostReviewsQuery, HostReviewsResponse>
     {
         private readonly IHostReviewsRepository _repository;
         private readonly IMapper _mapper;
@@ -21,20 +21,20 @@ namespace DiscoverEgypt.Application.Features.Reviews.Handlers.Queries
             _validator = validator;
         }
 
-        public async Task<HostReviewsIndexViewModel> Handle(GetHostReviewsQuery request, CancellationToken cancellationToken)
+        public async Task<HostReviewsResponse> Handle(GetHostReviewsQuery request, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
             var reviews = await _repository.GetForHostAsync(request.UserId, request.Page, request.PageSize, cancellationToken);
             var tourists = await _repository.GetTouristsAsync(reviews.Select(review => review.Booking.TouristUserId), cancellationToken);
-            var items = _mapper.Map<IReadOnlyList<HostReviewItemViewModel>>(reviews).Select((item, index) =>
+            var items = _mapper.Map<IReadOnlyList<HostReviewItemResponse>>(reviews).Select((item, index) =>
             {
                 var tourist = tourists.GetValueOrDefault(reviews[index].Booking.TouristUserId);
                 return item with { GuestName = !string.IsNullOrWhiteSpace(tourist?.FullName) ? tourist.FullName : tourist?.UserName ?? "Discover Egypt guest" };
             }).ToArray();
             var count = await _repository.GetCountAsync(request.UserId, cancellationToken);
             var average = await _repository.GetAverageRatingAsync(request.UserId, cancellationToken);
-            return new HostReviewsIndexViewModel(items, average, count, request.Page, request.PageSize, count);
+            return new HostReviewsResponse(items, average, count, request.Page, request.PageSize, count);
         }
     }
 }

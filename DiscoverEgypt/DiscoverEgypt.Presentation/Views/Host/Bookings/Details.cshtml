@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-@model DiscoverEgypt.Application.DTOs.Bookings.HostBookingDetailsDto
-=======
-@model DiscoverEgypt.Application.ViewModels.Bookings.HostBookingDetailsViewModel
->>>>>>> f567d3a (modificaion)
+@model DiscoverEgypt.Application.Responses.Bookings.HostBookingDetailsResponse
 @using DiscoverEgypt.Domain.Enums.Bookings
 @using DiscoverEgypt.Domain.Enums.Disputes
 @using DiscoverEgypt.Domain.Enums.Experiences
@@ -19,8 +15,7 @@
     var backTab = booking.Status is BookingStatus.Rejected or BookingStatus.Cancelled
         ? DiscoverEgypt.Application.Enums.Bookings.HostBookingTab.RejectedCancelled
         : Enum.Parse<DiscoverEgypt.Application.Enums.Bookings.HostBookingTab>(booking.Status.ToString());
-    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
-    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d, yyyy · h:mm tt");
+    string Cairo(DateTime value) => HostDateTimeFormatter.Cairo(value, "ddd, MMM d, yyyy · h:mm tt");
 }
 
 <section class="experiences-heading booking-detail-heading">

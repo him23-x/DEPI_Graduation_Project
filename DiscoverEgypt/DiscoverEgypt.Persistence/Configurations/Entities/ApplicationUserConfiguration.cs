@@ -1,4 +1,4 @@
-using DiscoverEgypt.Domain.Entities;
+using DiscoverEgypt.Persistence.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

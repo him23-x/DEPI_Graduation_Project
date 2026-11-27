@@ -1,4 +1,3 @@
-
 using DiscoverEgypt.Domain.Enums.Payments;
 
 namespace DiscoverEgypt.Domain.Entities
@@ -11,6 +10,7 @@ namespace DiscoverEgypt.Domain.Entities
         public PaymentStatus Status { get; set; }
         public DateTime? PaidAt { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? StripeSessionId { get; set; }
+        public string? StripePaymentIntentId { get; set; }
     }
 }
-

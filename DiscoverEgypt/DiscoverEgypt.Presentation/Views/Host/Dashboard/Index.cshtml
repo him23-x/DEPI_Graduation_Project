@@ -1,9 +1,8 @@
-@model DiscoverEgypt.Application.DTOs.Dashboard.HostDashboardDto
+@model DiscoverEgypt.Application.Responses.Dashboard.HostDashboardResponse
 @{
     ViewData["Title"] = "Host Dashboard";
     ViewData["Section"] = "Dashboard";
-    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
-    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d · h:mm tt");
+    string Cairo(DateTime value) => HostDateTimeFormatter.Cairo(value, "ddd, MMM d · h:mm tt");
     string StatusLabel(ExperienceStatus status) => status switch
     {
         ExperienceStatus.PendingApproval => "Pending approval",

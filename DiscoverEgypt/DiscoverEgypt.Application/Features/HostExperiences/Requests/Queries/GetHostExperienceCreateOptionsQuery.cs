@@ -1,8 +1,8 @@
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 using MediatR;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Requests.Queries
 {
-    public sealed record GetHostExperienceCreateOptionsQuery : IRequest<ExperienceCreateOptionsViewModel>;
+    public sealed record GetHostExperienceCreateOptionsQuery : IRequest<ExperienceCreateOptionsDto>;
 }
 

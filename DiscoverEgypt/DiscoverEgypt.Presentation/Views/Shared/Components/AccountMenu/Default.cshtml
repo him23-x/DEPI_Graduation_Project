@@ -1,0 +1,62 @@
+@model DiscoverEgypt.Presentation.ViewModels.Shared.AccountMenuViewModel
+
+<details class="account-menu account-menu-@Model.Placement">
+    <summary class="account-menu-trigger" aria-label="Open @Model.Role account menu" title="@Model.DisplayName">
+        <span class="account-menu-avatar">
+            @if (Model.HasProfileImage)
+            {
+                <img src="/Host/Profile/Image" alt="" />
+            }
+            else
+            {
+                @Model.Initial
+            }
+        </span>
+        <span class="account-menu-caret" aria-hidden="true">⌄</span>
+    </summary>
+    <div class="account-menu-panel">
+        <div class="account-menu-heading">
+            <strong>@Model.DisplayName</strong>
+            <small>@Model.Role account</small>
+        </div>
+        <nav class="account-menu-links" aria-label="@Model.Role account links">
+            @if (Model.Role == "Tourist")
+            {
+                <a asp-controller="TouristDashboard" asp-action="Index">My dashboard</a>
+                <a asp-controller="TouristBookings" asp-action="Index">My bookings</a>
+                <a asp-controller="Recommendations" asp-action="Index">Recommended for you</a>
+                <a asp-controller="TouristPreferences" asp-action="Index">My preferences</a>
+                <a asp-controller="TouristNotifications" asp-action="Index">Notifications</a>
+                <a asp-controller="TouristDisputes" asp-action="Index">My disputes</a>
+            }
+            else if (Model.Role == "Host")
+            {
+                <a asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                <a asp-controller="Experiences" asp-action="Index">My experiences</a>
+                <a asp-controller="Bookings" asp-action="Index">Bookings</a>
+                <a asp-controller="Earnings" asp-action="Index">Earnings</a>
+                <a asp-controller="Reviews" asp-action="Index">Reviews</a>
+                <a asp-controller="Disputes" asp-action="Index">Disputes</a>
+                <a asp-controller="Notifications" asp-action="Index">Notifications</a>
+                <a asp-controller="Profile" asp-action="Index">Profile</a>
+            }
+            else if (Model.Role == "Admin")
+            {
+                <a href="/Admin/Monitoring">Monitoring</a>
+                <a href="/Admin/Users">Accounts</a>
+                <a href="/Admin/Experiences">Experience review</a>
+                <a href="/Admin/GuideVerifications">Guide verification</a>
+                <a href="/Admin/Disputes">Disputes</a>
+            }
+            else
+            {
+                <a asp-controller="Explore" asp-action="Index">Explore experiences</a>
+                <a asp-controller="Guides" asp-action="Index">Approved guides</a>
+            }
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="account-menu-logout">
+            @Html.AntiForgeryToken()
+            <button type="submit">Log out</button>
+        </form>
+    </div>
+</details>

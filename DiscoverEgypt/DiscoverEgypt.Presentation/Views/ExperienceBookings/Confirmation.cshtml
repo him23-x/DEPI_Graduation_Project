@@ -1,0 +1,38 @@
+@model DiscoverEgypt.Application.Responses.Bookings.ExperienceBookingConfirmationResponse
+@using DiscoverEgypt.Domain.Enums.Bookings
+@using DiscoverEgypt.Domain.Enums.Payments
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Booking request saved";
+    ViewData["TouristPage"] = "booking";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+
+<section class="tourist-booking-page booking-confirmation-page">
+    <div class="booking-confirmation-card">
+        <div class="booking-confirmation-mark" aria-hidden="true">✓</div>
+        <span class="booking-confirmation-eyebrow">REQUEST SAVED</span>
+        <h1>Your booking request is ready</h1>
+        <p>@(Model.PaymentStatus == PaymentStatus.Pending ? "The booking and price snapshot are saved. Payment has not been processed yet." : Model.PaymentStatus == PaymentStatus.Paid ? "Stripe payment succeeded. The host can now review your booking request." : "Payment failed or was not completed. The booking remains unpaid and is not visible to the host.")</p>
+        <div class="booking-status-row"><span>Booking status</span><strong>@Model.BookingStatus</strong><span>Payment status</span><strong>@Model.PaymentStatus</strong></div>
+        <div class="booking-confirmation-details">
+            <h2>@Model.Title</h2>
+            <p>@Model.CulturalArea · @Model.MeetingPointArea</p>
+            <div><span>Date and time</span><strong>@HostDateTimeFormatter.Cairo(Model.ScheduledStartUtc, "dddd, MMMM d, yyyy · h:mm tt")</strong></div>
+            <div><span>Guests</span><strong>@Model.NumberOfGuests</strong></div>
+            <div><span>Service amount</span><strong>EGP @Model.ServiceAmount.ToString("N2", english)</strong></div>
+            <div><span>Platform fee (@Model.PlatformFeeRate.ToString("P0", english))</span><strong>EGP @Model.PlatformFeeAmount.ToString("N2", english)</strong></div>
+            <div class="booking-total"><span>Total</span><strong>EGP @Model.TotalAmount.ToString("N2", english)</strong></div>
+        </div>
+        <p class="booking-privacy-note">Your exact meeting point remains private until the booking is confirmed.</p>
+        @if (Model.BookingStatus == BookingStatus.Pending && Model.PaymentStatus is PaymentStatus.Pending or PaymentStatus.Failed)
+        {
+            <a class="button button-gold booking-submit" asp-controller="MockPayments" asp-action="Index" asp-route-bookingId="@Model.BookingId">Pay with Stripe</a>
+        }
+        <a class="button button-outline booking-submit" asp-controller="Explore" asp-action="Index">Back to experiences</a>
+    </div>
+</section>

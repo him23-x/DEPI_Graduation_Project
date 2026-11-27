@@ -1,4 +1,4 @@
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 using MediatR;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands
@@ -6,6 +6,6 @@ namespace DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands
     public sealed record UpdateHostExperienceDraftCommand(
         string UserId,
         int ExperienceId,
-        HostExperienceDraftViewModel Draft) : IRequest<bool>;
+        HostExperienceDraftDto Draft) : IRequest<bool>;
 }
 

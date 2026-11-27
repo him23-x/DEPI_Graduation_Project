@@ -1,0 +1,58 @@
+@model IReadOnlyList<DiscoverEgypt.Application.Responses.GuideVerification.AdminGuideVerificationQueueItemResponse>
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    ViewData["Title"] = "Guide verification queue";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/admin-guide-verification.css" asp-append-version="true" />
+
+<main class="admin-guide-verification-page">
+    @if (TempData["AdminGuideVerificationSuccess"] is string successMessage)
+    {
+        <div class="admin-verification-alert admin-verification-alert-success" role="status">@successMessage</div>
+    }
+    @if (TempData["AdminGuideVerificationError"] is string errorMessage)
+    {
+        <div class="admin-verification-alert admin-verification-alert-error" role="alert">@errorMessage</div>
+    }
+    <header class="admin-guide-verification-heading">
+        <span>ADMIN WORKSPACE · GUIDES</span>
+        <h1>Guide verification queue</h1>
+        <p>Review identity, license, language, and work-area evidence before approving a guide.</p>
+    </header>
+
+    <section class="admin-guide-verification-queue" aria-label="Guide verification requests pending review">
+        @if (Model.Count == 0)
+        {
+            <div class="admin-guide-verification-empty">
+                <span aria-hidden="true">✓</span>
+                <h2>Queue is clear</h2>
+                <p>There are no guide verification requests waiting for review.</p>
+            </div>
+        }
+        else
+        {
+            <div class="admin-guide-verification-table-wrap">
+                <table class="admin-guide-verification-table">
+                    <thead>
+                        <tr><th>Guide</th><th>License expiry</th><th>Documents</th><th>Submitted</th><th><span class="visually-hidden">Review</span></th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var request in Model)
+                        {
+                            <tr>
+                                <td><strong>@request.GuideName</strong><small>Guide profile #@request.GuideProfileId</small></td>
+                                <td>@request.LicenseExpiryDate.ToString("MMM d, yyyy", english)</td>
+                                <td>@request.DocumentCount</td>
+                                <td>@HostDateTimeFormatter.Cairo(request.SubmittedAt, "MMM d, yyyy · h:mm tt")</td>
+                                <td><a class="admin-guide-review-link" asp-action="Details" asp-route-id="@request.VerificationRequestId">Review request <span aria-hidden="true">→</span></a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</main>

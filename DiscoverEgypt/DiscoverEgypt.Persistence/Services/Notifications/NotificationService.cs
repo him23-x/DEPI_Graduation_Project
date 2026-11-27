@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Notifications;
-using DiscoverEgypt.Application.ViewModels.Notifications;
+using DiscoverEgypt.Application.Responses.Notifications;
 using DiscoverEgypt.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +42,7 @@ namespace DiscoverEgypt.Persistence.Services.Notifications
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<HostNotificationsViewModel> GetForUserAsync(
+        public async Task<NotificationsResponse> GetForUserAsync(
             string userId,
             NotificationReadFilter filter,
             int page,
@@ -68,7 +68,7 @@ namespace DiscoverEgypt.Persistence.Services.Notifications
                 .ThenByDescending(notification => notification.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(notification => new HostNotificationViewModel(
+                .Select(notification => new NotificationItemResponse(
                     notification.Id,
                     notification.Type,
                     notification.Message,
@@ -78,7 +78,7 @@ namespace DiscoverEgypt.Persistence.Services.Notifications
                 .ToListAsync(cancellationToken);
             var unreadCount = await userNotifications.CountAsync(notification => !notification.IsRead, cancellationToken);
 
-            return new HostNotificationsViewModel(notifications, filter, page, pageSize, totalCount, unreadCount);
+            return new NotificationsResponse(notifications, filter, page, pageSize, totalCount, unreadCount);
         }
 
         public Task<int> GetUnreadCountAsync(string userId, CancellationToken cancellationToken = default) =>

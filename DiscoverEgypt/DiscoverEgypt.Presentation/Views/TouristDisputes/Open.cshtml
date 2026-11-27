@@ -1,0 +1,45 @@
+@model DiscoverEgypt.Application.Responses.Disputes.TouristDisputeFormResponse
+@using DiscoverEgypt.Presentation.Formatting
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Open a dispute";
+    ViewData["TouristPage"] = "disputes";
+}
+
+<link rel="stylesheet" href="~/css/tourist-disputes.css" asp-append-version="true" />
+
+<section class="tourist-disputes-page tourist-dispute-form-page" aria-labelledby="open-dispute-title">
+    <a class="tourist-disputes-back" asp-controller="TouristBookings" asp-action="Details" asp-route-id="@Model.Booking.BookingId">← Back to booking</a>
+    <header class="tourist-disputes-heading">
+        <span class="tourist-disputes-eyebrow">BOOKING #@Model.Booking.BookingId</span>
+        <h1 id="open-dispute-title">Tell us what happened</h1>
+        <p>Submit a concern about this booking for review. The booking and payment status are handled separately.</p>
+    </header>
+
+    <div class="tourist-dispute-form-grid">
+        <section class="tourist-dispute-summary">
+            <span class="tourist-disputes-eyebrow">RELATED BOOKING</span>
+            <h2>@Model.Booking.BookingTitle</h2>
+            <dl>
+                <div><dt>Booking type</dt><dd>@Model.Booking.BookingType</dd></div>
+                <div><dt>Booking status</dt><dd>@Model.Booking.BookingStatus</dd></div>
+                <div><dt>Experience time</dt><dd>@HostDateTimeFormatter.Cairo(Model.Booking.ScheduledStartUtc, "dddd, MMMM d, yyyy · h:mm tt")</dd></div>
+            </dl>
+            <p class="tourist-dispute-privacy-note">Only you and authorized staff can access this dispute.</p>
+        </section>
+
+        <form class="tourist-dispute-form" asp-action="Open" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="Form.BookingId" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="tourist-dispute-validation" role="alert"></div>
+            <label asp-for="Form.Description">Describe your concern</label>
+            <textarea asp-for="Form.Description" rows="8" maxlength="5000" placeholder="Share the details that will help us review your concern."></textarea>
+            <span asp-validation-for="Form.Description" class="tourist-dispute-field-error"></span>
+            <small>Maximum 5,000 characters.</small>
+            <div class="tourist-dispute-form-actions">
+                <a class="button button-outline" asp-controller="TouristBookings" asp-action="Details" asp-route-id="@Model.Booking.BookingId">Cancel</a>
+                <button class="button button-gold" type="submit">Submit dispute</button>
+            </div>
+        </form>
+    </div>
+</section>

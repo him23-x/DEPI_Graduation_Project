@@ -1,4 +1,3 @@
-using DiscoverEgypt.Application.ViewModels.Bookings;
 using MediatR;
 
 using DiscoverEgypt.Application.Enums.Bookings;

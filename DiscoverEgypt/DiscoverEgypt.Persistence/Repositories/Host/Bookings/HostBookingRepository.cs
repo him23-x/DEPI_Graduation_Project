@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.Common;
 using DiscoverEgypt.Application.Contracts.Persistence;
+using DiscoverEgypt.Application.Responses.Accounts;
 using DiscoverEgypt.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -68,14 +69,23 @@ namespace DiscoverEgypt.Persistence.Repositories.Host.Bookings
             return booking;
         }
 
-        public async Task<IReadOnlyDictionary<string, ApplicationUser>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default) =>
-            await _dbContext.ApplicationUsers.AsNoTracking().Where(user => userIds.Contains(user.Id)).ToDictionaryAsync(user => user.Id, cancellationToken);
+        public async Task<IReadOnlyDictionary<string, UserSummaryResponse>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default) =>
+            await _dbContext.ApplicationUsers.AsNoTracking()
+                .Where(user => userIds.Contains(user.Id))
+                .ToDictionaryAsync(user => user.Id,
+                    user => new UserSummaryResponse(user.Id, user.UserName ?? string.Empty, user.Email ?? string.Empty, user.FullName),
+                    cancellationToken);
 
-        public async Task<bool> IsProviderSuspendedAsync(string userId, DateTime now, CancellationToken cancellationToken = default) =>
+        public async Task<bool> IsProviderSuspendedAsync(
+            string userId,
+            DateTime bookingCreatedAtUtc,
+            DateTime nowUtc,
+            CancellationToken cancellationToken = default) =>
             await _dbContext.Sanctions.AnyAsync(sanction => sanction.UserId == userId
                 && sanction.SanctionType == SanctionType.ProviderSuspension
-                && sanction.StartsAt <= now
-                && sanction.EndsAt >= now, cancellationToken);
+                && sanction.StartsAt <= nowUtc
+                && sanction.EndsAt >= nowUtc
+                && bookingCreatedAtUtc >= sanction.StartsAt, cancellationToken);
 
         public async Task<bool> HasConfirmedOverlapAsync(string userId, DateTime scheduledStart, DateTime scheduledEnd, int exceptBookingId, CancellationToken cancellationToken = default) =>
             await _dbContext.Bookings.AnyAsync(booking => booking.Id != exceptBookingId
@@ -119,7 +129,7 @@ namespace DiscoverEgypt.Persistence.Repositories.Host.Bookings
             {
                 Booking = booking,
                 Now = now,
-                IsProviderSuspended = await IsProviderSuspendedAsync(userId, now, cancellationToken),
+                IsProviderSuspended = await IsProviderSuspendedAsync(userId, booking.CreatedAt, now, cancellationToken),
                 HasOverlap = await HasConfirmedOverlapAsync(userId, booking.ScheduledStart, booking.ScheduledEnd, booking.Id, cancellationToken),
                 HasOpenDispute = booking.Disputes.Any(dispute => dispute.Status is DisputeStatus.Open or DisputeStatus.UnderReview),
                 HasPayout = booking.Payout is not null,

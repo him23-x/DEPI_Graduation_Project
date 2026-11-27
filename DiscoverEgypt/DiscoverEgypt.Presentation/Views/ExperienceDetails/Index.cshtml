@@ -1,0 +1,46 @@
+@model DiscoverEgypt.Application.DTOs.ExperienceDetails.ExperienceDetailsDto
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = Model.Title;
+    ViewData["TouristPage"] = "details";
+}
+
+<main class="tour-detail-page">
+    <nav class="detail-breadcrumb" aria-label="Breadcrumb"><a asp-controller="Explore" asp-action="Index">Explore Experiences</a><span>›</span><span>@Model.CulturalArea</span><span>›</span><span aria-current="page">@Model.Title</span></nav>
+    <header class="experience-detail-heading">
+        <div><div class="detail-eyebrows"><span>@Model.ExperienceType</span><span>@Model.CulturalArea</span></div><h1>@Model.Title</h1><div class="detail-summary-line"><span class="verified-label"><span aria-hidden="true">✓</span> Verified local host</span><span class="rating-summary">@(Model.ReviewCount > 0 ? $"{Model.AverageRating:0.0} · {Model.ReviewCount} verified reviews" : "New experience")</span><span>@Model.CulturalArea</span></div></div>
+        <a class="detail-back-link" asp-controller="Explore" asp-action="Index">← Browse experiences</a>
+    </header>
+
+    <section class="detail-gallery @(Model.Photos.Count <= 1 ? "single-photo" : string.Empty)" aria-label="Experience photos">
+        @if (Model.Photos.Count > 0)
+        {
+            var cover = Model.Photos[0];
+            <img class="gallery-cover" src="@Url.Action("Image", "ExperienceDetails", new { experienceId = Model.Id, mediaId = cover.Id })" alt="Photo from @Model.Title" />
+            @if (Model.Photos.Count > 1)
+            {
+                <div class="gallery-supporting">@foreach (var photo in Model.Photos.Skip(1).Take(3)){<img src="@Url.Action("Image", "ExperienceDetails", new { experienceId = Model.Id, mediaId = photo.Id })" alt="More of @Model.Title" loading="lazy" />}</div>
+                @if (Model.Photos.Count > 4){<span class="gallery-count">+@(Model.Photos.Count - 4) more photos</span>}
+            }
+        }
+        else
+        {
+            <div class="detail-gallery-fallback"><span aria-hidden="true">✳</span><p>Photos for this experience are being prepared.</p></div>
+        }
+    </section>
+
+    <div class="experience-detail-columns">
+        <div class="experience-detail-main">
+            <section class="detail-facts" aria-label="Experience facts"><div><span>Duration</span><strong>@(Model.DurationMinutes / 60)h @(Model.DurationMinutes % 60)m</strong></div><div><span>Group size</span><strong>Up to @Model.MaxGroupSize guests</strong></div><div><span>Languages</span><strong>@(Model.Languages.Count > 0 ? string.Join(", ", Model.Languages) : "Contact host")</strong></div><div><span>Experience type</span><strong>@Model.ExperienceType</strong></div></section>
+            <section class="detail-copy-section" id="experience-story"><span class="detail-section-label">THE EXPERIENCE</span><h2>About this cultural gathering</h2><p class="detail-description">@Model.Description</p>@if (Model.Interests.Count > 0){<div class="detail-chip-row"><span class="detail-section-label">INTERESTS</span>@foreach (var interest in Model.Interests){<span class="detail-chip">@interest</span>}</div>}</section>
+            <section class="cultural-story-panel"><span class="detail-section-label">LIVING HERITAGE · HOST STORY</span><h2>A story passed through generations</h2><p>@Model.CulturalStory</p></section>
+            <section class="public-host-card"><div class="host-mark">@(string.IsNullOrWhiteSpace(Model.HostName) ? "H" : Model.HostName.Trim()[0].ToString().ToUpperInvariant())</div><div><span class="verified-label"><span aria-hidden="true">✓</span> Experience approved</span><h2>@Model.HostName</h2><p>@(string.IsNullOrWhiteSpace(Model.HostBio) ? "A local host sharing the traditions and stories behind this experience." : Model.HostBio)</p></div></section>
+            <section class="location-card"><span class="detail-section-label">LOCATION &amp; HERITAGE DISTRICT</span><h2>@Model.CulturalArea</h2><p>@Model.MeetingPointArea</p><div class="location-map-placeholder"><span class="map-pin" aria-hidden="true">⌖</span><div><strong>@Model.CulturalArea</strong><small>Neighborhood area · exact point shared after booking confirmation</small></div></div><p class="privacy-note">The exact meeting point is shared only after a booking is confirmed.</p></section>
+            <section class="detail-reviews" id="reviews"><div class="reviews-heading"><div><span class="detail-section-label">COMMUNITY TESTIMONIALS</span><h2>Guest experiences</h2></div><div class="review-average">@(Model.ReviewCount > 0 ? Model.AverageRating.ToString("0.0", CultureInfo.InvariantCulture) : "New")<small>@(Model.ReviewCount > 0 ? $"out of 5 · {Model.ReviewCount} reviews" : "No reviews yet")</small></div></div>
+                @if (Model.Reviews.Count == 0){<p class="no-reviews">Be among the first guests to share a review of this experience.</p>}else{@foreach (var review in Model.Reviews){<article class="public-review"><div class="review-avatar">@(string.IsNullOrWhiteSpace(review.TouristName) ? "T" : review.TouristName.Trim()[0].ToString().ToUpperInvariant())</div><div class="public-review-copy"><div class="review-byline"><strong>@review.TouristName</strong><span>@review.Rating / 5</span></div><time datetime="@review.CreatedAt.ToString("O")">@review.CreatedAt.ToString("MMM d, yyyy", CultureInfo.GetCultureInfo("en-US"))</time>@if (!string.IsNullOrWhiteSpace(review.Comment)){<p>@review.Comment</p>}</div></article>}}</section>
+        </div>
+
+        <aside class="experience-booking-summary"><div class="booking-price"><span>INVESTMENT</span><strong>EGP @Model.PricePerPerson.ToString("N0")</strong><small>per person</small></div><div class="booking-facts"><span>Duration<strong>@(Model.DurationMinutes / 60)h @(Model.DurationMinutes % 60)m</strong></span><span>Group size<strong>Up to @Model.MaxGroupSize guests</strong></span><span>Language<strong>@(Model.Languages.Count > 0 ? string.Join(", ", Model.Languages) : "Contact host")</strong></span></div><div class="booking-note"><span aria-hidden="true">✓</span><p>All experience details are reviewed before publication.</p></div>@if (User.IsInRole("Tourist")){<a class="button button-gold booking-browse-button" asp-controller="ExperienceBookings" asp-action="Index" asp-route-experienceId="@Model.Id">Book this experience <span aria-hidden="true">→</span></a>}else if (User.Identity?.IsAuthenticated != true){<a class="button button-gold booking-browse-button" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Index", "ExperienceBookings", new { experienceId = Model.Id })">Log in to book <span aria-hidden="true">→</span></a>}else{<p class="booking-note">Tourist accounts can book experiences.</p>}<p class="booking-footnote">Exact meeting point details are shared after booking confirmation.</p><a class="booking-guide-link" asp-controller="Guides" asp-action="Index">Looking for a guide? Browse approved guides →</a></aside>
+    </div>
+</main>

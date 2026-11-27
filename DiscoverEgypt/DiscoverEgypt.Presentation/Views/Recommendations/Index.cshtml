@@ -1,0 +1,76 @@
+@model DiscoverEgypt.Application.Responses.Recommendations.RecommendedExperiencesResponse
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Experiences picked for you";
+    ViewData["TouristPage"] = "recommendations";
+}
+
+<link rel="stylesheet" href="~/css/tourist-recommendations.css" asp-append-version="true" />
+
+<section class="recommendations-page">
+    <header class="recommendations-heading">
+        <a asp-controller="Explore" asp-action="Index" class="recommendations-back">← Explore all experiences</a>
+        <span class="recommendations-eyebrow">CURATED AROUND YOUR INTERESTS</span>
+        <h1>Experiences picked for you</h1>
+        <p>Discover published cultural experiences ranked against the preferences you saved.</p>
+        @if (Model.RequiredLanguages.Count > 0)
+        {
+            <div class="required-language-note"><span aria-hidden="true">✓</span> Showing experiences available in @string.Join(", ", Model.RequiredLanguages)</div>
+        }
+    </header>
+
+    @if (!Model.HasPreferences)
+    {
+        <div class="recommendations-empty"><span aria-hidden="true">✳</span><h2>Set your preferences first</h2><p>Choose your budget, trip length, interests, regions, and languages so we can find a better match.</p><a class="button button-gold" asp-controller="TouristPreferences" asp-action="Index">Set my preferences</a></div>
+    }
+    else
+    {
+        <form asp-controller="Recommendations" asp-action="Index" method="get" class="recommendation-filter">
+            <div><label for="typeId">Experience type</label><p>@(Model.UsesSavedTypePreferences ? "Using your saved type preferences. Choose one type to narrow the list." : "Choose a type to narrow the list, or leave it open.")</p></div>
+            <select id="typeId" name="typeId">
+                <option value="">@(Model.UsesSavedTypePreferences ? "Use saved type preferences" : "All experience types")</option>
+                @foreach (var type in Model.Types)
+                {
+                    <option value="@type.Id" selected="@(Model.SelectedTypeId == type.Id ? "selected" : null)">@type.Name</option>
+                }
+            </select>
+            <button type="submit" class="button button-outline">Apply filter</button>
+        </form>
+
+        @if (Model.Items.Count == 0)
+        {
+            <div class="recommendations-empty"><span aria-hidden="true">✧</span><h2>No matches right now</h2><p>@(Model.RequiredLanguages.Count > 0 ? "No published experience currently matches your selected language and type filters. Try another type or update your preferences." : "No published experience currently matches your preferences. Try another type or update your preferences.")</p><a class="button button-outline" asp-controller="TouristPreferences" asp-action="Index">Update preferences</a></div>
+        }
+        else
+        {
+            <div class="recommendations-result-heading"><div><span>@Model.Items.Count RECOMMENDED EXPERIENCES</span><h2>Matched to your travel style</h2></div><a asp-controller="TouristPreferences" asp-action="Index">Edit preferences <span aria-hidden="true">↗</span></a></div>
+            <div class="recommended-grid">
+                @foreach (var experience in Model.Items)
+                {
+                    <article class="recommended-card">
+                        <a class="recommended-image" asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@experience.Id" aria-label="View @experience.Title">
+                            @if (!string.IsNullOrWhiteSpace(experience.CoverImageKey))
+                            {
+                                <img src="@Url.Action("Image", "Explore", new { id = experience.Id })" alt="" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="recommended-image-fallback" aria-hidden="true">✳</span>
+                            }
+                            <span class="match-score">@experience.MatchPercentage.ToString("0.#")% match</span>
+                            <span class="recommended-type">@experience.ExperienceType</span>
+                        </a>
+                        <div class="recommended-card-body">
+                            <div class="recommended-host"><span class="recommended-host-initial">@(string.IsNullOrWhiteSpace(experience.HostName) ? "H" : experience.HostName.Trim()[0].ToString().ToUpperInvariant())</span><span><strong>@experience.HostName</strong><small>@experience.CulturalArea</small></span><span class="recommended-verified" title="Published experience">✓</span></div>
+                            <h3><a asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@experience.Id">@experience.Title</a></h3>
+                            <p class="recommended-story">@experience.CulturalStory</p>
+                            <div class="match-details"><span class="match-details-label">WHY IT MATCHES</span><ul>@foreach (var detail in experience.MatchDetails){<li>@detail</li>}</ul></div>
+                            <div class="recommended-meta"><span>@(experience.ReviewCount > 0 ? $"{experience.AverageRating:0.0} · {experience.ReviewCount} reviews" : "New experience")</span><span>@(experience.DurationMinutes / 60)h @(experience.DurationMinutes % 60)m</span></div>
+                            <div class="recommended-card-footer"><span><strong>@experience.PricePerPerson.ToString("N0") EGP</strong><small>per guest</small></span><a class="button button-gold" asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@experience.Id">View experience</a></div>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    }
+</section>

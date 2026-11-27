@@ -1,0 +1,48 @@
+@model DiscoverEgypt.Application.Responses.Bookings.MockPaymentResponse
+@using DiscoverEgypt.Domain.Enums.Bookings
+@using DiscoverEgypt.Domain.Enums.Payments
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Payment result";
+    ViewData["TouristPage"] = "booking";
+    var english = CultureInfo.GetCultureInfo("en-US");
+    var succeeded = Model.PaymentStatus == PaymentStatus.Paid;
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/tourist-mock-payment.css" asp-append-version="true" />
+
+<section class="tourist-booking-page booking-confirmation-page">
+    <div class="booking-confirmation-card">
+        <div class="booking-confirmation-mark @(succeeded ? "" : "mock-payment-failed-mark")" aria-hidden="true">@(succeeded ? "✓" : "!")</div>
+        <span class="booking-confirmation-eyebrow">STRIPE PAYMENT RESULT</span>
+        <h1>@(succeeded ? "Stripe payment succeeded" : Model.PaymentStatus == PaymentStatus.Failed ? "Stripe payment failed" : "Payment is still pending")</h1>
+        <p>Booking status and payment status are recorded separately.</p>
+        <div class="booking-confirmation-details">
+            <h2>@Model.ServiceTitle</h2>
+            <div><span>Scheduled for</span><strong>@HostDateTimeFormatter.Cairo(Model.ScheduledStartUtc, "dddd, MMMM d, yyyy · h:mm tt")</strong></div>
+            <div><span>Amount</span><strong>EGP @Model.Amount.ToString("N2", english)</strong></div>
+            <div><span>Booking status</span><strong>@Model.BookingStatus</strong></div>
+            <div><span>Payment status</span><strong>@Model.PaymentStatus</strong></div>
+            @if (Model.PaidAtUtc.HasValue)
+            {
+                <div><span>Paid at</span><strong>@HostDateTimeFormatter.Cairo(Model.PaidAtUtc.Value, "MMM d, yyyy · h:mm tt")</strong></div>
+            }
+        </div>
+        @if (!succeeded && Model.BookingStatus == BookingStatus.Pending)
+        {
+            <a class="button button-gold booking-submit" asp-controller="MockPayments" asp-action="Index" asp-route-bookingId="@Model.BookingId">Try paying with Stripe again</a>
+        }
+        @if (Model.BookingType == BookingType.Guide)
+        {
+            <a class="button button-outline booking-submit" asp-controller="GuideBookings" asp-action="Confirmation" asp-route-id="@Model.BookingId">View booking details</a>
+        }
+        else
+        {
+            <a class="button button-outline booking-submit" asp-controller="ExperienceBookings" asp-action="Confirmation" asp-route-id="@Model.BookingId">View booking details</a>
+        }
+        <a class="button button-gold booking-submit" asp-controller="Explore" asp-action="Index">Back to experiences</a>
+    </div>
+</section>

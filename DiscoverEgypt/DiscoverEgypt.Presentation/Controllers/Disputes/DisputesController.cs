@@ -1,22 +1,11 @@
 using System.Security.Claims;
 using DiscoverEgypt.Application.Features.Disputes.Requests.Queries;
-<<<<<<< HEAD
-=======
-using DiscoverEgypt.Application.ViewModels.Disputes;
->>>>>>> f567d3a (modificaion)
+using DiscoverEgypt.Application.DTOs.Disputes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-<<<<<<< HEAD
-namespace DiscoverEgypt.Presentation.Controllers.Disputes;
-
-[Authorize(Roles = "Host")]
-[Route("Host/Disputes")]
-public sealed class DisputesController(IMediator mediator) : Controller
-=======
 namespace DiscoverEgypt.Presentation.Controllers.Disputes
->>>>>>> f567d3a (modificaion)
 {
     [Authorize(Roles = "Host")]
     [Route("Host/Disputes")]
@@ -29,14 +18,7 @@ namespace DiscoverEgypt.Presentation.Controllers.Disputes
             _mediator = mediator;
         }
 
-<<<<<<< HEAD
-        ViewData["Title"] = "Host Disputes";
-        ViewData["Section"] = "Disputes";
-        return View(result);
-    }
-=======
         private const int PageSize = 10;
->>>>>>> f567d3a (modificaion)
 
         [HttpGet("")]
         public async Task<IActionResult> Index(int page = 1, CancellationToken cancellationToken = default)
@@ -49,11 +31,6 @@ namespace DiscoverEgypt.Presentation.Controllers.Disputes
             if (page > result.PageCount)
                 return RedirectToAction(nameof(Index), new { page = result.PageCount });
 
-<<<<<<< HEAD
-        ViewData["Title"] = "Dispute details";
-        ViewData["Section"] = "Dispute details";
-        return View(dispute);
-=======
             ViewData["Title"] = "Host Disputes";
             ViewData["Section"] = "Disputes";
             return View(result);
@@ -73,7 +50,6 @@ namespace DiscoverEgypt.Presentation.Controllers.Disputes
             ViewData["Section"] = "Dispute details";
             return View(dispute);
         }
->>>>>>> f567d3a (modificaion)
     }
 }
 

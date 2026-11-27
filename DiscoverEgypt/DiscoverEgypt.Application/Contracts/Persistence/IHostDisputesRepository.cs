@@ -1,4 +1,5 @@
 using DiscoverEgypt.Domain.Entities;
+using DiscoverEgypt.Application.Responses.Accounts;
 
 namespace DiscoverEgypt.Application.Contracts.Persistence
 {
@@ -12,7 +13,7 @@ namespace DiscoverEgypt.Application.Contracts.Persistence
 
         Task<int> GetCountAsync(string userId, CancellationToken cancellationToken = default);
 
-        Task<IReadOnlyDictionary<string, ApplicationUser>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default);
+        Task<IReadOnlyDictionary<string, UserSummaryResponse>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default);
 
         Task<Dispute?> GetDetailsAsync(
             string userId,

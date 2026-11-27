@@ -1,0 +1,44 @@
+@model DiscoverEgypt.Application.Responses.Bookings.MockPaymentResponse
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Checkout with Stripe";
+    ViewData["TouristPage"] = "booking";
+    var english = CultureInfo.GetCultureInfo("en-US");
+    var notice = ViewData["PaymentNotice"] as string;
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/tourist-mock-payment.css" asp-append-version="true" />
+
+<section class="tourist-booking-page booking-confirmation-page">
+    <a class="booking-back-link" asp-controller="Explore" asp-action="Index">← Back to experiences</a>
+    <header class="tourist-booking-heading">
+        <span>STRIPE TEST CHECKOUT</span>
+        <h1>Complete your booking</h1>
+        <p>You will be redirected to Stripe Checkout (test mode) to complete your payment securely.</p>
+    </header>
+
+    <div class="booking-confirmation-card mock-payment-card">
+        @if (!string.IsNullOrWhiteSpace(notice))
+        {
+            <div class="booking-validation-summary" role="status">@notice</div>
+        }
+        <div class="booking-confirmation-details">
+            <span class="booking-confirmation-eyebrow">@(Model.BookingType == DiscoverEgypt.Domain.Enums.Bookings.BookingType.Guide ? "GUIDE BOOKING" : "EXPERIENCE BOOKING")</span>
+            <h2>@Model.ServiceTitle</h2>
+            <div><span>Scheduled for</span><strong>@HostDateTimeFormatter.Cairo(Model.ScheduledStartUtc, "dddd, MMMM d, yyyy · h:mm tt")</strong></div>
+            <div class="booking-total"><span>Amount due</span><strong>EGP @Model.Amount.ToString("N2", english)</strong></div>
+            <div><span>Booking status</span><strong>@Model.BookingStatus</strong></div>
+            <div><span>Payment status</span><strong>@Model.PaymentStatus</strong></div>
+        </div>
+        <div asp-validation-summary="All" class="booking-validation-summary" role="alert"></div>
+        <form asp-action="CreateCheckoutSession" method="post" class="mock-payment-actions">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="bookingId" value="@Model.BookingId" />
+            <button type="submit" class="button button-gold booking-submit">Pay with Stripe</button>
+        </form>
+        <small class="mock-payment-note">Payment updates the Payment status independently. The provider can review and accept your booking once Stripe confirms the payment.</small>
+    </div>
+</section>

@@ -1,0 +1,59 @@
+@model DiscoverEgypt.Application.Responses.Bookings.GuideBookingFormResponse
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Book a local guide";
+    ViewData["TouristPage"] = "booking";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+
+<section class="tourist-booking-page">
+    <a class="booking-back-link" asp-controller="Guides" asp-action="Details" asp-route-id="@Model.Guide.GuideProfileId">← Back to guide</a>
+    <header class="tourist-booking-heading"><span>PLAN YOUR PRIVATE TOUR</span><h1>Book a local guide</h1><p>Choose when, for how long, and where you would like your guide to meet you. The full price is shown before you send the request.</p></header>
+
+    <div class="tourist-booking-columns">
+        <form asp-action="Review" method="post" class="tourist-booking-form">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="booking-validation-summary" role="alert"></div>
+            <input asp-for="Form.GuideProfileId" type="hidden" />
+
+            <section class="booking-form-card">
+                <div class="booking-card-heading"><span>01</span><div><h2>When should the tour begin?</h2><p>Times are shown in Cairo local time.</p></div></div>
+                <label asp-for="Form.ScheduledStartLocal">Start date and time</label>
+                <input asp-for="Form.ScheduledStartLocal" type="datetime-local" min="@Model.MinimumStartLocal.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture)" step="60" />
+                <span asp-validation-for="Form.ScheduledStartLocal" class="booking-field-error"></span>
+                <small class="booking-field-hint">Guide bookings must start at least 72 hours from now.</small>
+            </section>
+
+            <section class="booking-form-card">
+                <div class="booking-card-heading"><span>02</span><div><h2>How long will you need a guide?</h2><p>Choose the number of billable hours.</p></div></div>
+                <label asp-for="Form.GuideHours">Duration in hours</label>
+                <input asp-for="Form.GuideHours" type="number" min="1" step="1" />
+                <span asp-validation-for="Form.GuideHours" class="booking-field-error"></span>
+            </section>
+
+            <section class="booking-form-card">
+                <div class="booking-card-heading"><span>03</span><div><h2>Where would you like to go?</h2><p>Enter the destination or area for the tour.</p></div></div>
+                <label asp-for="Form.Destination">Destination</label>
+                <input asp-for="Form.Destination" maxlength="300" autocomplete="street-address" placeholder="For example: Giza Plateau and Old Cairo" />
+                <span asp-validation-for="Form.Destination" class="booking-field-error"></span>
+            </section>
+
+            <button type="submit" class="button button-gold booking-submit">Review guide booking <span aria-hidden="true">→</span></button>
+        </form>
+
+        <aside class="booking-experience-card">
+            <span class="booking-experience-type">APPROVED LOCAL GUIDE</span>
+            <h2>@Model.Guide.GuideName</h2>
+            <p class="booking-area">@(Model.Guide.CulturalAreas.Count > 0 ? string.Join(" · ", Model.Guide.CulturalAreas) : "Egypt")</p>
+            <div class="booking-facts">
+                <span>Languages<strong>@(Model.Guide.Languages.Count > 0 ? string.Join(", ", Model.Guide.Languages) : "Ask the guide")</strong></span>
+                <span>Traveler rating<strong>@(Model.Guide.ReviewCount > 0 ? $"{Model.Guide.AverageRating.ToString("0.0", english)} · {Model.Guide.ReviewCount} reviews" : "New guide")</strong></span>
+            </div>
+            <div class="booking-price-estimate"><span>Hourly rate</span><strong>EGP @Model.Guide.HourlyRate.ToString("N2", english) / hour</strong></div>
+            <p class="booking-privacy-note">The guide must be approved and have a current license. Your selected destination and schedule will be checked again before the booking request is saved.</p>
+        </aside>
+    </div>
+</section>

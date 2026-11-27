@@ -1,0 +1,56 @@
+@model IReadOnlyList<DiscoverEgypt.Application.Responses.AdminUsers.AdminUserListItemResponse>
+@using System.Globalization
+@{
+    ViewData["Title"] = "Account management";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/admin-users.css" asp-append-version="true" />
+
+<main class="admin-users-page">
+    @if (TempData["AdminUserSuccess"] is string successMessage)
+    {
+        <div class="admin-users-alert admin-users-alert-success" role="status">@successMessage</div>
+    }
+    @if (TempData["AdminUserError"] is string errorMessage)
+    {
+        <div class="admin-users-alert admin-users-alert-error" role="alert">@errorMessage</div>
+    }
+    <header class="admin-users-heading">
+        <span>ADMIN WORKSPACE · ACCOUNTS</span>
+        <h1>Account management</h1>
+        <p>Activate or deactivate access while keeping each account's role and project data intact.</p>
+    </header>
+
+    <section class="admin-users-table-wrap" aria-label="Application accounts">
+        @if (Model.Count == 0)
+        {
+            <div class="admin-users-empty"><h2>No accounts found</h2><p>Accounts will appear here after they are created.</p></div>
+        }
+        else
+        {
+            <table class="admin-users-table">
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td><strong>@user.FullName</strong></td>
+                            <td>@user.Email</td>
+                            <td><div class="admin-users-roles">@if (user.Roles.Count == 0) { <span>Unassigned</span> } else { foreach (var role in user.Roles) { <span>@role</span> } }</div></td>
+                            <td><span class="admin-users-status @(user.IsActive ? "is-active" : "is-inactive")">@(user.IsActive ? "Active" : "Inactive")</span></td>
+                            <td>@user.CreatedAt.ToString("MMM d, yyyy", english)</td>
+                            <td>
+                                <form method="post" action="/Admin/Users/@user.UserId/status" class="admin-users-action-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="IsActive" value="@(!user.IsActive ? "true" : "false")" />
+                                    <button type="submit" class="@(user.IsActive ? "deactivate" : "activate")">@(user.IsActive ? "Deactivate" : "Activate")</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+</main>

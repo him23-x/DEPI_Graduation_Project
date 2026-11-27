@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
-using DiscoverEgypt.Application.ViewModels.Bookings;
+using DiscoverEgypt.Application.Responses.Bookings;
 using DiscoverEgypt.Application.Features.Bookings.Requests.Queries;
 using DiscoverEgypt.Application.Features.Bookings.Options;
 using DiscoverEgypt.Application.Features.Bookings.Policies;
@@ -10,7 +10,7 @@ using FluentValidation;
 
 namespace DiscoverEgypt.Application.Features.Bookings.Handlers.Queries
 {
-    public sealed class GetHostBookingsQueryHandler : IRequestHandler<GetHostBookingsQuery, IReadOnlyList<HostBookingListItemViewModel>>
+    public sealed class GetHostBookingsQueryHandler : IRequestHandler<GetHostBookingsQuery, IReadOnlyList<HostBookingListItemResponse>>
     {
         private readonly IHostBookingRepository _repository;
         private readonly IOptions<BookingLifecycleOptions> _lifecycleOptions;
@@ -29,13 +29,13 @@ namespace DiscoverEgypt.Application.Features.Bookings.Handlers.Queries
             _validator = validator;
         }
 
-        public async Task<IReadOnlyList<HostBookingListItemViewModel>> Handle(GetHostBookingsQuery request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<HostBookingListItemResponse>> Handle(GetHostBookingsQuery request, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.UserId);
             var bookings = await _repository.GetForHostAsync(request.UserId, request.Tab, cancellationToken);
             var tourists = await _repository.GetTouristsAsync(bookings.Select(booking => booking.TouristUserId), cancellationToken);
-            return _mapper.Map<IReadOnlyList<HostBookingListItemViewModel>>(bookings).Select((item, index) =>
+            return _mapper.Map<IReadOnlyList<HostBookingListItemResponse>>(bookings).Select((item, index) =>
             {
                 var booking = bookings[index];
                 var tourist = tourists.GetValueOrDefault(booking.TouristUserId);

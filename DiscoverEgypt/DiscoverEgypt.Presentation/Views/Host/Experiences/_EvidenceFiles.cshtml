@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 @model DiscoverEgypt.Application.DTOs.HostExperiences.EvidenceFileGroupDto
-=======
-@model DiscoverEgypt.Application.ViewModels.HostExperiences.EvidenceFileGroupViewModel
->>>>>>> f567d3a (modificaion)
 @{
     var files = Model.Editor.Files.Where(item => item.Kind == Model.Kind).OrderBy(item => item.UploadedAt).ToArray();
 }
@@ -18,7 +14,7 @@
             @foreach (var file in files)
             {
                 <li>
-                    <span><strong>@Model.Kind</strong><small>Added @file.UploadedAt.ToLocalTime().ToString("MMM d, yyyy")</small></span>
+                    <span><strong>@Model.Kind</strong><small>Added @HostDateTimeFormatter.Cairo(file.UploadedAt, "MMM d, yyyy")</small></span>
                     <div>
                         <a class="text-action" asp-controller="Experiences" asp-action="EvidenceFile" asp-route-evidenceId="@file.Id">Download</a>
                         <form asp-controller="Experiences" asp-action="DeleteEvidence" asp-route-id="@Model.Editor.ExperienceId" method="post">

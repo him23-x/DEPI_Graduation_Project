@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-@model DiscoverEgypt.Application.DTOs.Bookings.HostBookingsIndexDto
-@using DiscoverEgypt.Application.DTOs.Bookings
-=======
-@model DiscoverEgypt.Application.ViewModels.Bookings.HostBookingsIndexViewModel
-@using DiscoverEgypt.Application.ViewModels.Bookings
->>>>>>> f567d3a (modificaion)
+@model DiscoverEgypt.Application.Responses.Bookings.HostBookingsResponse
 @using DiscoverEgypt.Domain.Enums.Bookings
 @using DiscoverEgypt.Domain.Enums.Disputes
 @using DiscoverEgypt.Domain.Enums.Experiences
@@ -17,8 +11,7 @@
 @{
     ViewData["Title"] = "My Bookings";
     ViewData["Section"] = "Bookings";
-    var cairoZone = TimeZoneInfo.FindSystemTimeZoneById(OperatingSystem.IsWindows() ? "Egypt Standard Time" : "Africa/Cairo");
-    string Cairo(DateTime value) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(value, DateTimeKind.Utc), cairoZone).ToString("ddd, MMM d · h:mm tt");
+    string Cairo(DateTime value) => HostDateTimeFormatter.Cairo(value, "ddd, MMM d · h:mm tt");
     string UtcIso(DateTime value) => DateTime.SpecifyKind(value, DateTimeKind.Utc).ToString("O");
     var tabs = new (HostBookingTab Value, string Label)[]
     {

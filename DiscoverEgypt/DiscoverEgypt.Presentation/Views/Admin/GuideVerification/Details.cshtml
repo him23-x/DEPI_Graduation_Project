@@ -1,0 +1,82 @@
+@model DiscoverEgypt.Application.Responses.GuideVerification.AdminGuideVerificationDetailsResponse
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    ViewData["Title"] = "Review guide verification";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/admin-guide-verification.css" asp-append-version="true" />
+
+<main class="admin-guide-verification-page admin-guide-verification-details">
+    @if (TempData["AdminGuideVerificationError"] is string errorMessage)
+    {
+        <div class="admin-verification-alert admin-verification-alert-error" role="alert">@errorMessage</div>
+    }
+    <a class="admin-guide-verification-back" asp-action="Index">← Back to verification queue</a>
+    <header class="admin-guide-verification-heading">
+        <span>GUIDE PROFILE #@Model.GuideProfileId · REQUEST #@Model.VerificationRequestId</span>
+        <h1>@Model.GuideName</h1>
+        <p>Submitted @HostDateTimeFormatter.Cairo(Model.SubmittedAt, "MMMM d, yyyy · h:mm tt")</p>
+    </header>
+
+    <div class="admin-guide-verification-grid">
+        <div class="admin-guide-verification-main">
+            <section class="admin-guide-verification-panel">
+                <span class="admin-guide-verification-kicker">GUIDE PROFILE</span>
+                <h2>Profile information</h2>
+                <p class="admin-guide-bio">@(string.IsNullOrWhiteSpace(Model.Bio) ? "No guide bio was provided." : Model.Bio)</p>
+                <dl class="admin-guide-facts">
+                    <div><dt>Hourly rate</dt><dd>EGP @Model.HourlyRate.ToString("N2", english)</dd></div>
+                    <div><dt>License expiry</dt><dd>@Model.LicenseExpiryDate.ToString("MMMM d, yyyy", english)</dd></div>
+                    <div><dt>Languages</dt><dd>@(Model.GuideLanguages.Count == 0 ? "None listed" : string.Join(", ", Model.GuideLanguages))</dd></div>
+                    <div><dt>Work areas</dt><dd>@(Model.CulturalAreas.Count == 0 ? "None listed" : string.Join(", ", Model.CulturalAreas))</dd></div>
+                </dl>
+            </section>
+
+            <section class="admin-guide-verification-panel">
+                <span class="admin-guide-verification-kicker">PRIVATE DOCUMENTS</span>
+                <h2>Verification evidence</h2>
+                <p class="admin-guide-panel-note">Documents are private and can only be downloaded by an authorized Admin.</p>
+                @if (Model.Documents.Count == 0)
+                {
+                    <p class="admin-guide-no-documents">No active verification documents were attached.</p>
+                }
+                else
+                {
+                    <div class="admin-guide-document-list">
+                        @foreach (var document in Model.Documents)
+                        {
+                            <article class="admin-guide-document">
+                                <div>
+                                    <strong>@document.DocumentType</strong>
+                                    @if (!string.IsNullOrWhiteSpace(document.Language)) { <span>Language: @document.Language</span> }
+                                    @if (!string.IsNullOrWhiteSpace(document.CulturalArea)) { <span>Work area: @document.CulturalArea</span> }
+                                    <time>Uploaded @HostDateTimeFormatter.Cairo(document.UploadedAt, "MMM d, yyyy · h:mm tt")</time>
+                                </div>
+                                <a asp-action="DownloadDocument" asp-route-documentId="@document.DocumentId">Download private file</a>
+                            </article>
+                        }
+                    </div>
+                }
+            </section>
+        </div>
+
+        <aside class="admin-guide-verification-panel admin-guide-decision-panel">
+            <span class="admin-guide-pending-badge">Pending review</span>
+            <h2>Admin decision</h2>
+            <p>Check the submitted identity, license, language evidence where required, and work-area evidence.</p>
+            <form asp-action="Approve" asp-route-id="@Model.VerificationRequestId" method="post" class="admin-guide-decision-form">
+                @Html.AntiForgeryToken()
+                <button class="admin-guide-decision-button admin-guide-approve" type="submit" onclick="return confirm('Approve this guide verification request?');">Approve guide</button>
+            </form>
+            <form asp-action="Reject" asp-route-id="@Model.VerificationRequestId" method="post" class="admin-guide-decision-form">
+                @Html.AntiForgeryToken()
+                <label for="RejectionReason">Reason for rejection</label>
+                <textarea id="RejectionReason" name="RejectionReason" maxlength="1000" required>@ViewData["RejectionReason"]</textarea>
+                @Html.ValidationMessage("RejectionReason", null, new { @class = "admin-guide-validation" })
+                <button class="admin-guide-decision-button admin-guide-reject" type="submit" onclick="return confirm('Reject this guide verification request?');">Reject request</button>
+            </form>
+        </aside>
+    </div>
+</main>

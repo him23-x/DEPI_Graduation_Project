@@ -1,6 +1,6 @@
-using DiscoverEgypt.Domain.Entities;
-
 using DiscoverEgypt.Application.Enums.Bookings;
+using DiscoverEgypt.Application.Responses.Accounts;
+using DiscoverEgypt.Domain.Entities;
 
 namespace DiscoverEgypt.Application.Contracts.Persistence
 {
@@ -16,9 +16,13 @@ namespace DiscoverEgypt.Application.Contracts.Persistence
             int bookingId,
             CancellationToken cancellationToken = default);
 
-        Task<IReadOnlyDictionary<string, ApplicationUser>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default);
+        Task<IReadOnlyDictionary<string, UserSummaryResponse>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default);
 
-        Task<bool> IsProviderSuspendedAsync(string userId, DateTime now, CancellationToken cancellationToken = default);
+        Task<bool> IsProviderSuspendedAsync(
+            string userId,
+            DateTime bookingCreatedAtUtc,
+            DateTime nowUtc,
+            CancellationToken cancellationToken = default);
 
         Task<bool> HasConfirmedOverlapAsync(string userId, DateTime scheduledStart, DateTime scheduledEnd, int exceptBookingId, CancellationToken cancellationToken = default);
 

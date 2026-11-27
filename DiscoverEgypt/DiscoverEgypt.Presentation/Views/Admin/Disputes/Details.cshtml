@@ -1,0 +1,74 @@
+@model DiscoverEgypt.Application.Responses.Disputes.AdminDisputeDetailsResponse
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    ViewData["Title"] = "Review dispute";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/admin-disputes.css" asp-append-version="true" />
+
+<main class="admin-disputes-page admin-dispute-details-page">
+    <a class="admin-dispute-back" asp-action="Index">← Back to dispute queue</a>
+    <header class="admin-disputes-heading">
+        <span>DISPUTE #@Model.DisputeId · @Model.BookingType BOOKING #@Model.BookingId</span>
+        <h1>@Model.ServiceTitle</h1>
+        <p>Opened by @Model.OpenedByName · @HostDateTimeFormatter.Cairo(Model.CreatedAt, "MMMM d, yyyy · h:mm tt")</p>
+    </header>
+
+    <div class="admin-dispute-grid">
+        <div class="admin-dispute-main">
+            <section class="admin-dispute-panel">
+                <span class="admin-dispute-kicker">DISPUTE SUMMARY</span>
+                <h2>Reported issue</h2>
+                <p class="admin-dispute-description">@Model.Description</p>
+                <dl class="admin-dispute-facts">
+                    <div><dt>Tourist</dt><dd>@Model.TouristName</dd></div>
+                    <div><dt>Provider</dt><dd>@Model.ProviderName</dd></div>
+                    <div><dt>Dispute status</dt><dd>@Model.DisputeStatus</dd></div>
+                    <div><dt>Booking status</dt><dd>@Model.BookingStatus</dd></div>
+                    <div><dt>Service time</dt><dd>@HostDateTimeFormatter.Cairo(Model.ScheduledStart, "MMM d, yyyy · h:mm tt") – @HostDateTimeFormatter.Cairo(Model.ScheduledEnd, "MMM d, yyyy · h:mm tt")</dd></div>
+                </dl>
+            </section>
+
+            <section class="admin-dispute-panel">
+                <span class="admin-dispute-kicker">BOOKING AMOUNTS</span>
+                <h2>Stored payment and payout values</h2>
+                <dl class="admin-dispute-facts">
+                    <div><dt>Service amount</dt><dd>EGP @Model.ServiceAmount.ToString("N2", english)</dd></div>
+                    <div><dt>Platform fee (not refundable)</dt><dd>EGP @Model.PlatformFeeAmount.ToString("N2", english)</dd></div>
+                    <div><dt>Total paid</dt><dd>EGP @Model.TotalAmount.ToString("N2", english)</dd></div>
+                    <div><dt>Payment status</dt><dd>@Model.PaymentStatus</dd></div>
+                    <div><dt>Payout</dt><dd>@(Model.PayoutAmount.HasValue ? $"EGP {Model.PayoutAmount.Value.ToString("N2", english)} · {Model.PayoutStatus}" : "Not created")</dd></div>
+                </dl>
+            </section>
+        </div>
+
+        <aside class="admin-dispute-panel admin-dispute-resolution-panel">
+            <span class="admin-dispute-open-badge">Awaiting resolution</span>
+            <h2>Resolve dispute</h2>
+            <p>Provider fault refunds the remaining ServiceAmount and suspends the provider. Tourist fault keeps the ServiceAmount and bans the Tourist. NoFault creates neither refund nor sanction.</p>
+            <form asp-action="Resolve" asp-route-id="@Model.DisputeId" method="post" class="admin-dispute-resolution-form">
+                @Html.AntiForgeryToken()
+                <label for="Outcome">Resolution outcome</label>
+                <select id="Outcome" name="Outcome" required>
+                    <option value="">Choose an outcome</option>
+                    <option value="ProviderFault" selected="@(ViewData["Outcome"]?.ToString() == "ProviderFault")">Provider fault</option>
+                    <option value="TouristFault" selected="@(ViewData["Outcome"]?.ToString() == "TouristFault")">Tourist fault</option>
+                    <option value="NoFault" selected="@(ViewData["Outcome"]?.ToString() == "NoFault")">No fault</option>
+                </select>
+                @Html.ValidationMessage("Outcome", null, new { @class = "admin-dispute-validation" })
+
+                <label for="SanctionDays">Sanction duration in days (optional)</label>
+                <input id="SanctionDays" name="SanctionDays" type="number" min="1" value="@ViewData["SanctionDays"]" />
+                <small>Leave blank to use the default: 14 days for a provider, 30 days for a Tourist. Ignored for NoFault.</small>
+                @Html.ValidationMessage("SanctionDays", null, new { @class = "admin-dispute-validation" })
+
+                <label for="ResolutionNote">Resolution note (optional)</label>
+                <textarea id="ResolutionNote" name="ResolutionNote" maxlength="3000">@ViewData["ResolutionNote"]</textarea>
+                @Html.ValidationMessage("ResolutionNote", null, new { @class = "admin-dispute-validation" })
+                <button type="submit" class="admin-dispute-resolve-button" onclick="return confirm('Resolve this dispute using the selected outcome?');">Save resolution</button>
+            </form>
+        </aside>
+    </div>
+</main>

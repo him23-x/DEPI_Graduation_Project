@@ -1,4 +1,5 @@
 using DiscoverEgypt.Domain.Entities;
+using DiscoverEgypt.Persistence.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

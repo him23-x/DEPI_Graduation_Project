@@ -1,0 +1,46 @@
+@model DiscoverEgypt.Application.Responses.Bookings.ExperienceBookingReviewResponse
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Review your booking";
+    ViewData["TouristPage"] = "booking";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+
+<section class="tourist-booking-page booking-review-page">
+    <a class="booking-back-link" asp-action="Index" asp-route-experienceId="@Model.ExperienceId">← Change date or guests</a>
+    <header class="tourist-booking-heading"><span>CHECK THE DETAILS</span><h1>Review your booking</h1><p>Confirm the schedule and full price before creating your pending booking request.</p></header>
+
+    <div class="booking-review-card">
+        <div class="booking-review-main">
+            <span class="booking-experience-type">@Model.ExperienceType</span>
+            <h2>@Model.Title</h2>
+            <p class="booking-area">@Model.CulturalArea · @Model.MeetingPointArea</p>
+            <dl class="booking-review-facts">
+                <div><dt>Hosted by</dt><dd>@Model.HostName</dd></div>
+                <div><dt>Date</dt><dd>@Model.ScheduledStartLocal.ToString("dddd, MMMM d, yyyy", english)</dd></div>
+                <div><dt>Time in Cairo</dt><dd>@Model.ScheduledStartLocal.ToString("h:mm tt", english) – @Model.ScheduledEndLocal.ToString("h:mm tt", english)</dd></div>
+                <div><dt>Duration</dt><dd>@(Model.DurationMinutes / 60)h @(Model.DurationMinutes % 60)m</dd></div>
+                <div><dt>Guests</dt><dd>@Model.NumberOfGuests</dd></div>
+            </dl>
+            <p class="booking-privacy-note">The exact meeting point is not included in this review. It is shared only after the booking is confirmed.</p>
+        </div>
+
+        <div class="booking-review-price">
+            <h3>Price breakdown</h3>
+            <div><span>EGP @Model.PricePerPerson.ToString("N2", english) × @Model.NumberOfGuests guests</span><strong>EGP @Model.ServiceAmount.ToString("N2", english)</strong></div>
+            <div><span>Platform fee (@Model.PlatformFeeRate.ToString("P0", english))</span><strong>EGP @Model.PlatformFeeAmount.ToString("N2", english)</strong></div>
+            <div class="booking-total"><span>Total due</span><strong>EGP @Model.TotalAmount.ToString("N2", english)</strong></div>
+            <form asp-action="Confirm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ExperienceId" value="@Model.ExperienceId" />
+                <input type="hidden" name="ScheduledStartLocal" value="@Model.ScheduledStartLocal.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="NumberOfGuests" value="@Model.NumberOfGuests" />
+                <button type="submit" class="button button-gold booking-submit">Create booking request <span aria-hidden="true">→</span></button>
+            </form>
+            <small>The price and availability are checked again when you submit.</small>
+        </div>
+    </div>
+</section>

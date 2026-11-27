@@ -1,0 +1,49 @@
+@model DiscoverEgypt.Application.Responses.Bookings.ExperienceBookingFormResponse
+@using System.Globalization
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Book an experience";
+    ViewData["TouristPage"] = "booking";
+}
+
+<link rel="stylesheet" href="~/css/tourist-booking.css" asp-append-version="true" />
+
+<section class="tourist-booking-page">
+    <a class="booking-back-link" asp-controller="ExperienceDetails" asp-action="Index" asp-route-id="@Model.Experience.ExperienceId">← Back to experience</a>
+    <header class="tourist-booking-heading"><span>YOUR EGYPTIAN EXPERIENCE</span><h1>Plan your visit</h1><p>Choose a date and group size. We’ll show the full price before you submit the booking request.</p></header>
+
+    <div class="tourist-booking-columns">
+        <form asp-action="Review" method="post" class="tourist-booking-form">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="booking-validation-summary" role="alert"></div>
+            <input asp-for="Form.ExperienceId" type="hidden" />
+
+            <section class="booking-form-card">
+                <div class="booking-card-heading"><span>01</span><div><h2>When would you like to go?</h2><p>Times are shown in Cairo local time.</p></div></div>
+                <label asp-for="Form.ScheduledStartLocal">Start date and time</label>
+                <input asp-for="Form.ScheduledStartLocal" type="datetime-local" min="@Model.MinimumStartLocal.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture)" step="60" />
+                <span asp-validation-for="Form.ScheduledStartLocal" class="booking-field-error"></span>
+                <small class="booking-field-hint">Bookings must be made at least 72 hours before the experience.</small>
+            </section>
+
+            <section class="booking-form-card">
+                <div class="booking-card-heading"><span>02</span><div><h2>Who’s coming?</h2><p>Choose a group size within the host’s limit.</p></div></div>
+                <label asp-for="Form.NumberOfGuests">Number of guests</label>
+                <input asp-for="Form.NumberOfGuests" type="number" min="1" max="@Model.Experience.MaxGroupSize" step="1" />
+                <span asp-validation-for="Form.NumberOfGuests" class="booking-field-error"></span>
+                <small class="booking-field-hint">Maximum @Model.Experience.MaxGroupSize guests.</small>
+            </section>
+
+            <button type="submit" class="button button-gold booking-submit">Review booking <span aria-hidden="true">→</span></button>
+        </form>
+
+        <aside class="booking-experience-card">
+            <span class="booking-experience-type">@Model.Experience.ExperienceType</span>
+            <h2>@Model.Experience.Title</h2>
+            <p class="booking-area">@Model.Experience.CulturalArea · @Model.Experience.MeetingPointArea</p>
+            <div class="booking-facts"><span>Hosted by<strong>@Model.Experience.HostName</strong></span><span>Duration<strong>@(Model.Experience.DurationMinutes / 60)h @(Model.Experience.DurationMinutes % 60)m</strong></span><span>Group size<strong>Up to @Model.Experience.MaxGroupSize guests</strong></span></div>
+            <div class="booking-price-estimate"><span>Price per guest</span><strong>EGP @Model.Experience.PricePerPerson.ToString("N2", CultureInfo.GetCultureInfo("en-US"))</strong></div>
+            <p class="booking-privacy-note">Only the neighborhood is shown here. The exact meeting point is shared after the booking is confirmed.</p>
+        </aside>
+    </div>
+</section>

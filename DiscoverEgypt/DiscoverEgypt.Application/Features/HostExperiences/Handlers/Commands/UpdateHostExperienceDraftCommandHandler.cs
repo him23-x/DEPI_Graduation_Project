@@ -4,7 +4,7 @@ using DiscoverEgypt.Application.Features.HostExperiences.Requests.Commands;
 using MediatR;
 using AutoMapper;
 using FluentValidation;
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 
 namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Commands
 {
@@ -44,11 +44,11 @@ namespace DiscoverEgypt.Application.Features.HostExperiences.Handlers.Commands
             var areas = await _repository.GetCulturalAreasAsync(cancellationToken);
             var interests = await _repository.GetInterestsAsync(cancellationToken);
             var languages = await _repository.GetLanguagesAsync(cancellationToken);
-            var options = new ExperienceCreateOptionsViewModel(
-                _mapper.Map<IReadOnlyList<ExperienceLookupViewModel>>(types),
-                _mapper.Map<IReadOnlyList<ExperienceLookupViewModel>>(areas),
-                _mapper.Map<IReadOnlyList<ExperienceLookupViewModel>>(interests),
-                _mapper.Map<IReadOnlyList<ExperienceLookupViewModel>>(languages));
+            var options = new ExperienceCreateOptionsDto(
+                _mapper.Map<IReadOnlyList<ExperienceLookupDto>>(types),
+                _mapper.Map<IReadOnlyList<ExperienceLookupDto>>(areas),
+                _mapper.Map<IReadOnlyList<ExperienceLookupDto>>(interests),
+                _mapper.Map<IReadOnlyList<ExperienceLookupDto>>(languages));
             if (!HostExperienceDraftPolicy.HasValidOptions(request.Draft, options))
             {
                 return false;

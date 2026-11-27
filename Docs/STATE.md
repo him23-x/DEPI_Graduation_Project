@@ -1,5 +1,5 @@
 # Project State
 
-- **Done:** Prepared the proposed dependency-ordered work order from `Docs/SRS.md`, `Docs/AGENT.md`, and applicable entities in `Docs/Discover_Egypt_Classes_Specs_V2.0.md`.
-- **Next:** Wait for the user to start or select a cycle.
-- **Open questions:** See the SRS and the carried-forward list in `Docs/WORK_ORDER.md`; no unresolved decision was assumed.
+- **Done:** HostProfile and requested Host fixes; public Home/Explore, Experience Details, Approved Guides, Guide Details; Tourist preferences/recommendations, dashboard, booking, mock payment, booking management, disputes, reviews, notifications, and sharing; Admin experience review/unpublish, guide verification review, dispute resolution, account activation/deactivation, and transaction monitoring.
+- **Next:** Guide-facing flows: create/edit GuideProfile; submit verification and documents; manage provider bookings (list, details, accept/reject, complete); view earnings/payouts; verify Guide notification coverage and review/rating display on Guide Details.
+- **Open questions:** See `Docs/SRS.md` for remaining storage, fee, payment-provider, evidence-retention, dispute-window, performance/recovery, and language questions. The design archive has no separate Approved Guides or Guide Details screens; those pages follow the shared palette and typography.

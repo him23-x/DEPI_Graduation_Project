@@ -1,0 +1,138 @@
+@model DiscoverEgypt.Application.Responses.AdminExperiences.AdminExperienceDetailsResponse
+@using DiscoverEgypt.Presentation.Formatting
+@using System.Globalization
+@{
+    ViewData["Title"] = "Review experience";
+    var english = CultureInfo.GetCultureInfo("en-US");
+}
+
+<link rel="stylesheet" href="~/css/admin-experiences.css" asp-append-version="true" />
+
+<main class="admin-experiences-page admin-experience-details-page">
+    @if (TempData["AdminExperienceReviewError"] is string errorMessage)
+    {
+        <div class="admin-review-alert admin-review-alert-error" role="alert">@errorMessage</div>
+    }
+    <a class="admin-experience-back" asp-controller="Experiences" asp-action="Index">← Back to review queue</a>
+    <header class="admin-experiences-heading">
+        <span>SUBMISSION #@Model.ExperienceId · @Model.ExperienceType</span>
+        <h1>@Model.Title</h1>
+        <p>Submitted by @Model.HostName · @HostDateTimeFormatter.Cairo(Model.SubmittedAt, "MMMM d, yyyy · h:mm tt")</p>
+    </header>
+
+    <div class="admin-experience-detail-grid">
+        <div class="admin-experience-main-column">
+            <section class="admin-experience-panel">
+                <div class="admin-experience-panel-heading"><span>EXPERIENCE OVERVIEW</span><h2>Listing information</h2></div>
+                <dl class="admin-experience-facts">
+                    <div><dt>Experience type</dt><dd>@Model.ExperienceType</dd></div>
+                    <div><dt>Cultural area</dt><dd>@Model.CulturalArea</dd></div>
+                    <div><dt>Price per person</dt><dd>EGP @Model.PricePerPerson.ToString("N2", english)</dd></div>
+                    <div><dt>Duration</dt><dd>@Model.DurationMinutes minutes</dd></div>
+                    <div><dt>Maximum group size</dt><dd>@Model.MaxGroupSize guests</dd></div>
+                    <div><dt>Public meeting area</dt><dd>@Model.MeetingPointArea</dd></div>
+                    <div class="admin-experience-fact-wide"><dt>Exact meeting point (private)</dt><dd>@Model.ExactMeetingPoint</dd></div>
+                    <div class="admin-experience-fact-wide"><dt>Interests</dt><dd>@(Model.Interests.Count == 0 ? "None selected" : string.Join(", ", Model.Interests))</dd></div>
+                    <div class="admin-experience-fact-wide"><dt>Languages</dt><dd>@(Model.Languages.Count == 0 ? "None selected" : string.Join(", ", Model.Languages))</dd></div>
+                    <div><dt>Public media</dt><dd>@Model.ImageCount photos · @Model.VideoCount videos · @(Model.HasCoverImage ? "Cover selected" : "No cover")</dd></div>
+                </dl>
+                <div class="admin-experience-copy"><h3>Description</h3><p>@Model.Description</p><h3>Cultural story</h3><p>@Model.CulturalStory</p></div>
+            </section>
+
+            <section class="admin-experience-panel">
+                <div class="admin-experience-panel-heading"><span>PRIVATE SUBMISSION MATERIAL</span><h2>Evidence</h2><p>Files are available only through this Admin-authorized download route.</p></div>
+                @if (Model.Evidence.Count == 0)
+                {
+                    <p class="admin-experience-no-evidence">No active evidence was attached to this submission.</p>
+                }
+                else
+                {
+                    @foreach (var group in Model.Evidence.GroupBy(item => item.Kind))
+                    {
+                        <section class="admin-evidence-group">
+                            <h3>@group.Key</h3>
+                            @foreach (var evidence in group)
+                            {
+                                <article class="admin-evidence-item">
+                                    <div class="admin-evidence-meta"><span>Added @HostDateTimeFormatter.Cairo(evidence.UploadedAt, "MMM d, yyyy · h:mm tt")</span>
+                                        @if (evidence.HasFile)
+                                        {
+                                            <a asp-controller="ExperienceEvidence" asp-action="Download" asp-route-evidenceId="@evidence.EvidenceId">Download private file</a>
+                                        }
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(evidence.TextContent))
+                                    {
+                                        <p class="admin-evidence-text">@evidence.TextContent</p>
+                                    }
+                                    @if (!evidence.HasFile && string.IsNullOrWhiteSpace(evidence.TextContent))
+                                    {
+                                        <p class="admin-experience-no-evidence">No active file or text is available.</p>
+                                    }
+                                </article>
+                            }
+                        </section>
+                    }
+                }
+            </section>
+
+            <section class="admin-experience-panel">
+                <div class="admin-experience-panel-heading"><span>HOST DECLARATIONS</span><h2>Accepted declarations</h2></div>
+                @if (Model.Declarations.Count == 0)
+                {
+                    <p class="admin-experience-no-evidence">No declaration record was found.</p>
+                }
+                else
+                {
+                    @foreach (var declaration in Model.Declarations)
+                    {
+                        <article class="admin-declaration-item"><div><strong>@declaration.Type</strong><time>@HostDateTimeFormatter.Cairo(declaration.AcceptedAt, "MMM d, yyyy · h:mm tt")</time></div><p>@declaration.Text</p></article>
+                    }
+                }
+            </section>
+        </div>
+
+        <aside class="admin-experience-side-column">
+            <section class="admin-experience-summary-card">
+                <span class="admin-experience-status admin-experience-status-@Model.Status">@Model.Status</span>
+                <h2>Review status</h2>
+                <p>@(Model.Status switch
+                {
+                    DiscoverEgypt.Domain.Enums.Experiences.ExperienceStatus.PendingApproval => "This submission is waiting for an Admin decision.",
+                    DiscoverEgypt.Domain.Enums.Experiences.ExperienceStatus.Published => "This experience is visible to tourists.",
+                    DiscoverEgypt.Domain.Enums.Experiences.ExperienceStatus.Unpublished => "This experience is hidden from tourists until an Admin republishes it.",
+                    _ => "Review this experience status."
+                })</p>
+                <dl><div><dt>Photos</dt><dd>@Model.ImageCount</dd></div><div><dt>Videos</dt><dd>@Model.VideoCount</dd></div><div><dt>Evidence items</dt><dd>@Model.Evidence.Count</dd></div><div><dt>Declarations</dt><dd>@Model.Declarations.Count</dd></div></dl>
+                @if (Model.Status == DiscoverEgypt.Domain.Enums.Experiences.ExperienceStatus.PendingApproval)
+                {
+                    <form asp-action="Approve" asp-route-id="@Model.ExperienceId" method="post" class="admin-review-form">
+                        @Html.AntiForgeryToken()
+                        <button class="admin-review-decision-button admin-review-approve-button" type="submit" onclick="return confirm('Approve and publish this experience?');">Approve and publish</button>
+                    </form>
+                    <form asp-action="Reject" asp-route-id="@Model.ExperienceId" method="post" class="admin-review-form">
+                        @Html.AntiForgeryToken()
+                        <label for="RejectionReason">Reason for rejection</label>
+                        <textarea id="RejectionReason" name="RejectionReason" maxlength="1000" required>@ViewData["RejectionReason"]</textarea>
+                        @Html.ValidationMessage("RejectionReason", null, new { @class = "admin-review-validation" })
+                        <button class="admin-review-decision-button admin-review-reject-button" type="submit" onclick="return confirm('Reject this experience and save the reason?');">Reject experience</button>
+                    </form>
+                }
+                else if (Model.Status == DiscoverEgypt.Domain.Enums.Experiences.ExperienceStatus.Published)
+                {
+                    <form asp-action="Unpublish" asp-route-id="@Model.ExperienceId" method="post" class="admin-review-form">
+                        @Html.AntiForgeryToken()
+                        <button class="admin-review-decision-button admin-review-reject-button" type="submit" onclick="return confirm('Unpublish this experience? It will be hidden from tourists.');">Unpublish experience</button>
+                    </form>
+                }
+                else if (Model.Status == DiscoverEgypt.Domain.Enums.Experiences.ExperienceStatus.Unpublished)
+                {
+                    <form asp-action="Republish" asp-route-id="@Model.ExperienceId" method="post" class="admin-review-form">
+                        @Html.AntiForgeryToken()
+                        <button class="admin-review-decision-button admin-review-approve-button" type="submit" onclick="return confirm('Check the requirements and republish this experience?');">Republish experience</button>
+                    </form>
+                }
+            </section>
+            <p class="admin-experience-privacy-note">Evidence files are private. Do not share downloaded documents outside the authorized review process.</p>
+        </aside>
+    </div>
+</main>

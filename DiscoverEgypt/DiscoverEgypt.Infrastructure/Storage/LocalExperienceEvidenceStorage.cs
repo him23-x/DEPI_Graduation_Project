@@ -1,5 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Storage;
-using DiscoverEgypt.Application.ViewModels.HostExperiences;
+using DiscoverEgypt.Application.DTOs.HostExperiences;
 
 namespace DiscoverEgypt.Infrastructure.Storage
 {

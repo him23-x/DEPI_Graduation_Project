@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Discover Egypt Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-disputes.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/account-menu.css" asp-append-version="true" />
+</head>
+<body class="admin-shell">
+    <header class="admin-shell-header">
+        <nav class="admin-shell-nav" aria-label="Admin navigation">
+            <a class="admin-shell-brand" href="/Admin/Disputes">Discover Egypt <span>ADMIN</span></a>
+            <div class="admin-shell-links">
+                <a href="/Admin/Experiences">Experiences</a>
+                <a href="/Admin/GuideVerifications">Guide verification</a>
+                <a href="/Admin/Users">Accounts</a>
+                <a href="/Admin/Disputes">Disputes</a>
+                <a href="/Admin/Monitoring">Monitoring</a>
+            </div>
+            @await Component.InvokeAsync("AccountMenu", new { placement = "admin" })
+        </nav>
+    </header>
+    @RenderBody()
+    <footer class="admin-shell-footer">&copy; 2026 Discover Egypt · Admin workspace</footer>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/account-menu.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,70 @@
+@model DiscoverEgypt.Application.Responses.Disputes.TouristDisputeDetailsResponse
+@using DiscoverEgypt.Presentation.Formatting
+@{
+    Layout = "_TouristLayout";
+    ViewData["Title"] = "Dispute details";
+    ViewData["TouristPage"] = "disputes";
+    var statusLabel = Model.Status == DiscoverEgypt.Domain.Enums.Disputes.DisputeStatus.UnderReview ? "Under review" : Model.Status.ToString();
+    var outcomeLabel = Model.Outcome switch
+    {
+        DiscoverEgypt.Domain.Enums.Disputes.DisputeOutcome.ProviderFault => "Provider at fault",
+        DiscoverEgypt.Domain.Enums.Disputes.DisputeOutcome.TouristFault => "Tourist at fault",
+        DiscoverEgypt.Domain.Enums.Disputes.DisputeOutcome.NoFault => "No fault",
+        _ => "Pending"
+    };
+    var notice = TempData["TouristDisputeNotice"] as string;
+}
+
+<link rel="stylesheet" href="~/css/tourist-disputes.css" asp-append-version="true" />
+
+<section class="tourist-disputes-page" aria-labelledby="tourist-dispute-detail-title">
+    <a class="tourist-disputes-back" asp-action="Index">← Back to my disputes</a>
+    @if (!string.IsNullOrWhiteSpace(notice)) { <div class="tourist-dispute-alert dispute-alert-success" role="status">@notice</div> }
+    <header class="tourist-disputes-heading">
+        <span class="tourist-disputes-eyebrow">DISPUTE #@Model.DisputeId</span>
+        <h1 id="tourist-dispute-detail-title">Dispute details</h1>
+        <p>Track the review status and decision for your booking concern.</p>
+    </header>
+
+    <div class="tourist-dispute-detail-grid">
+        <main class="tourist-dispute-detail-main">
+            <section class="tourist-dispute-detail-card">
+                <div class="tourist-dispute-detail-status">
+                    <span class="tourist-dispute-status dispute-status-@Model.Status.ToString().ToLowerInvariant()">@statusLabel</span>
+                    <span>Submitted @HostDateTimeFormatter.Cairo(Model.CreatedAtUtc, "MMM d, yyyy · h:mm tt")</span>
+                </div>
+                <h2>Your concern</h2>
+                <p class="tourist-dispute-description">@Model.Description</p>
+            </section>
+
+            <section class="tourist-dispute-detail-card">
+                <span class="tourist-disputes-eyebrow">DECISION</span>
+                <h2>Resolution</h2>
+                <dl>
+                    <div><dt>Outcome</dt><dd>@outcomeLabel</dd></div>
+                    <div><dt>Resolved</dt><dd>@(Model.ResolvedAtUtc.HasValue ? HostDateTimeFormatter.Cairo(Model.ResolvedAtUtc.Value, "MMM d, yyyy · h:mm tt") : "Pending review")</dd></div>
+                    @if (!string.IsNullOrWhiteSpace(Model.ResolutionNote))
+                    {
+                        <div class="dispute-resolution-note"><dt>Resolution note</dt><dd>@Model.ResolutionNote</dd></div>
+                    }
+                </dl>
+            </section>
+
+            <section class="tourist-dispute-detail-card">
+                <span class="tourist-disputes-eyebrow">RELATED BOOKING</span>
+                <h2>@Model.BookingTitle</h2>
+                <dl>
+                    <div><dt>Booking</dt><dd>#@Model.BookingId · @Model.BookingStatus</dd></div>
+                    <div><dt>Start</dt><dd>@HostDateTimeFormatter.Cairo(Model.ScheduledStartUtc, "MMM d, yyyy · h:mm tt")</dd></div>
+                    <div><dt>End</dt><dd>@HostDateTimeFormatter.Cairo(Model.ScheduledEndUtc, "MMM d, yyyy · h:mm tt")</dd></div>
+                </dl>
+                <a class="tourist-dispute-link" asp-controller="TouristBookings" asp-action="Details" asp-route-id="@Model.BookingId">View booking details <span aria-hidden="true">↗</span></a>
+            </section>
+        </main>
+        <aside class="tourist-dispute-next-step">
+            <span aria-hidden="true">✳</span>
+            <h2>@(Model.Status is DiscoverEgypt.Domain.Enums.Disputes.DisputeStatus.Open or DiscoverEgypt.Domain.Enums.Disputes.DisputeStatus.UnderReview ? "Your dispute is being reviewed" : "Review completed")</h2>
+            <p>@(Model.Status is DiscoverEgypt.Domain.Enums.Disputes.DisputeStatus.Open or DiscoverEgypt.Domain.Enums.Disputes.DisputeStatus.UnderReview ? "The dispute status will update here when a decision is recorded." : "The recorded outcome and resolution note are shown on this page.")</p>
+        </aside>
+    </div>
+</section>

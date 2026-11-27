@@ -1,4 +1,5 @@
 using DiscoverEgypt.Application.Contracts.Persistence;
+using DiscoverEgypt.Application.Responses.Accounts;
 using DiscoverEgypt.Domain.Entities;
 using DiscoverEgypt.Domain.Enums.Bookings;
 using Microsoft.EntityFrameworkCore;
@@ -42,10 +43,12 @@ namespace DiscoverEgypt.Persistence.Repositories.Host.Reviews
         public async Task<decimal> GetAverageRatingAsync(string userId, CancellationToken cancellationToken = default) =>
             await HostReviews(userId).AverageAsync(review => (decimal?)review.Rating, cancellationToken) ?? 0m;
 
-        public async Task<IReadOnlyDictionary<string, ApplicationUser>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default) =>
+        public async Task<IReadOnlyDictionary<string, UserSummaryResponse>> GetTouristsAsync(IEnumerable<string> userIds, CancellationToken cancellationToken = default) =>
             await _dbContext.ApplicationUsers.AsNoTracking()
                 .Where(user => userIds.Contains(user.Id))
-                .ToDictionaryAsync(user => user.Id, cancellationToken);
+                .ToDictionaryAsync(user => user.Id,
+                    user => new UserSummaryResponse(user.Id, user.UserName ?? string.Empty, user.Email ?? string.Empty, user.FullName),
+                    cancellationToken);
 
         private IQueryable<Review> HostReviews(string userId) => _dbContext.Reviews
             .AsNoTracking()
